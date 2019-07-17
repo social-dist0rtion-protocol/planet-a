@@ -14,7 +14,7 @@ import { PrimaryButton, BorderButton } from '../components/Buttons'
 import getConfig from '../config'
 import { getStoredValue, storeValues } from "../services/localStorage";
 
-const { CURRENCY } = getConfig()
+const { CURRENCY, LINKS } = getConfig()
 
 export default class Advanced extends React.Component {
   constructor(props) {
@@ -169,18 +169,20 @@ export default class Advanced extends React.Component {
           <Text>Enable advanced features</Text>
           <Checkbox onChange={this.updateAdvancedBalance} checked={expertMode} />
         </Flex>
+
         <hr style={{paddingTop:20}}/>
+
         <div>
           <div style={{width:"100%",textAlign:"center"}}><h5>Learn More</h5></div>
           <div className="content ops row settings-row" style={{marginBottom:10}}>
-            <a href="https://github.com/leapdao/burner-wallet" style={{color:"#FFFFFF"}} target="_blank" rel="noopener noreferrer">
+            <a href={LINKS.CODE} style={{color:"#FFFFFF"}} target="_blank" rel="noopener noreferrer">
               <BorderButton width={1}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                   <i className="fas fa-code"/> {i18n.t('code')}
                 </Scaler>
               </BorderButton>
             </a>
-            <a href="https://leapdao.org/" style={{color:"#FFFFFF"}} target="_blank" rel="noopener noreferrer">
+            <a href={LINKS.ABOUT} style={{color:"#FFFFFF"}} target="_blank" rel="noopener noreferrer">
               <BorderButton width={1}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                   <i className="fas fa-info"/> {i18n.t('about')}
