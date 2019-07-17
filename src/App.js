@@ -257,6 +257,16 @@ export default class App extends Component {
     })
   }
   componentDidMount(){
+    const testReceipt = {
+      to: "0x901442E4dEeC484E9B2EFDb2bA20FCb19880D9A3",
+      from: "0x51Ff1fab76079d20418d1c74DA65653FfE3fD0aa",
+      type: "trade",
+      profit: 20,
+      emission: 2,
+      result: {}
+    }
+    this.setReceipt(testReceipt);
+    this.changeView("receipt");
     document.body.style.backgroundColor = mainStyle.backgroundColor
 
     this.detectContext()
