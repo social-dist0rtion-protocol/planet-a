@@ -4,18 +4,22 @@ import { Flex, Box } from "rimble-ui";
 import styled, { keyframes } from "styled-components";
 import { Blockie } from "dapparatus";
 import handshake from "../assets/handshake.gif";
+import kaching from "../assets/ka-ching.mp3";
+import pollution from "../assets/pollution.mp3";
+import newtag from "../assets/new-tag.png";
 import Confetti from "react-dom-confetti";
+import Sound from "react-sound";
 
 const config = {
   angle: 90,
   spread: 90,
   startVelocity: 45,
-  elementCount: "200",
+  elementCount: "25",
   dragFriction: 0.1,
-  duration: 6000,
+  duration: 4000,
   stagger: 0,
-  width: "10px",
-  height: "10px",
+  width: "40px",
+  height: "40px",
   colors: ["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"]
 };
 
@@ -91,7 +95,8 @@ export default class TradeReceipt extends Component {
       orientation: Math.round(Math.random()) === 0 ? 1 : -1,
       explosion: false,
       rotate: ranPlay(),
-      intervalId: 0
+      intervalId: 0,
+      soundStatus: Sound.status.PLAYING
     };
   }
 
@@ -122,16 +127,19 @@ export default class TradeReceipt extends Component {
     const {
       receipt: { from, to, profit, emission }
     } = this.props;
-    const { orientation, explosion, rotate } = this.state;
+    const { orientation, explosion, rotate, soundStatus } = this.state;
 
     return (
       <div>
-        <h3 style={{ textAlign: "center", marginBottom: "2em" }}>
-          Congratz! Your trade as generated:
+        <h3 style={{ textAlign: "center", marginBottom: "1em" }}>
+          🎉 Your trade has generated 🎉
         </h3>
         <Flex alignItems="center" justifyContent="space-between">
           <Box style={{ textAlign: "center" }} width={1 / 5}>
             <Blockie address={from} config={{ size: blockieSize }} />
+            {/* EXXXTREME 90ies CSS skills incoming */}
+            <br />
+            You
           </Box>
           <Box style={{ textAlign: "center" }} width={3 / 5}>
             <Hero orientation={orientation} size={1.7}>
@@ -159,11 +167,21 @@ export default class TradeReceipt extends Component {
           </Box>
           <Box style={{ textAlign: "center" }} width={1 / 5}>
             <Blockie address={to} config={{ size: blockieSize }} />
+            {/* EXXXTREME 90ies CSS skills incoming */}
+            <br />
+            Your <img style={{ width: "2vw" }} src={newtag} /> buddy
           </Box>
         </Flex>
         <Flex alignItems="center" justifyContent="center">
           <Confetti active={explosion} config={config} />
         </Flex>
+        <Sound
+          url={profit > emission ? kaching : pollution}
+          playStatus={soundStatus}
+          onFinishedPlaying={() =>
+            this.setState({ soundStatus: Sound.status.STOPPED })
+          }
+        />
       </div>
     );
   }
