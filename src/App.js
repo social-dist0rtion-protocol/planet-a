@@ -263,8 +263,7 @@ export default class App extends Component {
       from: "0x51Ff1fab76079d20418d1c74DA65653FfE3fD0aa",
       type: "trade",
       profit: 20,
-      emission: 2,
-      result: {}
+      emission: 25,
     }
     this.setReceipt(testReceipt);
     this.changeView("receipt");
