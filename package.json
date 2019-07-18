@@ -26,6 +26,7 @@
     "react-copy-to-clipboard": "^5.0.1",
     "react-dev-utils": "^8.0.0",
     "react-dom": "^16.6.0",
+    "react-dom-confetti": "^0.1.1",
     "react-emoji-render": "^0.5.0",
     "react-file-reader-input": "^2.0.0",
     "react-i18next": "^9.0.7",
