@@ -5,6 +5,10 @@ const configs = [
       CURRENCY_LIST: ["USD", "EUR", "GBP"],
       DEFAULT_CURRENCY: "USD"
     },
+    LINKS: {
+      CODE: "https://github.com/leapdao/burner-wallet",
+      ABOUT: "https://leapdao.org/",
+    },
     SIDECHAIN: {
       NAME: "Leap Testnet",
       RPC: "https://testnet-node.leapdao.org",
@@ -46,6 +50,10 @@ const configs = [
       CURRENCY_LIST: ["EUR", "USD", "GBP"],
       DEFAULT_CURRENCY: "USD"
     },
+    LINKS: {
+      CODE: "https://github.com/leapdao/burner-wallet",
+      ABOUT: "https://leapdao.org/",
+    },
     SIDECHAIN: {
       NAME: "Leap Testnet",
       RPC: "https://testnet-node.leapdao.org",
@@ -86,6 +94,10 @@ const configs = [
       EXCHANGE_RATE_QUERY: 5000,
       CURRENCY_LIST: ["EUR", "USD", "GBP"],
       DEFAULT_CURRENCY: "USD"
+    },
+    LINKS: {
+      CODE: "https://github.com/leapdao/burner-wallet",
+      ABOUT: "https://leapdao.org/",
     },
     SIDECHAIN: {
       NAME: "Leap Network",
