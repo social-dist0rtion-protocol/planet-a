@@ -30,6 +30,8 @@ import burnerlogo from './assets/burnerwallet.png';
 import BurnWallet from './components/BurnWallet'
 import Bottom from './components/Bottom';
 import Card from './components/StyledCard';
+import Passport from './components/Passport';
+import Passports from './components/Passports';
 import incogDetect from './services/incogDetect.js'
 import { ThemeProvider } from 'rimble-ui';
 import theme from "./theme";
@@ -42,6 +44,7 @@ import pdai from './assets/pdai.png';
 import base64url from 'base64url';
 import EthCrypto from 'eth-crypto';
 import { getStoredValue, storeValues, eraseStoredValue } from "./services/localStorage";
+import {fetchPassportData, fetchAlPassports, fetchPassport} from "./services/plasma";
 
 let LOADERIMAGE = burnerlogo
 let HARDCODEVIEW// = "loader"// = "receipt"
@@ -376,7 +379,10 @@ export default class App extends Component {
         xdaiBalance = this.state.xdaiweb3.utils.fromWei(""+xdaiBalance,'ether')
       }
 
-      this.setState({ethBalance,daiBalance,xdaiBalance,balance:xdaiBalance,hasUpdateOnce:true})
+      const plasma = this.state.xdaiweb3;
+      const passports = await fetchAlPassports(plasma, this.state.account);
+
+      this.setState({passports, ethBalance,daiBalance,xdaiBalance,balance:xdaiBalance,hasUpdateOnce:true})
     }
 
 
@@ -838,13 +844,12 @@ export default class App extends Component {
               {web3 /*&& this.checkNetwork()*/ && (() => {
                 //console.log("VIEW:",view)
 
-                let extraTokens = ""
-
                 let defaultBalanceDisplay = (
                   <div>
                     <Balance
                       icon={pdai}
-                      text={"PDAI"}
+                      text={CONFIG.SIDECHAIN.DAI_SHORTNAME}
+                      symbol={CONFIG.SIDECHAIN.DAI_SYMBOL}
                       amount={this.state.xdaiBalance}
                       address={account}
                       currencyDisplay={this.currencyDisplay} />
@@ -951,16 +956,17 @@ export default class App extends Component {
                     <div>
                       {this.state.scannerOpen ? sendByScan : null}
                       <Card>
-                        {extraTokens}
-
+                        <Passports list={this.state.passports}/>
                         {expertMode ? (<>
                         <Balance
                           icon={pdai}
-                          text={"PDAI"}
+                          text={CONFIG.SIDECHAIN.DAI_SHORTNAME}
+                          symbol={CONFIG.SIDECHAIN.DAI_SYMBOL}
                           amount={this.state.xdaiBalance}
                           address={account}
                           currencyDisplay={this.currencyDisplay}/>
 
+                        {/*
                         <Balance
                           icon={dai}
                           text={"DAI"}
@@ -975,7 +981,10 @@ export default class App extends Component {
                           tokenAmount={this.state.ethBalance}
                           address={account}
                           currencyDisplay={this.currencyDisplay}/>
-                        </>) : (
+                        */}
+                        </>
+                        ) : (
+
                           <SimpleBalance
                             mainAmount={this.state.xdaiBalance}
                             otherAmounts={{DAI: this.state.daiBalance, ETH: parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)}}
