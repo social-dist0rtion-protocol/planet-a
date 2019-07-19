@@ -29,7 +29,7 @@ const tokenDisplay = (amount, symbol = "", maximumFractionDigits = 2) => {
 
 const valuableTokens = ["ETH"]
 
-export  default ({icon, text, amount, tokenAmount, currencyDisplay}) => {
+export  default ({icon, text, amount, tokenAmount, currencyDisplay, symbol}) => {
   let opacity;
   let fiatValue;
   let tokenValue;
@@ -47,7 +47,7 @@ export  default ({icon, text, amount, tokenAmount, currencyDisplay}) => {
   }else{
     opacity = 1;
     fiatValue = currencyDisplay(amount);
-    tokenValue = tokenDisplay(tokenAmount || amount, text, floatNumbers);
+    tokenValue = tokenDisplay(tokenAmount || amount, symbol || text, floatNumbers);
   }
 
   return (
