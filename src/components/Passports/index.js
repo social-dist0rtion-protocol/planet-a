@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import Passport from "../Passport";
+import { Flex, Text } from "rimble-ui";
 import {
   Container,
   PassportCover,
+  PassportLabel,
   PassportCountry,
   PassportName
 } from "./styles";
@@ -20,7 +22,7 @@ class Index extends Component {
         close={() => {
           this.setState({ currentPassport: null });
         }}
-        data={list ? list[currentPassport].data : null}
+        passport={list[currentPassport]}
       />
     ) : (
       <Container>
@@ -35,13 +37,16 @@ class Index extends Component {
                 shortName={shortName}
                 onClick={() => this.setState({ currentPassport: i })}
               >
-                <PassportCountry>{shortName}</PassportCountry>
+                <Flex flexDirection="column" justifyContent="flex-start">
+                  <PassportCountry>{shortName}</PassportCountry>
+                  <PassportLabel>Passport</PassportLabel>
+                </Flex>
                 <PassportName>{name}</PassportName>
               </PassportCover>
             );
           })
         ) : (
-          <div>loading data...</div>
+          <Text>Processing passports data...</Text>
         )}
       </Container>
     );

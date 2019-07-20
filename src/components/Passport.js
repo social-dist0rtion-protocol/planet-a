@@ -1,5 +1,6 @@
 import React from "react";
 import { Flex, Text } from "rimble-ui";
+import { IconClose } from "./Passports/styles";
 
 const Param = ({ label, value, color }) => {
   return (
@@ -17,24 +18,23 @@ const Param = ({ label, value, color }) => {
 const Citizen = props => {
   const { name, country } = props;
   return (
-    <Flex flexDirection="column">
-      <Text mb={2} fontSize={5} fontWeight={4} textAlign="center">
-        {name.length > 0 ? name : "Mr.Mysterious"}
-      </Text>
+    <Flex flexDirection="column" mb={3}>
       <Text
-        mb={3}
-        fontSize={3}
+        fontSize={2}
         textAlign="center"
       >{`Citizen of the ${country}`}</Text>
+      <Text fontSize={5} fontWeight={4} textAlign="center">
+        {name.length > 0 ? name : "Mr.Mysterious"}
+      </Text>
     </Flex>
   );
 };
 
 const Passport = props => {
-  const { data, close } = props;
-  console.log({ data });
-  const country = data ? data.country : "World";
-  if (!data) {
+  const { passport, close } = props;
+  const { data } = passport;
+  const country = passport.country.fullName;
+  if (!passport) {
     return (
       <Flex justifyContent="center" opacity={0.25}>
         <Text color="copyColor">
@@ -46,8 +46,8 @@ const Passport = props => {
 
   const { emitted, locked, name } = data;
   return (
-    <Flex flexDirection="column" alignItems="center">
-      <p onClick={close}>Close</p>
+    <Flex flexDirection="column" alignItems="center" pt={3}>
+      <IconClose onClick={close} />
       <Citizen name={name} country={country} />
       <Flex
         pb={3}
