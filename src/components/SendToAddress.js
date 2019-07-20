@@ -162,16 +162,17 @@ export default class SendToAddress extends React.Component {
     let { toAddress, amount } = this.state;
     let { address, convertCurrency, currencyDisplay } = this.props
 
-    const displayCurrency = getStoredValue("currency", address);
-    amount = convertCurrency(amount, `USD/${displayCurrency}`);
-    console.log("CONVERTED TO DOLLAR AMOUNT",amount)
+    // Disable conversion, since we are sending DAI
+    // const displayCurrency = getStoredValue("currency", address);
+    // amount = convertCurrency(amount, `USD/${displayCurrency}`);
 
     if(this.state.canSend){
 
       if(parseFloat(this.props.balance) <= 0){
         this.props.changeAlert({type: 'warning', message: "No Funds."})
       }else if(parseFloat(this.props.balance)<parseFloat(amount)){
-        this.props.changeAlert({type: 'warning', message: 'Not enough funds: '+currencyDisplay(Math.floor((parseFloat(this.props.balance))*100)/100)})
+        // this.props.changeAlert({type: 'warning', message: 'Not enough funds: '+currencyDisplay(Math.floor((parseFloat())*100)/100)})
+        this.props.changeAlert({type: 'warning', message: `Not enough funds: ${this.props.balance}`})
       }else{
         console.log("SWITCH TO LOADER VIEW...",amount)
         this.props.changeView('loader_SIDECHAIN')
@@ -269,7 +270,8 @@ export default class SendToAddress extends React.Component {
       <Input
         width={1}
         type="number"
-        placeholder={this.props.currencyDisplay(0)}
+        placeholder={0}
+        step={0.1}
         value={this.state.amount}
         ref={(input) => { this.amountInput = input; }}
         onChange={event => this.updateState('amount', event.target.value)}
@@ -318,7 +320,9 @@ export default class SendToAddress extends React.Component {
 
           <Field mb={3} label={i18n.t("send_to_address.send_amount")}>
             {amountInputDisplay}
-            {/* TODO: i18n this with merging PR #195 */
+            {/* TODO: i18n this with merging PR #195 */}
+
+            {/* We simply hide this one in case we will need it later
             this.state.currencyWarning ? (
               <InputInfo color="blue">
                 {" "}
@@ -336,6 +340,7 @@ export default class SendToAddress extends React.Component {
                             `}
               </InputInfo>
             ) : null}
+            */}
           </Field>
           {/* For Planet A and since messages currently don't work, we simply
               set them to display: "none".
