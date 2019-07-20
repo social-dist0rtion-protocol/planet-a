@@ -40,8 +40,8 @@ export default {
     disabled: 0.4
   },
   colors: {
-    passportUSA: "#c32a43",
-    passportUSB: "#5b91c8",
+    passportUSA: "#6846c3",
+    passportUSB: "#077154",
     emitted: '#4C6FED',
     locked: "#05B62C",
     primary: 'black',
