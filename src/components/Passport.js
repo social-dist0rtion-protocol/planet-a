@@ -4,7 +4,7 @@ import { IconClose } from "./Passports/styles";
 
 const Param = ({ label, value, color }) => {
   return (
-    <Flex flexDirection={"Column"} alignItems="center" py={2} px={4}>
+    <Flex flexDirection={"Column"} alignItems="center" pt={2} px={4}>
       <Text fontSize={1} color="copyColor">
         {label}
       </Text>
