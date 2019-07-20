@@ -18,7 +18,7 @@ import Receive from './components/Receive'
 import Share from './components/Share'
 import ShareLink from './components/ShareLink'
 import Balance from "./components/Balance";
-import SimpleBalance from "./components/SimpleBalance";
+import GoellarsBalance from './components/GoellarsBalance';
 import Receipt from "./components/Receipt";
 import MainCard from './components/MainCard';
 import History from './components/History';
@@ -30,7 +30,6 @@ import burnerlogo from './assets/burnerwallet.png';
 import BurnWallet from './components/BurnWallet'
 import Bottom from './components/Bottom';
 import Card from './components/StyledCard';
-import Passport from './components/Passport';
 import Passports from './components/Passports';
 import incogDetect from './services/incogDetect.js'
 import { ThemeProvider } from 'rimble-ui';
@@ -39,12 +38,12 @@ import getConfig from "./config";
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
 import eth from './assets/ethereum.png';
-import dai from './assets/dai.png';
+
 import pdai from './assets/pdai.png';
 import base64url from 'base64url';
 import EthCrypto from 'eth-crypto';
 import { getStoredValue, storeValues, eraseStoredValue } from "./services/localStorage";
-import {fetchPassportData, fetchAlPassports, fetchPassport} from "./services/plasma";
+import { fetchAlPassports } from "./services/plasma";
 
 let LOADERIMAGE = burnerlogo
 let HARDCODEVIEW// = "loader"// = "receipt"
@@ -740,10 +739,6 @@ export default class App extends Component {
     }
   }
   render() {
-    const expertMode = getStoredValue("expertMode") === "true"
-      // Right now "expertMode" is enabled by default. To disable it by default, remove the following line.
-      || getStoredValue("expertMode") === null;
-
     let {
       web3, account, gwei, block, avgBlockTime, etherscan, balance, metaAccount, burnMetaAccount, view, alert, send
     } = this.state;
@@ -845,15 +840,7 @@ export default class App extends Component {
                 //console.log("VIEW:",view)
 
                 let defaultBalanceDisplay = (
-                  <div>
-                    <Balance
-                      icon={pdai}
-                      text={CONFIG.SIDECHAIN.DAI_SHORTNAME}
-                      symbol={CONFIG.SIDECHAIN.DAI_SYMBOL}
-                      amount={this.state.xdaiBalance}
-                      address={account}
-                      currencyDisplay={this.currencyDisplay} />
-                  </div>
+                  <GoellarsBalance balance={this.state.daiBalance}/>
                 )
 
                 // NOTE: This view is to show specific historical transactions.
@@ -956,40 +943,8 @@ export default class App extends Component {
                     <div>
                       {this.state.scannerOpen ? sendByScan : null}
                       <Card>
-                        <Passports list={this.state.passports}/>
-                        {expertMode ? (<>
-                        <Balance
-                          icon={pdai}
-                          text={CONFIG.SIDECHAIN.DAI_SHORTNAME}
-                          symbol={CONFIG.SIDECHAIN.DAI_SYMBOL}
-                          amount={this.state.xdaiBalance}
-                          address={account}
-                          currencyDisplay={this.currencyDisplay}/>
-
-                        {/*
-                        <Balance
-                          icon={dai}
-                          text={"DAI"}
-                          amount={this.state.daiBalance}
-                          address={account}
-                          currencyDisplay={this.currencyDisplay}/>
-
-                        <Balance
-                          icon={eth}
-                          text={"ETH"}
-                          amount={parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)}
-                          tokenAmount={this.state.ethBalance}
-                          address={account}
-                          currencyDisplay={this.currencyDisplay}/>
-                        */}
-                        </>
-                        ) : (
-
-                          <SimpleBalance
-                            mainAmount={this.state.xdaiBalance}
-                            otherAmounts={{DAI: this.state.daiBalance, ETH: parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice)}}
-                            currencyDisplay={this.currencyDisplay} />
-                        )}
+                        <Passports list={this.state.passports} account={this.state.account}/>
+                        <GoellarsBalance balance={this.state.daiBalance}/>
 
                         <MainCard
                           buttonStyle={buttonStyle}
