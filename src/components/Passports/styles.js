@@ -78,3 +78,8 @@ export const IconClose = ({ onClick }) => {
     </IconContainer>
   );
 };
+
+export const Loading = styled(Text).attrs(()=>({
+  fontSize: 2,
+  color: "silver"
+}))``;
