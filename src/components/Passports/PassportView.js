@@ -1,11 +1,11 @@
 import React from "react";
 import { Flex, Text } from "rimble-ui";
-import { IconClose } from "./Passports/styles";
+import { IconClose } from "./styles";
 
 const Param = ({ label, value, color }) => {
   return (
     <Flex flexDirection={"Column"} alignItems="center" pt={2} px={4}>
-      <Text fontSize={1} color="copyColor">
+      <Text fontSize={2} color={"silver"}>
         {label}
       </Text>
       <Text fontSize={5} fontWeight={4} color={color}>
@@ -19,10 +19,7 @@ const Citizen = props => {
   const { name, country } = props;
   return (
     <Flex flexDirection="column" mb={3}>
-      <Text
-        fontSize={2}
-        textAlign="center"
-      >{`Citizen of the ${country}`}</Text>
+      <Text fontSize={2} textAlign="center">{`Citizen of the ${country}`}</Text>
       <Text fontSize={5} fontWeight={4} textAlign="center">
         {name.length > 0 ? name : "Mr.Mysterious"}
       </Text>
@@ -30,7 +27,7 @@ const Citizen = props => {
   );
 };
 
-const Passport = props => {
+const PassportView = props => {
   const { passport, close } = props;
   const { data } = passport;
   const country = passport.country.fullName;
@@ -63,4 +60,4 @@ const Passport = props => {
   );
 };
 
-export default Passport;
+export default PassportView;
