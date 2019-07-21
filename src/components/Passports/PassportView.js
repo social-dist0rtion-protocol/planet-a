@@ -53,7 +53,7 @@ const PassportView = props => {
         width="100%"
         justifyContent="space-around"
       >
-        <Param label={"CO2 Produced"} value={emitted} color="emitted" />
+        <Param label={"CO₂ Produced"} value={emitted} color="emitted" />
         <Param label={"CO2 Locked"} value={locked} color="locked" />
       </Flex>
     </Flex>
