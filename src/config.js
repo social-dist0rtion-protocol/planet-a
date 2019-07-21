@@ -1,6 +1,6 @@
 const configs = [
   {
-    DOMAINS: ["localhost", "10.0.0.107", "sundai.fritz.box", "192.168.178.25"],
+    DOMAINS: ["localhost", "10.0.0.107", "sundai.fritz.box", /192\.168\..*/, /.*\.ngrok\.io/],
     CURRENCY: {
       CURRENCY_LIST: ["USD", "EUR", "GBP"],
       DEFAULT_CURRENCY: "USD"
@@ -206,7 +206,12 @@ const configs = [
 ];
 
 function findConfig(hostname) {
-  return configs.filter(({ DOMAINS }) => DOMAINS.includes(hostname));
+  return configs.filter(
+    ({ DOMAINS }) =>
+      DOMAINS.filter(domain =>
+        domain instanceof RegExp ? domain.exec(hostname) : domain === hostname
+      ).length
+  );
 }
 
 export default function getConfig() {
