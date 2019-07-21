@@ -3,13 +3,17 @@ import { Flex, Text } from "rimble-ui";
 import { IconClose } from "./styles";
 
 const Param = ({ label, value, color }) => {
+  const locale = localStorage.getItem('i18nextLng')
+  const formatter = new Intl.NumberFormat(locale, {
+    minimumFractionDigits: 2,
+  });
   return (
     <Flex flexDirection={"Column"} alignItems="center" pt={2} px={4}>
       <Text fontSize={2} color={"silver"}>
         {label}
       </Text>
       <Text fontSize={5} fontWeight={4} color={color}>
-        {value}
+        {formatter.format(value)}
       </Text>
     </Flex>
   );
@@ -54,7 +58,7 @@ const PassportView = props => {
         justifyContent="space-around"
       >
         <Param label={"CO₂ Produced"} value={emitted} color="emitted" />
-        <Param label={"CO2 Locked"} value={locked} color="locked" />
+        <Param label={"CO₂ Locked"} value={locked} color="locked" />
       </Flex>
     </Flex>
   );
