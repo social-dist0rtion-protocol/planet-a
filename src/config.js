@@ -51,7 +51,9 @@ const configs = [
     SIDECHAIN: {
       NAME: "Leap Testnet",
       RPC: "https://testnet-node.leapdao.org",
-      DAI_ADDRESS: "0xD2D0F8a6ADfF16C2098101087f9548465EC96C98",
+      DAI_ADDRESS: "0x1f89Fb2199220a350287B162B9D0A330A2D2eFAD",
+      DAI_SYMBOL: "₲",
+      DAI_SHORTNAME: "GÖLR",
       MARKET_MAKER:
         "https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet",
       BRIDGE_ADDRESS: "0x26a937302cc6A0A7334B210de06136C8C61BA885",
@@ -92,7 +94,9 @@ const configs = [
     SIDECHAIN: {
       NAME: "Leap Testnet",
       RPC: "https://testnet-node.leapdao.org",
-      DAI_ADDRESS: "0xD2D0F8a6ADfF16C2098101087f9548465EC96C98",
+      DAI_ADDRESS: "0x1f89Fb2199220a350287B162B9D0A330A2D2eFAD",
+      DAI_SYMBOL: "₲",
+      DAI_SHORTNAME: "GÖLR",
       MARKET_MAKER:
         "https://2nuxsb25he.execute-api.eu-west-1.amazonaws.com/testnet",
       BRIDGE_ADDRESS: "0x26a937302cc6A0A7334B210de06136C8C61BA885",
