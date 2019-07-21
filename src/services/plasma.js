@@ -54,7 +54,7 @@ export const getCitizenship = async (plasma, account) => {
   }
 };
 
-export const fetchAlPassports = async (plasma, account) => {
+export const fetchAllPassports = async (plasma, account) => {
   let passports = [];
   const keys = Object.keys(COUNTRIES);
   for (let i = 0; i < keys.length; i++) {

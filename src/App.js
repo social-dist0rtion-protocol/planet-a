@@ -43,7 +43,7 @@ import pdai from './assets/pdai.png';
 import base64url from 'base64url';
 import EthCrypto from 'eth-crypto';
 import { getStoredValue, storeValues, eraseStoredValue } from "./services/localStorage";
-import { fetchAlPassports } from "./services/plasma";
+import { fetchAllPassports } from "./services/plasma";
 
 let LOADERIMAGE = burnerlogo
 let HARDCODEVIEW// = "loader"// = "receipt"
@@ -379,7 +379,7 @@ export default class App extends Component {
       }
 
       const plasma = this.state.xdaiweb3;
-      const passports = await fetchAlPassports(plasma, this.state.account);
+      const passports = await fetchAllPassports(plasma, this.state.account);
 
       this.setState({passports, ethBalance,daiBalance,xdaiBalance,balance:xdaiBalance,hasUpdateOnce:true})
     }
