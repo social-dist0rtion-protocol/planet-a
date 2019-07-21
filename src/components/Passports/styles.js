@@ -1,6 +1,7 @@
 import React from "react";
 import { Flex, Text, Icon } from "rimble-ui";
 import styled from "styled-components";
+import passportPattern from '../../assets/papyrus.png';
 
 export const Container = styled(Flex).attrs(() => ({
   flexWrap: "wrap",
@@ -33,7 +34,10 @@ export const PassportCover = styled(Flex).attrs(({ shortName }) => ({
 
   @supports (background-blend-mode: color-burn) {
     background-blend-mode: color-burn;
-    background-image: url("https://www.toptal.com/designers/subtlepatterns/patterns/papyrus.png");
+    /*  Background made by Olivia Harmon, 
+     *  https://www.toptal.com/designers/subtlepatterns/papyrus-pattern/
+     */
+    background-image: url(${passportPattern});
   }
 `;
 
