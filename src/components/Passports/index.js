@@ -35,9 +35,10 @@ class Passports extends Component {
     this.closePassport = this.closePassport.bind(this);
   }
 
-  componentWillReceiveProps({ list }) {
+  componentDidUpdate(prevProps) {
+    const { list } = this.props;
     const { currentPassportId } = this.state;
-    if (currentPassportId && this.props.list !== list) {
+    if (currentPassportId && list !== prevProps.list) {
       this.setState({
         currentPassport: list.find(
           passport => passport.id === currentPassportId
