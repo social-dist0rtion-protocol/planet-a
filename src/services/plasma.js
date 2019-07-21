@@ -26,15 +26,15 @@ export const extractData = passport => {
 
   const nameHex = sliceHex(rawData, 0, 20);
   const imageHex = sliceHex(rawData, 20, 24);
-  const emittedHex = sliceHex(rawData, 24, 28);
-  const lockedHex = sliceHex(rawData, 28, 32);
+  const lockedHex = sliceHex(rawData, 24, 28);
+  const emittedHex = sliceHex(rawData, 28, 32);
 
   const { hexToString, hexToNumber } = web3.utils;
 
   const name = hexToString(nameHex);
   const image = hexToString(imageHex);
-  const emitted = hexToNumber(emittedHex);
   const locked = hexToNumber(lockedHex);
+  const emitted = hexToNumber(emittedHex);
 
   return {
     name,
