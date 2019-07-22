@@ -44,10 +44,12 @@ Passports are ERC1948 tokens. Each player needs at least one passport to play.
 
 Passport data structure:
 
+```
 +------------+------------+------------+-------------+
-|20 bytes    | 4 bytes    | 4 bytes    | 4 bytes     |
-|name str    | picId      | CO₂ locked | CO₂ emitted |
+| 20 bytes   | 4 bytes    | 4 bytes    | 4 bytes     |
+| name str   | picId      | CO₂ locked | CO₂ emitted |
 +------------+------------+------------+-------------+
+```
 
 Note that the CO₂ value in the passport is expressed in Megatons.
 
