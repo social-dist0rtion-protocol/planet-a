@@ -7,7 +7,7 @@ export default class FinalizeHandshake extends React.Component {
   send = async () => {
     const result = await finalizeHandshake(
       this.props.leap3,
-      this.state.passport,
+      this.props.defaultPassport.unspent,
       this.props.scannerState.receipt,
       this.props.metaAccount.privateKey
     );
