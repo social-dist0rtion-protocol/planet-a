@@ -10,6 +10,10 @@ class PlasmaMethodCall {
     const conditions = Tx.spendCond(inputs.map(o => new Input(o)));
     conditions.inputs[0].setMsgData(this.data);
 
+    // conditions should be signed but:
+    // https://github.com/leapdao/leap-node/issues/298
+    // ¯\_(ツ)_/¯
+
     const { outputs } = await new Promise((resolve, reject) => {
       this.plasma.currentProvider.send(
         {
@@ -28,7 +32,7 @@ class PlasmaMethodCall {
     });
     conditions.inputs[0].setMsgData(this.data);
     conditions.outputs = outputs.map(o => new Output(o));
-    conditions.signAll(privateKey);
+    //conditions.signAll(privateKey);
     const result = await new Promise((resolve, reject) => {
       this.plasma.currentProvider.send(
         {
