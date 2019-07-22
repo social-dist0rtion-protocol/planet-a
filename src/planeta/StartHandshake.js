@@ -14,7 +14,7 @@ export default class Handshake extends React.Component {
       changeAlert,
       goBack,
       metaAccount,
-      leap3,
+      plasma,
       defaultPassport: passport
     } = this.props;
 

@@ -11,7 +11,7 @@
 import Web3 from "web3";
 import { bytesToHex, padLeft } from "web3-utils";
 import { ecsign, hashPersonalMessage, ripemd160 } from "ethereumjs-util";
-import { LeapContract } from "./leap-utils";
+import { PlasmaContract } from "./plasma-utils";
 
 const EARTH_ABI = require("./abis/earth.json");
 
@@ -59,8 +59,8 @@ function unpackReceipt(receipt) {
   return { address, color, value, data, signature };
 }
 
-async function findPassportOutput(leap3, address, color, value) {
-  const passports = await leap3.getUnspent(address, color);
+async function findPassportOutput(plasma, address, color, value) {
+  const passports = await plasma.getUnspent(address, color);
   return passports.filter(p => p.output.value === value)[0];
 }
 
@@ -87,22 +87,22 @@ export function startHandshake(passport, privateKey) {
   return receipt;
 }
 
-export async function finalizeHandshake(leap3, passport, receipt, privateKey) {
+export async function finalizeHandshake(plasma, passport, receipt, privateKey) {
   const theirPassport = unpackReceipt(receipt);
   const theirPassportOutput = await findPassportOutput(
-    leap3,
+    plasma,
     theirPassport.address,
     theirPassport.color,
     theirPassport.value
   );
-  const earthLeapOutput = (await leap3.getUnspent(EARTH_ADDR, LEAP_COLOR))[0];
-  const earthCO2Output = (await leap3.getUnspent(EARTH_ADDR, CO2_COLOR))[0];
-  const earthGoellarsOutput = (await leap3.getUnspent(
+  const earthLeapOutput = (await plasma.getUnspent(EARTH_ADDR, LEAP_COLOR))[0];
+  const earthCO2Output = (await plasma.getUnspent(EARTH_ADDR, CO2_COLOR))[0];
+  const earthGoellarsOutput = (await plasma.getUnspent(
     EARTH_ADDR,
     GOELLARS_COLOR
   ))[0];
 
-  const earthContract = new LeapContract(leap3, EARTH_ABI);
+  const earthContract = new PlasmaContract(plasma, EARTH_ABI);
   return await earthContract.methods
     .trade(
       theirPassport.value,

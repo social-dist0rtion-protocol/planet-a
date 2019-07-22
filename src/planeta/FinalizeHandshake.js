@@ -6,7 +6,7 @@ import { finalizeHandshake } from "./utils";
 export default class FinalizeHandshake extends React.Component {
   send = async () => {
     const result = await finalizeHandshake(
-      this.props.leap3,
+      this.props.plasma,
       this.props.defaultPassport.unspent,
       this.props.scannerState.receipt,
       this.props.metaAccount.privateKey
@@ -34,7 +34,7 @@ export default class FinalizeHandshake extends React.Component {
       goBack,
       metaAccount,
       web3,
-      leap3,
+      plasma,
       defaultPassport: passport
     } = this.props;
 
