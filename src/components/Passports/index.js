@@ -24,7 +24,7 @@ export function getDefaultPassport(account, passports) {
       ? passports.find(passport => passport.id === passportId)
       : null;
   }
-  if (!passport && passports && passports.length === 0) {
+  if (!passport && passports && passports.length === 1) {
     passport = passports[0]
   }
   return passport;
