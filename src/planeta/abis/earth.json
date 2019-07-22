@@ -1,0 +1,40 @@
+[
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "passportA",
+        "type": "uint256"
+      },
+      {
+        "name": "passDataAfter",
+        "type": "bytes32"
+      },
+      {
+        "name": "sigA",
+        "type": "bytes"
+      },
+      {
+        "name": "passportB",
+        "type": "uint256"
+      },
+      {
+        "name": "factorB",
+        "type": "uint32"
+      },
+      {
+        "name": "countryAaddr",
+        "type": "address"
+      },
+      {
+        "name": "countryBaddr",
+        "type": "address"
+      }
+    ],
+    "name": "trade",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
