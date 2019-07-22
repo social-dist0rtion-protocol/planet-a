@@ -964,8 +964,7 @@ export default class App extends Component {
                             changeAlert={this.changeAlert}
                             changeView={this.changeView}
                             goBack={this.goBack.bind(this)}
-                            web3={this.state.web3}
-                            leap3={this.state.xdaiweb3}
+                            plasma={this.state.xdaiweb3}
                             metaAccount={this.state.metaAccount}
                             defaultPassport={defaultPassport}
                         />
@@ -987,8 +986,7 @@ export default class App extends Component {
                             changeView={this.changeView}
                             scannerState={this.state.scannerState}
                             goBack={this.goBack.bind(this)}
-                            web3={this.state.web3}
-                            leap3={this.state.xdaiweb3}
+                            plasma={this.state.xdaiweb3}
                             metaAccount={this.state.metaAccount}
                             defaultPassport={defaultPassport}
                         />

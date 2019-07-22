@@ -1,8 +1,8 @@
 import { Tx, Input, Output } from "leap-core";
 
-class LeapMethodCall {
-  constructor(leap3, data) {
-    this.leap3 = leap3;
+class PlasmaMethodCall {
+  constructor(plasma, data) {
+    this.plasma = plasma;
     this.data = data;
   }
 
@@ -11,7 +11,7 @@ class LeapMethodCall {
     conditions.inputs[0].setMsgData(this.data);
 
     const { outputs } = await new Promise((resolve, reject) => {
-      this.leap3.currentProvider.send(
+      this.plasma.currentProvider.send(
         {
           jsonrpc: "2.0",
           id: 42,
@@ -30,7 +30,7 @@ class LeapMethodCall {
     conditions.outputs = outputs.map(o => new Output(o));
     conditions.signAll(privateKey);
     const result = await new Promise((resolve, reject) => {
-      this.leap3.currentProvider.send(
+      this.plasma.currentProvider.send(
         {
           jsonrpc: "2.0",
           id: 42,
@@ -49,11 +49,11 @@ class LeapMethodCall {
   }
 }
 
-export class LeapContract {
-  constructor(leap3, abi) {
-    this.leap3 = leap3;
+export class PlasmaContract {
+  constructor(plasma, abi) {
+    this.plasma = plasma;
     this.abi = abi;
-    this.contract = new leap3.eth.Contract(abi);
+    this.contract = new plasma.eth.Contract(abi);
     this.methods = {};
     abi
       .filter(o => o.type === "function")
@@ -64,6 +64,6 @@ export class LeapContract {
 
   methodCall(method, ...params) {
     const data = this.contract.methods[method](...params).encodeABI();
-    return new LeapMethodCall(this.leap3, data);
+    return new PlasmaMethodCall(this.plasma, data);
   }
 }
