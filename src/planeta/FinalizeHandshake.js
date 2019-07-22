@@ -14,6 +14,20 @@ export default class FinalizeHandshake extends React.Component {
     console.log("Finalize handshake", result);
   };
 
+  componentDidMount() {
+    const {
+      goBack,
+      changeAlert,
+      defaultPassport: passport
+    } = this.props;
+
+    if (!passport) {
+      // Sorry.
+      goBack()
+      setTimeout(() => changeAlert({ type: "warning", message: "Select a passport" }), 100);
+    }
+  }
+
   render() {
     const {
       changeAlert,
@@ -25,9 +39,6 @@ export default class FinalizeHandshake extends React.Component {
     } = this.props;
 
     if (!passport) {
-      // Sorry.
-      setTimeout(() => goBack(), 100);
-      setTimeout(() => changeAlert({ type: "warning", message: "Select a passport" }), 200);
       return null;
     }
 
