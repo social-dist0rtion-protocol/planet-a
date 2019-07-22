@@ -59,6 +59,12 @@ class SendByScan extends Component {
     console.log("DATA")
     console.log(data)
 
+    if(data && data.startsWith("/planeta/handshake")) {
+      this.stopRecording();
+      this.props.returnToState({ receipt: data.replace("/planeta/handshake/", "") }, "planet_a_finalize_handshake");
+      return;
+    }
+
     //detect and respect status deep links...
     if(data && data.indexOf("get.status.im")>=0){
       let paymentLocation = data.indexOf("payment/")
