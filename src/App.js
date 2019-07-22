@@ -271,7 +271,6 @@ export default class App extends Component {
 
     console.log("document.getElementsByClassName('className').style",document.getElementsByClassName('.btn').style)
     window.addEventListener("resize", this.updateDimensions.bind(this));
-    console.log("BAU BAU BAU BAU", window.location);
     if(window.location.pathname){
       console.log("PATH",window.location.pathname,window.location.pathname.length,window.location.hash)
       if(window.location.pathname.indexOf("/pk")>=0){
@@ -996,7 +995,7 @@ export default class App extends Component {
                     <div>
                       {this.state.scannerOpen ? sendByScan : null}
                       <Card>
-                        <Passports list={passports} account={this.state.account}/>
+                        <Passports list={passports} account={account}/>
                         <GoellarsBalance balance={this.state.daiBalance}/>
 
                         <MainCard
