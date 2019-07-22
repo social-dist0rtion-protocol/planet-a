@@ -8,6 +8,23 @@ import { startHandshake } from "./utils";
 const CONFIG = getConfig();
 
 export default class Handshake extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  async componentDidMount() {
+    const { metaAccount, plasma, web3, defaultPassport: passport } = this.props;
+    const country = passport.country.fullName;
+    const name = passport.data.name;
+    const receipt = await startHandshake(
+      web3,
+      passport.unspent,
+      metaAccount.privateKey
+    );
+    this.setState({ receipt });
+  }
+
   render() {
     const {
       changeView,
@@ -17,12 +34,11 @@ export default class Handshake extends React.Component {
       plasma,
       defaultPassport: passport
     } = this.props;
-
+    const { receipt } = this.state;
     const country = passport.country.fullName;
     const name = passport.data.name;
-
-    const receipt = startHandshake(passport.unspent, metaAccount.privateKey);
     const url = "/planeta/handshake/" + receipt;
+
     return (
       <div>
         <div>

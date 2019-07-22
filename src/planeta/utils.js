@@ -40,15 +40,19 @@ function updateCO2(passportData, amount = 10) {
   return padLeft(n.toString(16), 64);
 }
 
-function hashAndSign(buffer, address, privateKey) {
-  const { r, s, v } = ecsign(
-    hashPersonalMessage(buffer),
-    Buffer.from(privateKey.replace("0x", ""), "hex")
-  );
-  const full = Array.from(r)
-    .concat(Array.from(s))
-    .concat([v]);
-  return bytesToHex(full);
+async function hashAndSign(web3, buffer, address, privateKey) {
+  if (privateKey) {
+    const { r, s, v } = ecsign(
+      hashPersonalMessage(buffer),
+      Buffer.from(privateKey.replace("0x", ""), "hex")
+    );
+    const full = Array.from(r)
+      .concat(Array.from(s))
+      .concat([v]);
+    return bytesToHex(full);
+  } else {
+    return await web3.eth.personal.sign("0x" + buffer.toString("hex"), address);
+  }
 
   // Web3:
   //return await web3.eth.personal.sign(buffer.toString(), address, null);
@@ -64,10 +68,11 @@ async function findPassportOutput(plasma, address, color, value) {
   return passports.filter(p => p.output.value === value)[0];
 }
 
-export function startHandshake(passport, privateKey) {
+export async function startHandshake(web3, passport, privateKey) {
   const passportDataAfter = updateCO2(passport.output.data);
 
-  const signature = hashAndSign(
+  const signature = await hashAndSign(
+    web3,
     Buffer.from(
       passport.output.data.replace("0x", "") + passportDataAfter,
       "hex"
