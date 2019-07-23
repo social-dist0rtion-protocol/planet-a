@@ -42,7 +42,7 @@
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
     "lint": "eslint src",
-    "deploy": "aws s3 sync ./dist s3://mainnet.leapdao.org/ --acl public-read && aws cloudfront create-invalidation --distribution-id E224ANE6YCE3LE --paths '/*'"
+    "deploy": "echo 'Re-building, deploying build to S3 and invalidating Cloudfront distribution. To get deployment credentials, ask someone from the team.' && npm run build && AWS_PROFILE=leap aws s3 sync build/ s3://planeta.leap.rocks/ --acl public-read && AWS_PROFILE=leap aws cloudfront create-invalidation --distribution-id EMOOCRPZK4EIL --paths '/*'"
   },
   "eslintConfig": {
     "extends": "react-app"
