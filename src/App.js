@@ -747,8 +747,10 @@ export default class App extends Component {
     let {
       web3, account, gwei, block, avgBlockTime, etherscan, balance, metaAccount, burnMetaAccount, view, alert, send, passports
     } = this.state;
+
+    // This makes it easier to debug stuff on the console. Will keep it here for now.
     window.myweb3 = web3;
-    window.plasma = this.state.xdaiweb3;
+    window.myplasma = this.state.xdaiweb3;
     const defaultPassport = getDefaultPassport(account, passports);
 
     let networkOverlay = ""
