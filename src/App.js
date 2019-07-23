@@ -39,7 +39,6 @@ import getConfig from "./config";
 import RNMessageChannel from 'react-native-webview-messaging';
 import eth from './assets/ethereum.png';
 
-import pdai from './assets/pdai.png';
 import base64url from 'base64url';
 import EthCrypto from 'eth-crypto';
 import { getStoredValue, storeValues, eraseStoredValue } from "./services/localStorage";
@@ -849,7 +848,7 @@ export default class App extends Component {
                 //console.log("VIEW:",view)
 
                 let defaultBalanceDisplay = (
-                  <GoellarsBalance balance={this.state.daiBalance}/>
+                  <GoellarsBalance balance={this.state.xdaiBalance}/>
                 )
 
                 // NOTE: This view is to show specific historical transactions.
@@ -997,8 +996,9 @@ export default class App extends Component {
                     <div>
                       {this.state.scannerOpen ? sendByScan : null}
                       <Card>
+
                         <Passports list={passports} account={account}/>
-                        <GoellarsBalance balance={this.state.daiBalance}/>
+                        <GoellarsBalance balance={this.state.xdaiBalance}/>
 
                         <MainCard
                           buttonStyle={buttonStyle}

@@ -11,7 +11,6 @@ import {
   Input,
 } from 'rimble-ui';
 import { PrimaryButton, BorderButton } from "./Buttons";
-import InputInfo from "./InputInfo";
 import { getStoredValue } from "../services/localStorage";
 
 export default class SendToAddress extends React.Component {
@@ -160,7 +159,6 @@ export default class SendToAddress extends React.Component {
 
   send = async () => {
     let { toAddress, amount } = this.state;
-    let { address, convertCurrency, currencyDisplay } = this.props
 
     // Disable conversion, since we are sending DAI
     // const displayCurrency = getStoredValue("currency", address);
