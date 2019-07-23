@@ -13,5 +13,5 @@ deploy:
     # Note: Use this later when we've registered a cool domain
     #fqdn: 0xdeface.me
     target-branch: master
-    #on:
-        #branch: master
+    on:
+        branch: master
