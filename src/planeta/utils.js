@@ -34,6 +34,11 @@ const LEAP_COLOR = 0;
 const CO2_COLOR = 2;
 const GOELLARS_COLOR = 3;
 
+// Select a random element from a list, see below for usage
+function choice(l) {
+  return l[Math.floor(Math.random() * l.length)];
+}
+
 function updateCO2(passportData, amount) {
   const n = new BN(passportData.replace("0x", ""), 16);
   n.iadd(new BN(amount));
@@ -101,14 +106,18 @@ export async function finalizeHandshake(plasma, passport, receipt, privateKey) {
     theirPassport.value
   );
 
-  const earthLeapOutput = (await plasma.getUnspent(EarthContractData.address, LEAP_COLOR))[0];
-  const earthCO2Output = (await plasma.getUnspent(EarthContractData.address, CO2_COLOR))[0];
-  const earthGoellarsOutput = (await plasma.getUnspent(
-    EarthContractData.address,
-    GOELLARS_COLOR
-  ))[0];
-  console.log(EarthContractData, earthLeapOutput, earthCO2Output, earthGoellarsOutput);
-
+  // Multiple citizens handshaking at the same time might end up using the same
+  // output `0`, resulting in failed transactions. To mitigate this issue we
+  // need to have multiple outputs (let's say 20) and select one randomly.
+  const earthLeapOutput = choice(
+    await plasma.getUnspent(EarthContractData.address, LEAP_COLOR)
+  );
+  const earthCO2Output = choice(
+    await plasma.getUnspent(EarthContractData.address, CO2_COLOR)
+  );
+  const earthGoellarsOutput = choice(
+    await plasma.getUnspent(EarthContractData.address, GOELLARS_COLOR)
+  );
   const earthContract = new PlasmaContract(plasma, EarthContractData.abi);
   return await earthContract.methods
     .trade(
