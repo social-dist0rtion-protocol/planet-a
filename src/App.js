@@ -39,7 +39,6 @@ import getConfig from "./config";
 import RNMessageChannel from 'react-native-webview-messaging';
 import eth from './assets/ethereum.png';
 
-import pdai from './assets/pdai.png';
 import base64url from 'base64url';
 import EthCrypto from 'eth-crypto';
 import { getStoredValue, storeValues, eraseStoredValue } from "./services/localStorage";
