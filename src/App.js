@@ -839,7 +839,7 @@ export default class App extends Component {
                 //console.log("VIEW:",view)
 
                 let defaultBalanceDisplay = (
-                  <GoellarsBalance balance={this.state.daiBalance}/>
+                  <GoellarsBalance balance={this.state.xdaiBalance}/>
                 )
 
                 // NOTE: This view is to show specific historical transactions.
@@ -943,7 +943,7 @@ export default class App extends Component {
                       {this.state.scannerOpen ? sendByScan : null}
                       <Card>
                         <Passports list={this.state.passports} account={this.state.account}/>
-                        <GoellarsBalance balance={this.state.daiBalance}/>
+                        <GoellarsBalance balance={this.state.xdaiBalance}/>
 
                         <MainCard
                           buttonStyle={buttonStyle}
