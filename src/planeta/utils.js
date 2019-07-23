@@ -14,7 +14,10 @@ import { ecsign, hashPersonalMessage, ripemd160 } from "ethereumjs-util";
 import { PlasmaContract } from "./plasma-utils";
 
 const EarthContractData = require("./contracts/Earth.json");
-EarthContractData.code = Buffer.from(EarthContractData.code.replace("0x", ""), "hex");
+EarthContractData.code = Buffer.from(
+  EarthContractData.code.replace("0x", ""),
+  "hex"
+);
 
 const BN = Web3.utils.BN;
 
@@ -66,8 +69,9 @@ async function findPassportOutput(plasma, address, color, value) {
 }
 
 export async function startHandshake(web3, passport, privateKey) {
-  const passportDataAfter = updateCO2(passport.output.data, "8");
-
+  // For now we hardcode the CO₂ emitted by 8 Gt, why 8 Gt? Answer here:
+  // https://docs.google.com/spreadsheets/d/1chB4P7C594ABGn2u3VQb73t2F_0YPq26OHGJt0ZuME0/edit#gid=0
+  const passportDataAfter = updateCO2(passport.output.data, "8000");
   const signature = await hashAndSign(
     web3,
     Buffer.from(
@@ -77,7 +81,6 @@ export async function startHandshake(web3, passport, privateKey) {
     passport.output.address,
     privateKey
   );
-
   const receipt = [
     passport.output.address,
     passport.output.color,
