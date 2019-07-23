@@ -41,7 +41,8 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "deploy": "aws s3 sync ./dist s3://mainnet.leapdao.org/ --acl public-read && aws cloudfront create-invalidation --distribution-id E224ANE6YCE3LE --paths '/*'"
   },
   "eslintConfig": {
     "extends": "react-app"
