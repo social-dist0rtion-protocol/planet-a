@@ -23,6 +23,7 @@ class PlasmaMethodCall {
           params: [condition.hex()]
         },
         (err, response) => {
+          console.log("checkSpendingCondition", err, response);
           if (err) {
             return reject(err);
           }
@@ -41,11 +42,12 @@ class PlasmaMethodCall {
           method: "eth_sendRawTransaction",
           params: [condition.hex()]
         },
-        (err, { result }) => {
+        (err, response) => {
+          console.log("sendRawTransaction", err, response);
           if (err) {
             return reject(err);
           }
-          return resolve(result);
+          return resolve(response.result);
         }
       );
     });
