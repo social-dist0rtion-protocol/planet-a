@@ -24,11 +24,6 @@ const Value = styled(Text).attrs(() => ({
   color: "black"
 }))``;
 
-const renderBalance = parts => {
-  return parts.map(({ type, value }) => {
-    return <span key={type}>{type === "currency" ? "₲" : value}</span>;
-  });
-};
 
 const GoellarsBalance = props => {
   const { balance } = props;
@@ -42,7 +37,7 @@ const GoellarsBalance = props => {
   const noBalance = isNaN(balance);
   const balanceValue = noBalance
     ? "--"
-    : renderBalance(formatter.formatToParts(balance));
+    : formatter.format(balance).replace('PYG', '₲');
   return (
     <Container>
       <Label>Goellars Balance</Label>
