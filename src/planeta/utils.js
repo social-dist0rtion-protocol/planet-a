@@ -20,6 +20,7 @@ EarthContractData.code = Buffer.from(
 );
 
 const BN = Web3.utils.BN;
+const factor18 = new BN("1000000000000000000");
 
 const USA_ADDR = "0x3378420181474D3aad9579907995011D6a545E3D";
 const USB_ADDR = "0x181fc600915c35F4e44d41f9203A7c389b4A7189";
@@ -142,7 +143,12 @@ export async function finalizeHandshake(plasma, passport, receipt, privateKey) {
   }
 }
 
+
 async function _finalizeHandshake(plasma, passport, receipt, privateKey) {
+  const gt = lower => o => (new BN(o.output.value)).gt((new BN(lower)).mul(factor18));
+   // Select a random element from a list, see below for usage
+  const choice = l => l[Math.floor(Math.random() * l.length)];
+
   const theirPassport = unpackReceipt(receipt);
   const theirPassportOutput = await findPassportOutput(
     plasma,
@@ -151,13 +157,13 @@ async function _finalizeHandshake(plasma, passport, receipt, privateKey) {
     theirPassport.value
   );
 
-  const earthLeapOutput = (await plasma.getUnspent(EarthContractData.address, LEAP_COLOR))[0];
-  const earthCO2Output = (await plasma.getUnspent(EarthContractData.address, CO2_COLOR))[0];
-  const earthGoellarsOutput = (await plasma.getUnspent(
+  // TODO: remove filters.
+  const earthLeapOutput = choice((await plasma.getUnspent(EarthContractData.address, LEAP_COLOR)).filter(gt(0.0001)));
+  const earthCO2Output = choice((await plasma.getUnspent(EarthContractData.address, CO2_COLOR)).filter(gt(20)))
+  const earthGoellarsOutput = choice((await plasma.getUnspent(
     EarthContractData.address,
     GOELLARS_COLOR
-  ))[0];
-  console.log(EarthContractData, earthLeapOutput, earthCO2Output, earthGoellarsOutput);
+  )).filter(gt(1)))
 
   const earthContract = new PlasmaContract(plasma, EarthContractData.abi);
   return await earthContract.methods
