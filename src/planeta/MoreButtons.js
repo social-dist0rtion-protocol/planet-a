@@ -2,7 +2,9 @@ import React from "react";
 import { Flex, Icon, Box } from "rimble-ui";
 import { BorderButton } from "../components/Buttons";
 
-export default ({ changeView, defaultPassport, changeAlert }) => {
+import { lockCO2 } from "./utils";
+
+export default ({ changeView, defaultPassport, changeAlert, plasma, metaAccount}) => {
   const passportAlert = () =>
     changeAlert({ type: "warning", message: "Select a passport" });
   return (
@@ -27,15 +29,18 @@ export default ({ changeView, defaultPassport, changeAlert }) => {
       <Box flex={1} m={2}>
         <BorderButton
           fullWidth
-          onClick={() => {
-            changeAlert({ type: "warning", message: "Not yet implemented" });
-            /*
+          onClick={async () => {
             if (defaultPassport) {
-              changeView("planet_a_plant_trees");
+              //changeView("planet_a_plant_trees");
+              console.log(await lockCO2(
+                plasma,
+                defaultPassport,
+                "10000000",
+                metaAccount.privateKey
+              ));
             } else {
               passportAlert();
             }
-            */
           }}
         >
           <Flex mx={-2} alignItems="center">

@@ -1015,6 +1015,8 @@ export default class App extends Component {
                           changeView={this.changeView}
                           defaultPassport={defaultPassport}
                           changeAlert={this.changeAlert}
+                          plasma={this.state.xdaiweb3}
+                          metaAccount={this.state.metaAccount}
                         />
 
                         <RecentTransactions

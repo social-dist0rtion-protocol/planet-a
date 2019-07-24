@@ -12,10 +12,19 @@ import Web3 from "web3";
 import { bytesToHex, padLeft } from "web3-utils";
 import { ecsign, hashPersonalMessage, ripemd160 } from "ethereumjs-util";
 import { PlasmaContract } from "./plasma-utils";
+import { Tx, helpers } from 'leap-core';
+
+const CO2_PER_GOELLAR = 16;
 
 const EarthContractData = require("./contracts/Earth.json");
 EarthContractData.code = Buffer.from(
   EarthContractData.code.replace("0x", ""),
+  "hex"
+);
+
+const AirContractData = require("./contracts/Air.json");
+AirContractData.code = Buffer.from(
+  AirContractData.code.replace("0x", ""),
   "hex"
 );
 
@@ -130,3 +139,59 @@ export async function finalizeHandshake(plasma, passport, receipt, privateKey) {
       privateKey
     );
 }
+
+// 1 Göllar locks 16Gt of CO₂
+export async function lockCO2(plasma, passport, goellars, privateKey) {
+  const amount = (new BN(CO2_PER_GOELLAR)).mul(new BN(goellars));
+  console.log("amount", amount.toString());
+
+  const airContract = new PlasmaContract(plasma, AirContractData.abi);
+  const airLeapOutput = (await plasma.getUnspent(AirContractData.address, LEAP_COLOR))[0];
+  const airCO2Output = (await plasma.getUnspent(AirContractData.address, CO2_COLOR))[0];
+  const goellarsOutput = (await plasma.getUnspent(passport.unspent.output.address, GOELLARS_COLOR))[0];
+
+  console.log('air', airLeapOutput);
+  console.log('air', airCO2Output);
+  console.log('goe', goellarsOutput);
+
+  //const airCO2Outputs = helpers.calcInputs(
+  //  await plasma.getUnspent(AirContractData.address, CO2_COLOR),
+  //  AirContractData.address,
+  //  amount,
+  //  CO2_COLOR
+  //)
+  //const goellarsOutputs = helpers.calcInputs(
+  //  await plasma.getUnspent(passport.unspent.output.address, GOELLARS_COLOR),
+  //  passport.unspent.output.address,
+  //  goellars,
+  //  GOELLARS_COLOR
+  //)
+  console.log("params",
+      goellars,
+      COUNTRY_TO_ADDR[passport.unspent.output.color],
+      passport.unspent.output.value,
+      EarthContractData.address
+  )
+
+  return await airContract.methods
+    .plantTree(
+      goellars,
+      COUNTRY_TO_ADDR[passport.unspent.output.color],
+      passport.unspent.output.value,
+      EarthContractData.address
+    )
+    .send(
+      [
+        { prevout: airLeapOutput.outpoint, script: AirContractData.code },
+        { prevout: passport.unspent.outpoint },
+        { prevout: airCO2Output.outpoint },
+        { prevout: goellarsOutput.outpoint }
+        // ...airCO2Outputs,
+        // ...goellarsOutputs
+      ],
+      privateKey
+    );
+}
+
+window.lockCO2 = lockCO2
+window.leaphelpers = helpers;
