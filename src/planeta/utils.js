@@ -93,6 +93,56 @@ export async function startHandshake(web3, passport, privateKey) {
 }
 
 export async function finalizeHandshake(plasma, passport, receipt, privateKey) {
+  // NOTE: Leapdao's Plasma implementation currently doesn't return receipts.
+  // We hence have to periodically query the leap node to check whether our
+  // transaction has been included into the chain. We assume that if it hasn't
+  // been included after 5000ms (50 rounds at a 100ms timeout), it failed.
+  // Unfortunately, at this point we cannot provide an error message for why
+
+  let txHash;
+  let rounds = 50;
+
+  while (rounds--) {
+    // redundancy rules ✊
+    try {
+      txHash = await _finalizeHandshake(plasma, passport, receipt, privateKey);
+    } catch(err) {
+      // ignore for now
+      console.log("error finalizing handshake", err);
+      // NOTE: Leap's node currently doesn't implement the "newBlockHeaders"
+      // JSON-RPC call. When a transaction is rejected by a node,
+      // sendSignedTransaction hence throws an error. We simply ignore this
+      // error here and use the polling tactic below. For more details see:
+      // https://github.com/leapdao/leap-node/issues/255
+
+      // const messageToIgnore = "Failed to subscribe to new newBlockHeaders to confirm the transaction receipts.";
+      // NOTE: In the case where we want to ignore web3's error message, there's
+      // "\r\n {}" included in the error message, which is why we cannot
+      // compare with the equal operator, but have to use String.includes.
+      // if (!err.message.includes(messageToIgnore)) {
+      //  throw err;
+      // }
+    }
+
+    let res = await plasma.eth.getTransaction(txHash)
+
+    if (res && res.blockHash) {
+      receipt = res;
+      break;
+    }
+
+    // wait ~100ms
+    await new Promise((resolve) => setTimeout(() => resolve(), 100));
+  }
+
+  if (receipt) {
+    return receipt;
+  } else {
+    throw new Error("Transaction wasn't included into a block.");
+  }
+}
+
+async function _finalizeHandshake(plasma, passport, receipt, privateKey) {
   const theirPassport = unpackReceipt(receipt);
   const theirPassportOutput = await findPassportOutput(
     plasma,
