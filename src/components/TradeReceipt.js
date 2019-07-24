@@ -67,7 +67,6 @@ const ranPlay = () => {
 const Gain = styled.div`
   position: relative;
   white-space: nowrap;
-  overflow: hidden;
   top: ${props => props.top + "%"};
   left: ${props => props.left + "%"};
   animation: ${pop} 0.75s infinite ease-in-out
