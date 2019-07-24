@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex, Icon, Box } from "rimble-ui";
-import { BorderButton } from "../components/Buttons";
+import { PrimaryButton } from "../components/Buttons";
 
 export default ({ changeView, defaultPassport, changeAlert }) => {
   const passportAlert = () =>
@@ -8,7 +8,7 @@ export default ({ changeView, defaultPassport, changeAlert }) => {
   return (
     <Flex mx={-2}>
       <Box flex={1} m={2}>
-        <BorderButton
+        <PrimaryButton
           fullWidth
           onClick={() => {
             if (defaultPassport) {
@@ -22,10 +22,10 @@ export default ({ changeView, defaultPassport, changeAlert }) => {
             <Icon name="Loop" mr={2} />
             Handshake
           </Flex>
-        </BorderButton>
+        </PrimaryButton>
       </Box>
       <Box flex={1} m={2}>
-        <BorderButton
+        <PrimaryButton
           fullWidth
           onClick={() => {
             changeAlert({ type: "warning", message: "Not yet implemented" });
@@ -42,7 +42,7 @@ export default ({ changeView, defaultPassport, changeAlert }) => {
             <Icon name="NaturePeople" mr={2} />
             Plant Trees
           </Flex>
-        </BorderButton>
+        </PrimaryButton>
       </Box>
     </Flex>
   );

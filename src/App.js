@@ -1002,6 +1002,11 @@ export default class App extends Component {
                         <Passports list={passports} account={account}/>
                         <GoellarsBalance balance={this.state.xdaiBalance}/>
 
+                        <PlanetAMoreButtons
+                          changeView={this.changeView}
+                          defaultPassport={defaultPassport}
+                          changeAlert={this.changeAlert}
+                        />
                         <MainCard
                           buttonStyle={buttonStyle}
                           address={account}
@@ -1011,11 +1016,6 @@ export default class App extends Component {
                           currencyDisplay={this.currencyDisplay}
                         />
 
-                        <PlanetAMoreButtons
-                          changeView={this.changeView}
-                          defaultPassport={defaultPassport}
-                          changeAlert={this.changeAlert}
-                        />
 
                         <RecentTransactions
                           currencyDisplay={this.currencyDisplay}
