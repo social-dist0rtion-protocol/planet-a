@@ -122,6 +122,8 @@ export default class TradeReceipt extends Component {
 
   componentDidMount() {
     this.explode();
+    // TODO: Instead of using setInterval, use an actual FPS function like
+    // window.requestAnimationFrame()
     const intervalId = setInterval(
       this.explode.bind(this),
       config.duration - config.duration / 10
@@ -199,8 +201,13 @@ export default class TradeReceipt extends Component {
           }
         />
         <p>
-          (If this animation lags, get a phone with a better graphics card,
-          loser!)
+          Animation is currently not optimized for FPS value but instead just
+          tries to render as fast as possible. Pls donate DAI to improve this!
+        </p>
+        <p>
+          <a href="https://gitcoin.co/grants/127/planet-a" target="_blank">
+            To send us some money, click here!
+          </a>
         </p>
       </div>
     );
