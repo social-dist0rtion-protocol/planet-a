@@ -24,7 +24,7 @@ const configs = [
         // Ultimately, we want to remove this value from the code base somehow.
         EXIT: 160000,
         DEPOSIT: 330000,
-        TX: 1000,
+        TX: 5000,
       }
     },
     ROOTCHAIN: {

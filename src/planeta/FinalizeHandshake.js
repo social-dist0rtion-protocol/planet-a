@@ -1,30 +1,60 @@
+//@format
 import React from "react";
 import { PrimaryButton } from "../components/Buttons";
 import { Text, Flex, Box } from "rimble-ui";
 import { finalizeHandshake } from "./utils";
 
 export default class FinalizeHandshake extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
   send = async () => {
-    const result = await finalizeHandshake(
-      this.props.plasma,
-      this.props.defaultPassport.unspent,
-      this.props.scannerState.receipt,
-      this.props.metaAccount.privateKey
+    const {
+      plasma,
+      defaultPassport,
+      scannerState,
+      metaAccount,
+      setReceipt,
+      changeView
+    } = this.props;
+    changeView("loader");
+
+    let finalReceipt;
+    try {
+      finalReceipt = await finalizeHandshake(
+        plasma,
+        defaultPassport.unspent,
+        scannerState.receipt,
+        metaAccount.privateKey
+      );
+    } catch (err) {
+      setReceipt({ type: "error" });
+      return;
+    }
+
+    setReceipt(
+      // NOTE: Receipt needs to be of type "trade" for correct receipt to be
+      // displayed. "profit" and "emission" needs to be included.
+      Object.assign(finalReceipt, {
+        type: "trade",
+        profit: 0.2,
+        emission: 8
+      })
     );
-    console.log("Finalize handshake", result);
+    changeView("receipt");
   };
 
   componentDidMount() {
-    const {
-      goBack,
-      changeAlert,
-      defaultPassport: passport
-    } = this.props;
+    const { goBack, changeAlert, defaultPassport: passport } = this.props;
 
     if (!passport) {
       // Sorry.
-      goBack()
-      setTimeout(() => changeAlert({ type: "warning", message: "Select a passport" }), 100);
+      goBack();
+      setTimeout(
+        () => changeAlert({ type: "warning", message: "Select a passport" }),
+        100
+      );
     }
   }
 

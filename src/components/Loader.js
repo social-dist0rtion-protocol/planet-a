@@ -33,7 +33,6 @@ class Loader extends Component {
       t = await time();
     } else if (network === "SIDECHAIN") {
       t = CONFIG.SIDECHAIN.TIME_ESTIMATES.TX; //ms
-      throw new Error("Network not yet supported");
     } else {
       // 8ms was Loader's default value.
       t = 8333; // ms

@@ -99,7 +99,7 @@ export async function finalizeHandshake(plasma, passport, receipt, privateKey) {
   // been included after 5000ms (50 rounds at a 100ms timeout), it failed.
   // Unfortunately, at this point we cannot provide an error message for why
 
-  let txHash;
+  let txHash, finalReceipt;
   let rounds = 50;
 
   while (rounds--) {
@@ -127,7 +127,7 @@ export async function finalizeHandshake(plasma, passport, receipt, privateKey) {
     let res = await plasma.eth.getTransaction(txHash)
 
     if (res && res.blockHash) {
-      receipt = res;
+      finalReceipt = res;
       break;
     }
 
@@ -135,8 +135,8 @@ export async function finalizeHandshake(plasma, passport, receipt, privateKey) {
     await new Promise((resolve) => setTimeout(() => resolve(), 100));
   }
 
-  if (receipt) {
-    return receipt;
+  if (finalReceipt) {
+    return finalReceipt;
   } else {
     throw new Error("Transaction wasn't included into a block.");
   }
@@ -156,7 +156,7 @@ async function _finalizeHandshake(plasma, passport, receipt, privateKey) {
   const earthGoellarsOutput = (await plasma.getUnspent(
     EarthContractData.address,
     GOELLARS_COLOR
-  ))[0];
+  ))[1];
   console.log(EarthContractData, earthLeapOutput, earthCO2Output, earthGoellarsOutput);
 
   const earthContract = new PlasmaContract(plasma, EarthContractData.abi);

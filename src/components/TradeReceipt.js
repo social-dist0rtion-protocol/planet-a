@@ -14,12 +14,12 @@ const config = {
   angle: 90,
   spread: 90,
   startVelocity: 45,
-  elementCount: "25",
+  elementCount: "10",
   dragFriction: 0.1,
   duration: 4000,
   stagger: 0,
-  width: "40px",
-  height: "40px",
+  width: "60px",
+  height: "60px",
   colors: ["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"]
 };
 
@@ -66,6 +66,8 @@ const ranPlay = () => {
 
 const Gain = styled.div`
   position: relative;
+  white-space: nowrap;
+  overflow: hidden;
   top: ${props => props.top + "%"};
   left: ${props => props.left + "%"};
   animation: ${pop} 0.75s infinite ease-in-out
@@ -96,7 +98,17 @@ export default class TradeReceipt extends Component {
       explosion: false,
       rotate: ranPlay(),
       intervalId: 0,
-      soundStatus: Sound.status.PLAYING
+      soundStatus: Sound.status.PLAYING,
+      positions: {
+        profit: {
+          top: ranPlay() ? ranNum(marginLimit) : -1 * ranNum(marginLimit),
+          left: ranPlay() ? ranNum(marginLimit) : -1 * ranNum(marginLimit)
+        },
+        emission: {
+          top: ranPlay() ? ranNum(marginLimit) : -1 * ranNum(marginLimit),
+          left: ranPlay() ? ranNum(marginLimit) : -1 * ranNum(marginLimit)
+        }
+      }
     };
   }
 
@@ -113,7 +125,7 @@ export default class TradeReceipt extends Component {
     this.explode();
     const intervalId = setInterval(
       this.explode.bind(this),
-      config.duration - config.duration / 2
+      config.duration - config.duration / 10
     );
     this.setState({ intervalId });
   }
@@ -127,12 +139,18 @@ export default class TradeReceipt extends Component {
     const {
       receipt: { from, to, profit, emission }
     } = this.props;
-    const { orientation, explosion, rotate, soundStatus } = this.state;
+    const {
+      orientation,
+      explosion,
+      rotate,
+      soundStatus,
+      positions
+    } = this.state;
 
     return (
       <div>
         <h3 style={{ textAlign: "center", marginBottom: "1em" }}>
-          🎉 Your trade has generated 🎉
+          🎉 PROFIT!!1🎉
         </h3>
         <Flex alignItems="center" justifyContent="space-between">
           <Box style={{ textAlign: "center" }} width={1 / 5}>
@@ -144,24 +162,21 @@ export default class TradeReceipt extends Component {
           <Box style={{ textAlign: "center" }} width={3 / 5}>
             <Hero orientation={orientation} size={1.7}>
               <Gain
-                left={
-                  ranPlay() ? ranNum(marginLimit) : -1 * ranNum(marginLimit)
-                }
-                top={ranPlay() ? ranNum(marginLimit) : -1 * ranNum(marginLimit)}
-                size={ranNum(5)}
+                left={positions.profit.left}
+                top={positions.profit.top}
+                size={ranNum(10)}
                 rotate={rotate}
               >
-                + ${profit}
+                + ₲{profit}
               </Gain>
               <Gain
-                left={
-                  ranPlay() ? ranNum(marginLimit) : -1 * ranNum(marginLimit)
-                }
-                top={ranPlay() ? ranNum(marginLimit) : -1 * ranNum(marginLimit)}
-                size={ranNum(5)}
+                left={positions.emission.left}
+                top={positions.emission.top}
+                size={ranNum(10)}
                 rotate={!rotate}
               >
-                + {emission}t CO2
+                + {emission}
+                Gt CO2
               </Gain>
             </Hero>
           </Box>
@@ -176,12 +191,18 @@ export default class TradeReceipt extends Component {
           <Confetti active={explosion} config={config} />
         </Flex>
         <Sound
-          url={profit > emission ? kaching : pollution}
+          // url={profit > emission ? kaching : pollution}
+          // NOTE: We want to fuck with the brain of the players lol
+          url={kaching}
           playStatus={soundStatus}
           onFinishedPlaying={() =>
             this.setState({ soundStatus: Sound.status.STOPPED })
           }
         />
+        <p>
+          (If this animation lags, get a phone with a better graphics card,
+          loser!)
+        </p>
       </div>
     );
   }
