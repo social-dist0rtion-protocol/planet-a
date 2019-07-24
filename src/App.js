@@ -30,7 +30,7 @@ import burnerlogo from './assets/burnerwallet.png';
 import BurnWallet from './components/BurnWallet'
 import Bottom from './components/Bottom';
 import Card from './components/StyledCard';
-import { Passports, getDefaultPassport } from './components/Passports';
+import Passports from './components/Passports';
 import incogDetect from './services/incogDetect.js'
 import { ThemeProvider } from 'rimble-ui';
 import theme from "./theme";
@@ -43,9 +43,6 @@ import base64url from 'base64url';
 import EthCrypto from 'eth-crypto';
 import { getStoredValue, storeValues, eraseStoredValue } from "./services/localStorage";
 import { fetchAllPassports } from "./services/plasma";
-import PlanetAMoreButtons from "./planeta/MoreButtons";
-import PlanetAStartHandshake from "./planeta/StartHandshake";
-import PlanetAFinalizeHandshake from "./planeta/FinalizeHandshake";
 
 let LOADERIMAGE = burnerlogo
 let HARDCODEVIEW// = "loader"// = "receipt"
@@ -222,14 +219,11 @@ export default class App extends Component {
   openScanner(returnState){
     this.setState({returnState:returnState, scannerOpen: true})
   }
-  returnToState(scannerState, nextView){
+  returnToState(scannerState){
     let updateState = Object.assign({scannerState}, this.state.returnState);
     updateState.scannerOpen = false
     updateState.returnState = false
     console.log("UPDATE FROM RETURN STATE",updateState)
-    if (nextView) {
-      updateState.view = nextView;
-    }
     this.setState(updateState)
   }
   updateDimensions() {
@@ -745,13 +739,8 @@ export default class App extends Component {
   }
   render() {
     let {
-      web3, account, gwei, block, avgBlockTime, etherscan, balance, metaAccount, burnMetaAccount, view, alert, send, passports
+      web3, account, gwei, block, avgBlockTime, etherscan, balance, metaAccount, burnMetaAccount, view, alert, send
     } = this.state;
-
-    // This makes it easier to debug stuff on the console. Will keep it here for now.
-    window.myweb3 = web3;
-    window.myplasma = this.state.xdaiweb3;
-    const defaultPassport = getDefaultPassport(account, passports);
 
     let networkOverlay = ""
     // if(web3 && !this.checkNetwork() && view!=="exchange"){
@@ -948,58 +937,12 @@ export default class App extends Component {
                 )
 
                 switch(view) {
-                  case 'planet_a_handshake':
-                  return (
-                    <div>
-                      {this.state.scannerOpen ? sendByScan : null}
-                      <Card>
-                        <NavCard title="Start Handshake" goBack={this.goBack.bind(this)}/>
-                        <PlanetAStartHandshake
-                            changeAlert={this.changeAlert}
-                            changeView={this.changeView}
-                            goBack={this.goBack.bind(this)}
-                            web3={this.state.web3}
-                            plasma={this.state.xdaiweb3}
-                            metaAccount={this.state.metaAccount}
-                            defaultPassport={defaultPassport}
-                        />
-                      </Card>
-                      <Bottom
-                        text="Cancel"
-                        action={this.goBack.bind(this)}
-                      />
-                    </div>
-                  );
-                  case 'planet_a_finalize_handshake':
-                  return (
-                    <div>
-                      {this.state.scannerOpen ? sendByScan : null}
-                      <Card>
-                        <NavCard title="Finalize Handshake" goBack={this.goBack.bind(this)}/>
-                        <PlanetAFinalizeHandshake
-                            changeAlert={this.changeAlert}
-                            changeView={this.changeView}
-                            scannerState={this.state.scannerState}
-                            goBack={this.goBack.bind(this)}
-                            web3={this.state.web3}
-                            plasma={this.state.xdaiweb3}
-                            metaAccount={this.state.metaAccount}
-                            defaultPassport={defaultPassport}
-                        />
-                      </Card>
-                      <Bottom
-                        text="Cancel"
-                        action={this.goBack.bind(this)}
-                      />
-                    </div>
-                  );
                   case 'main':
                   return (
                     <div>
                       {this.state.scannerOpen ? sendByScan : null}
                       <Card>
-
-                        <Passports list={passports} account={account}/>
+                        <Passports list={this.state.passports} account={this.state.account}/>
                         <GoellarsBalance balance={this.state.xdaiBalance}/>
 
                         <MainCard
@@ -1009,12 +952,6 @@ export default class App extends Component {
                           changeAlert={this.changeAlert}
                           changeView={this.changeView}
                           currencyDisplay={this.currencyDisplay}
-                        />
-
-                        <PlanetAMoreButtons
-                          changeView={this.changeView}
-                          defaultPassport={defaultPassport}
-                          changeAlert={this.changeAlert}
                         />
 
                         <RecentTransactions

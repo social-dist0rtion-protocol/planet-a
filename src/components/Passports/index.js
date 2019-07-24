@@ -15,22 +15,7 @@ import {
   eraseStoredValue
 } from "../../services/localStorage";
 
-export function getDefaultPassport(account, passports) {
-  const passportId = getStoredValue("currentPassport", account);
-  let passport;
-
-  if (passportId) {
-    passport = passports
-      ? passports.find(passport => passport.id === passportId)
-      : null;
-  }
-  if (!passport && passports && passports.length === 1) {
-    passport = passports[0]
-  }
-  return passport;
-}
-
-export class Passports extends Component {
+class Passports extends Component {
   constructor(props) {
     super(props);
     const { account, list } = props;
@@ -109,3 +94,5 @@ export class Passports extends Component {
     );
   }
 }
+
+export default Passports;

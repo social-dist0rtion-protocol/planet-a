@@ -31,7 +31,7 @@ export const extractData = passport => {
 
   const { hexToString, hexToNumber } = web3.utils;
 
-  const name = hexToString(nameHex) || "Mr. Mysterious";
+  const name = hexToString(nameHex);
   const image = hexToString(imageHex);
   const locked = hexToNumber(lockedHex);
   const emitted = hexToNumber(emittedHex);
@@ -70,8 +70,7 @@ export const fetchAllPassports = async (plasma, account) => {
           },
           color,
           data: extractData(passport),
-          id: getId(passport),
-          unspent: passport
+          id: getId(passport)
         }))
       );
     passports = passports.concat(countryPassports);

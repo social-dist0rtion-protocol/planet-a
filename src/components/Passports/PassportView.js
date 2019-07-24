@@ -5,8 +5,7 @@ import { IconClose } from "./styles";
 const Param = ({ label, value, color }) => {
   const locale = localStorage.getItem('i18nextLng')
   const formatter = new Intl.NumberFormat(locale, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
   });
   return (
     <Flex flexDirection={"Column"} alignItems="center" pt={2} px={4}>
@@ -58,8 +57,8 @@ const PassportView = props => {
         width="100%"
         justifyContent="space-around"
       >
-        <Param label={"CO₂ Produced (Gigaton)"} value={emitted / 1000} color="emitted" />
-        <Param label={"CO₂ Locked (Gigaton)"} value={locked / 1000} color="locked" />
+        <Param label={"CO₂ Produced"} value={emitted} color="emitted" />
+        <Param label={"CO₂ Locked"} value={locked} color="locked" />
       </Flex>
     </Flex>
   );
