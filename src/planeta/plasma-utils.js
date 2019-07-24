@@ -7,6 +7,7 @@ class PlasmaMethodCall {
   }
 
   async send(inputs, privateKey) {
+    // TODO: Rename condition to transaction
     const condition = Tx.spendCond(inputs.map(o => new Input(o)));
     condition.inputs[0].setMsgData(this.data);
 
@@ -51,7 +52,7 @@ class PlasmaMethodCall {
         }
       );
     });
-    return result;
+    return condition.hash();
   }
 }
 
