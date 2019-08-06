@@ -161,7 +161,7 @@ export default class App extends Component {
 
   // NOTE: This function is for _displaying_ a currency value to a user. It
   // adds a currency unit to the beginning or end of the number!
-  currencyDisplay(amount, toParts=false, convert=true) {
+  currencyDisplay(amount, convert=true) {
     const { account } = this.state;
     const locale = getStoredValue('i18nextLng');
     const symbol = getStoredValue('currency', account) || CONFIG.CURRENCY.DEFAULT_CURRENCY;
@@ -175,7 +175,8 @@ export default class App extends Component {
       currency: symbol,
       maximumFractionDigits: 2
     });
-    return toParts ? formatter.formatToParts(amount) : formatter.format(amount);
+
+    return formatter.format(amount);
   }
 
   /*
