@@ -15,6 +15,12 @@ class PlasmaMethodCall {
     // https://github.com/leapdao/leap-node/issues/298
     // ¯\_(ツ)_/¯
 
+    if(Array.isArray(privateKey)) {
+      condition.sign(privateKey)
+    } else {
+      condition.signAll(privateKey);
+    }
+
     const { outputs } = await new Promise((resolve, reject) => {
       this.plasma.currentProvider.send(
         {
@@ -34,7 +40,11 @@ class PlasmaMethodCall {
     });
     condition.inputs[0].setMsgData(this.data);
     condition.outputs = outputs.map(o => new Output(o));
-    //condition.signAll(privateKey);
+    if(Array.isArray(privateKey)) {
+      condition.sign(privateKey)
+    } else {
+      condition.signAll(privateKey);
+    }
     const result = await new Promise((resolve, reject) => {
       this.plasma.currentProvider.send(
         {

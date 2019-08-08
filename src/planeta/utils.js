@@ -35,9 +35,19 @@ const LEAP_COLOR = 0;
 const CO2_COLOR = 2;
 const GOELLARS_COLOR = 3;
 
+export const choice = l => l[Math.floor(Math.random() * l.length)];
+
 function updateCO2(passportData, amount) {
   const n = new BN(passportData.replace("0x", ""), 16);
   n.iadd(new BN(amount));
+  return padLeft(n.toString(16), 64);
+}
+
+// Defect: increase CO2Locked in passport receipt by 1.
+function startDefect(passportData) {
+  const n = new BN(passportData.replace("0x", ""), 16);
+  // a.bincn(b) - add 1 << b to the number
+  n.bincn(32);
   return padLeft(n.toString(16), 64);
 }
 
@@ -69,10 +79,25 @@ async function findPassportOutput(plasma, address, color, value) {
   return passports.filter(p => p.output.value === value)[0];
 }
 
-export async function startHandshake(web3, passport, privateKey) {
+export async function startHandshake(
+  web3,
+  passport,
+  privateKey,
+  strategy = "collaborate"
+) {
   // For now we hardcode the CO₂ emitted by 8 Gt, why 8 Gt? Answer here:
   // https://docs.google.com/spreadsheets/d/1chB4P7C594ABGn2u3VQb73t2F_0YPq26OHGJt0ZuME0/edit#gid=0
-  const passportDataAfter = updateCO2(passport.output.data, "8000");
+  let passportDataAfter;
+
+  if (strategy === "collaborate") {
+    passportDataAfter = updateCO2(passport.output.data, "400");
+  } else if (strategy === "defect") {
+    passportDataAfter = updateCO2(passport.output.data, "20000");
+    passportDataAfter = startDefect(passportDataAfter);
+  }
+
+  console.log(strategy, passport.output.data, passportDataAfter);
+
   const signature = await hashAndSign(
     web3,
     Buffer.from(
@@ -93,7 +118,13 @@ export async function startHandshake(web3, passport, privateKey) {
   return receipt;
 }
 
-export async function finalizeHandshake(plasma, passport, receipt, privateKey) {
+export async function finalizeHandshake(
+  plasma,
+  passport,
+  receipt,
+  privateKey,
+  strategy = "collaborate"
+) {
   // NOTE: Leapdao's Plasma implementation currently doesn't return receipts.
   // We hence have to periodically query the leap node to check whether our
   // transaction has been included into the chain. We assume that if it hasn't
@@ -104,8 +135,14 @@ export async function finalizeHandshake(plasma, passport, receipt, privateKey) {
   let rounds = 50;
 
   try {
-    txHash = await _finalizeHandshake(plasma, passport, receipt, privateKey);
-  } catch(err) {
+    txHash = await _finalizeHandshake(
+      plasma,
+      passport,
+      receipt,
+      privateKey,
+      strategy
+    );
+  } catch (err) {
     // ignore for now
     console.log("error finalizing handshake", err);
     // NOTE: Leap's node currently doesn't implement the "newBlockHeaders"
@@ -125,9 +162,7 @@ export async function finalizeHandshake(plasma, passport, receipt, privateKey) {
 
   while (rounds--) {
     // redundancy rules ✊
-
-    let res = await plasma.eth.getTransaction(txHash)
-      console.log("albi", res, txHash);
+    let res = await plasma.eth.getTransaction(txHash);
 
     if (res && res.blockHash) {
       finalReceipt = res;
@@ -135,7 +170,7 @@ export async function finalizeHandshake(plasma, passport, receipt, privateKey) {
     }
 
     // wait ~100ms
-    await new Promise((resolve) => setTimeout(() => resolve(), 100));
+    await new Promise(resolve => setTimeout(() => resolve(), 100));
   }
 
   if (finalReceipt) {
@@ -145,11 +180,16 @@ export async function finalizeHandshake(plasma, passport, receipt, privateKey) {
   }
 }
 
-async function _finalizeHandshake(plasma, passport, receipt, privateKey) {
-  const gt = lower => o => (new BN(o.output.value)).gt((new BN(lower)).mul(factor18));
-   // Select a random element from a list, see below for usage
-  const choice = l => l[Math.floor(Math.random() * l.length)];
-
+async function _finalizeHandshake(
+  plasma,
+  passport,
+  receipt,
+  privateKey,
+  strategy
+) {
+  const gt = lower => o =>
+    new BN(o.output.value).gt(new BN(lower).mul(factor18));
+  // Select a random element from a list, see below for usage
   const theirPassport = unpackReceipt(receipt);
   const theirPassportOutput = await findPassportOutput(
     plasma,
@@ -159,13 +199,40 @@ async function _finalizeHandshake(plasma, passport, receipt, privateKey) {
   );
 
   // TODO: remove filters.
-  const earthLeapOutput = choice(await plasma.getUnspent(EarthContractData.address, LEAP_COLOR))
-  const earthCO2Output = choice((await plasma.getUnspent(EarthContractData.address, CO2_COLOR)).filter(gt(20)))
-  const earthGoellarsOutput = choice((await plasma.getUnspent(
-    EarthContractData.address,
-    GOELLARS_COLOR
-  )).filter(gt("1")))
-  console.log("hello", earthLeapOutput, earthCO2Output, earthGoellarsOutput, theirPassportOutput, passport);
+  const earthLeapOutput = choice(
+    await plasma.getUnspent(EarthContractData.address, LEAP_COLOR)
+  );
+  const earthCO2Output = choice(
+    (await plasma.getUnspent(EarthContractData.address, CO2_COLOR)).filter(
+      gt("20")
+    )
+  );
+  const earthGoellarsOutput = choice(
+    (await plasma.getUnspent(EarthContractData.address, GOELLARS_COLOR)).filter(
+      gt("1")
+    )
+  );
+
+  const inputs = [
+    { prevout: earthLeapOutput.outpoint, script: EarthContractData.code },
+    { prevout: earthCO2Output.outpoint },
+    { prevout: earthGoellarsOutput.outpoint },
+    { prevout: theirPassportOutput.outpoint },
+    { prevout: passport.outpoint }
+  ];
+
+  const toSign = [null, null, null, null, privateKey];
+
+  if (strategy === "defect") {
+    const myGoellarsOutput = (await plasma.getUnspent(
+      passport.output.address,
+      GOELLARS_COLOR
+    ))[0];
+    inputs.push({ prevout: myGoellarsOutput.outpoint });
+    toSign.push(privateKey);
+  }
+
+  console.log("finalize", strategy, inputs, toSign);
 
   const earthContract = new PlasmaContract(plasma, EarthContractData.abi);
   return await earthContract.methods
@@ -177,14 +244,5 @@ async function _finalizeHandshake(plasma, passport, receipt, privateKey) {
       COUNTRY_TO_ADDR[theirPassport.color],
       COUNTRY_TO_ADDR[passport.output.color]
     )
-    .send(
-      [
-        { prevout: earthLeapOutput.outpoint, script: EarthContractData.code },
-        { prevout: earthCO2Output.outpoint },
-        { prevout: earthGoellarsOutput.outpoint },
-        { prevout: theirPassportOutput.outpoint },
-        { prevout: passport.outpoint }
-      ],
-      privateKey
-    );
+    .send(inputs, toSign);
 }

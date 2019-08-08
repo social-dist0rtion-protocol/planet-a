@@ -953,7 +953,7 @@ export default class App extends Component {
                     <div>
                       {this.state.scannerOpen ? sendByScan : null}
                       <Card>
-                        <NavCard title="Start Handshake" goBack={this.goBack.bind(this)}/>
+                        <NavCard title="🤝 Business Time! 🤝" goBack={this.goBack.bind(this)}/>
                         <PlanetAStartHandshake
                             changeAlert={this.changeAlert}
                             changeView={this.changeView}
@@ -975,7 +975,7 @@ export default class App extends Component {
                     <div>
                       {this.state.scannerOpen ? sendByScan : null}
                       <Card>
-                        <NavCard title="Finalize Handshake" goBack={this.goBack.bind(this)}/>
+                        <NavCard title="🤝 Seal the Deal! 🤝" goBack={this.goBack.bind(this)}/>
                         <PlanetAFinalizeHandshake
                             changeAlert={this.changeAlert}
                             changeView={this.changeView}

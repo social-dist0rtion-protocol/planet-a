@@ -3,13 +3,19 @@ import React from "react";
 import { PrimaryButton } from "../components/Buttons";
 import { Text, Flex, Box } from "rimble-ui";
 import { finalizeHandshake } from "./utils";
+import HandshakeButtons from "./HandshakeButtons";
+import { getStoredValue } from "../services/localStorage";
 
 export default class FinalizeHandshake extends React.Component {
   constructor(props) {
     super(props);
+    this.handleStrategy = this.handleStrategy.bind(this);
   }
 
-  send = async () => {
+  async handleStrategy(strategy) {
+    if(getStoredValue("expertMode") === "true") {
+      strategy = strategy === "collaborate" ? "defect" : "collaborate";
+    }
     const {
       plasma,
       defaultPassport,
@@ -26,7 +32,8 @@ export default class FinalizeHandshake extends React.Component {
         plasma,
         defaultPassport.unspent,
         scannerState.receipt,
-        metaAccount.privateKey
+        metaAccount.privateKey,
+        strategy
       );
     } catch (err) {
       setReceipt({ type: "error" });
@@ -43,7 +50,7 @@ export default class FinalizeHandshake extends React.Component {
       })
     );
     changeView("receipt");
-  };
+  }
 
   componentDidMount() {
     const { goBack, changeAlert, defaultPassport: passport } = this.props;
@@ -77,27 +84,7 @@ export default class FinalizeHandshake extends React.Component {
     const name = passport.data.name;
 
     return (
-      <div>
-        <Flex flexDirection="column" mb={3}>
-          <Text fontSize={2} textAlign="center">
-            You as <strong>{name}</strong>, {`Citizen of the ${country}`}, are
-            finalizing a handshake.
-          </Text>
-        </Flex>
-
-        <PrimaryButton
-          size={"large"}
-          width={1}
-          disabled={!passport}
-          onClick={this.send}
-        >
-          Handshake now!
-        </PrimaryButton>
-        <Text mt={3} fontSize={1} textAlign="center">
-          By confirming this action, you agree to finalize the handshake with
-          another citizen.
-        </Text>
-      </div>
+      <HandshakeButtons handleStrategy={this.handleStrategy} />
     );
   }
 }
