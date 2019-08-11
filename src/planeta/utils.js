@@ -35,16 +35,16 @@ const LEAP_COLOR = 0;
 const CO2_COLOR = 2;
 const GOELLARS_COLOR = 3;
 
-export const choice = l => l[Math.floor(Math.random() * l.length)];
+export const choice = arr => arr[Math.floor(Math.random() * arr.length)];
 
-function updateCO2(passportData, amount) {
+function calculateUpdatedCO2(passportData, amount) {
   const n = new BN(passportData.replace("0x", ""), 16);
   n.iadd(new BN(amount));
   return padLeft(n.toString(16), 64);
 }
 
 // Defect: increase CO2Locked in passport receipt by 1.
-function startDefect(passportData) {
+function calculateStartDefect(passportData) {
   const n = new BN(passportData.replace("0x", ""), 16);
   // a.bincn(b) - add 1 << b to the number
   n.bincn(32);
@@ -90,13 +90,11 @@ export async function startHandshake(
   let passportDataAfter;
 
   if (strategy === "collaborate") {
-    passportDataAfter = updateCO2(passport.output.data, "400");
+    passportDataAfter = calculateUpdatedCO2(passport.output.data, "400");
   } else if (strategy === "defect") {
-    passportDataAfter = updateCO2(passport.output.data, "20000");
-    passportDataAfter = startDefect(passportDataAfter);
+    passportDataAfter = calculateUpdatedCO2(passport.output.data, "20000");
+    passportDataAfter = calculateStartDefect(passportDataAfter);
   }
-
-  console.log(strategy, passport.output.data, passportDataAfter);
 
   const signature = await hashAndSign(
     web3,

@@ -1,6 +1,5 @@
 import React from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import { Text, Heading, QR as QRCode } from "rimble-ui";
+import { Text, Heading } from "rimble-ui";
 import { BorderButton } from "../components/Buttons";
 import { choice } from "./utils";
 

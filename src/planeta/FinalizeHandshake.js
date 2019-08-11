@@ -1,7 +1,5 @@
 //@format
 import React from "react";
-import { PrimaryButton } from "../components/Buttons";
-import { Text, Flex, Box } from "rimble-ui";
 import { finalizeHandshake } from "./utils";
 import HandshakeButtons from "./HandshakeButtons";
 import { getStoredValue } from "../services/localStorage";
@@ -13,7 +11,7 @@ export default class FinalizeHandshake extends React.Component {
   }
 
   async handleStrategy(strategy) {
-    if(getStoredValue("expertMode") === "true") {
+    if (getStoredValue("expertMode") === "true") {
       strategy = strategy === "collaborate" ? "defect" : "collaborate";
     }
     const {
@@ -66,25 +64,12 @@ export default class FinalizeHandshake extends React.Component {
   }
 
   render() {
-    const {
-      changeAlert,
-      goBack,
-      metaAccount,
-      web3,
-      plasma,
-      defaultPassport: passport
-    } = this.props;
+    const { defaultPassport: passport } = this.props;
 
     if (!passport) {
       return null;
     }
 
-    const { receipt } = this.props.scannerState;
-    const country = passport.country.fullName;
-    const name = passport.data.name;
-
-    return (
-      <HandshakeButtons handleStrategy={this.handleStrategy} />
-    );
+    return <HandshakeButtons handleStrategy={this.handleStrategy} />;
   }
 }

@@ -1,14 +1,10 @@
 import React from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import getConfig from "../config";
 import i18n from "../i18n";
-import { Text, Flex, Icon, Box, Heading, QR as QRCode } from "rimble-ui";
+import { Flex, Box, Heading, QR as QRCode } from "rimble-ui";
 import { startHandshake } from "./utils";
-import { PrimaryButton, BorderButton } from "../components/Buttons";
 import HandshakeButtons from "./HandshakeButtons";
 import { getStoredValue } from "../services/localStorage";
-
-const CONFIG = getConfig();
 
 function renderReceipt(receipt, changeAlert) {
   const url = "/planeta/handshake/" + receipt;
@@ -52,12 +48,10 @@ export default class Handshake extends React.Component {
   }
 
   async handleStrategy(strategy) {
-    if(getStoredValue("expertMode") === "true") {
+    if (getStoredValue("expertMode") === "true") {
       strategy = strategy === "collaborate" ? "defect" : "collaborate";
     }
-    const { metaAccount, plasma, web3, defaultPassport: passport } = this.props;
-    const country = passport.country.fullName;
-    const name = passport.data.name;
+    const { metaAccount, web3, defaultPassport: passport } = this.props;
     const receipt = await startHandshake(
       web3,
       passport.unspent,
@@ -68,17 +62,8 @@ export default class Handshake extends React.Component {
   }
 
   render() {
-    const {
-      changeView,
-      changeAlert,
-      goBack,
-      metaAccount,
-      plasma,
-      defaultPassport: passport
-    } = this.props;
+    const { changeAlert, goBack } = this.props;
     const { receipt } = this.state;
-    const country = passport.country.fullName;
-    const name = passport.data.name;
 
     return (
       <div>
