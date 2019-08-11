@@ -19,6 +19,12 @@ EarthContractData.code = Buffer.from(
   "hex"
 );
 
+const AirContractData = require("./contracts/Air.json");
+AirContractData.code = Buffer.from(
+  AirContractData.code.replace("0x", ""),
+  "hex"
+);
+
 const BN = Web3.utils.BN;
 const factor18 = new BN("1000000000000000000");
 
@@ -41,6 +47,12 @@ function updateCO2(passportData, amount) {
   const n = new BN(passportData.replace("0x", ""), 16);
   n.iadd(new BN(amount));
   return padLeft(n.toString(16), 64);
+}
+
+async function totalGtCO2(plasma) {
+  const outputs = await plasma.getUnspent(AirContractData.address, CO2_COLOR);
+  const total = outputs.reduce((acc, {output: {value}}) => acc.iadd(new BN(value)), new BN(0))
+  return total.div(factor18);
 }
 
 // Defect: increase CO2Locked in passport receipt by 1.
