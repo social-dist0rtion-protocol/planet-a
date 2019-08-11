@@ -10,7 +10,7 @@
 
 import Web3 from "web3";
 import { bytesToHex, padLeft } from "web3-utils";
-import { ecsign, hashPersonalMessage, ripemd160 } from "ethereumjs-util";
+import { ecsign, hashPersonalMessage } from "ethereumjs-util";
 import { PlasmaContract } from "./plasma-utils";
 
 const EarthContractData = require("./contracts/Earth.json");
@@ -25,8 +25,6 @@ const factor18 = new BN("1000000000000000000");
 const USA_ADDR = "0x3378420181474D3aad9579907995011D6a545E3D";
 const USB_ADDR = "0x181fc600915c35F4e44d41f9203A7c389b4A7189";
 
-const USA_COLOR = 49156;
-const USB_COLOR = 49155;
 const COUNTRY_TO_ADDR = {
   "49156": USA_ADDR,
   "49155": USB_ADDR
