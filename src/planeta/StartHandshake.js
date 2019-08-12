@@ -66,14 +66,13 @@ export default class Handshake extends React.Component {
     const { receipt } = this.state;
 
     return (
-      <div>
-        <div>
-          {receipt ? (
-            renderReceipt(receipt, changeAlert)
-          ) : (
-            <HandshakeButtons handleStrategy={this.handleStrategy} />
-          )}
-        </div>
+      <Flex flexDirection="column">
+        >
+        {receipt ? (
+          renderReceipt(receipt, changeAlert)
+        ) : (
+          <HandshakeButtons handleStrategy={this.handleStrategy} />
+        )}
         <div name="theVeryBottom" className="text-center bottom-text">
           <span style={{ padding: 10 }}>
             <a
@@ -87,7 +86,7 @@ export default class Handshake extends React.Component {
             </a>
           </span>
         </div>
-      </div>
+      </Flex>
     );
   }
 }
