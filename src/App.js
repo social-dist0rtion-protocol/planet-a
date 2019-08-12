@@ -46,6 +46,7 @@ import { fetchAllPassports } from "./services/plasma";
 import PlanetAMoreButtons from "./planeta/MoreButtons";
 import PlanetAStartHandshake from "./planeta/StartHandshake";
 import PlanetAFinalizeHandshake from "./planeta/FinalizeHandshake";
+import planetATransactionHandler from "./planeta/transactionHandler";
 
 let LOADERIMAGE = burnerlogo
 let HARDCODEVIEW// = "loader"// = "receipt"
@@ -538,6 +539,9 @@ export default class App extends Component {
       for(let t in transactions){
         //console.log("TX",transactions[t])
         let tx = await web3.eth.getTransaction(transactions[t])
+        if (this.state.passports) {
+          planetATransactionHandler(web3, this.state.passports, tx);
+        }
         // NOTE: NST information is encoded in a transaction's values. Hence if
         // we don't filter out NST transactions, they'll show up as huge
         // transfers in the UI.
