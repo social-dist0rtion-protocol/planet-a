@@ -67,7 +67,6 @@ export default class Handshake extends React.Component {
 
     return (
       <Flex flexDirection="column">
-        >
         {receipt ? (
           renderReceipt(receipt, changeAlert)
         ) : (
