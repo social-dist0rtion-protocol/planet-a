@@ -45,7 +45,7 @@ export default class Advanced extends React.Component {
     storeValues({ currency: value }, address)
   }
 
-  updateAdvancedBalance= e => {
+  updateExpertMode = e => {
     let { checked } = e.target
     this.setState({ expertMode: checked })
     storeValues({ expertMode: checked })
@@ -262,6 +262,16 @@ export default class Advanced extends React.Component {
           </div>
         </div>
         }
+
+        {expertMode && (
+          <>
+            <hr />
+            <Flex py={3} alignItems="center" justifyContent="space-between">
+              <Text>Swap "Play Fair" and "Play Greedy" in the handshake dialog.</Text>
+              <Checkbox onChange={this.updateExpertMode} checked={expertMode} />
+            </Flex>
+          </>
+        )}
 
       </div>
     )

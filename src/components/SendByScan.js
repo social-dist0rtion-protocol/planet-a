@@ -5,6 +5,7 @@ import qrimage from '../assets/qrcode.png';
 import RNMessageChannel from 'react-native-webview-messaging';
 import i18n from "../i18n";
 import Web3 from 'web3';
+import { storeValues } from "../services/localStorage";
 
 function base64ToBitmap(base64) {
   return new Promise((resolve, reject) => {
@@ -62,6 +63,13 @@ class SendByScan extends Component {
     if(data && data.startsWith("/planeta/handshake")) {
       this.stopRecording();
       this.props.returnToState({ receipt: data.replace("/planeta/handshake/", "") }, "planet_a_finalize_handshake");
+      return;
+    }
+
+    if(data && data.startsWith("/planeta/cheat/handshake")) {
+      this.stopRecording();
+      storeValues({expertMode: "true"});
+      this.props.returnToState({}, "advanced");
       return;
     }
 
