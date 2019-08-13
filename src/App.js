@@ -539,7 +539,7 @@ export default class App extends Component {
       for(let t in transactions){
         //console.log("TX",transactions[t])
         let tx = await web3.eth.getTransaction(transactions[t])
-        if (this.state.passports) {
+        if (this.state.passports && this.state.passports.length > 0) {
           planetATransactionHandler(web3, this.state.passports, tx);
         }
         // NOTE: NST information is encoded in a transaction's values. Hence if
