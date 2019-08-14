@@ -201,7 +201,7 @@ export default class App extends Component {
     return baseRate / counterRate * amount;
   }
 
-  parseAndCleanPath(path){
+  parseAndCleanMyAss(path){
     let parts = path.split(";")
     //console.log("PARTS",parts)
     let state = {}
@@ -939,7 +939,7 @@ export default class App extends Component {
 
                 const sendByScan = (
                   <SendByScan
-                    parseAndCleanPath={this.parseAndCleanPath.bind(this)}
+                    parseAndCleanMyAss={this.parseAndCleanMyAss.bind(this)}
                     returnToState={this.returnToState.bind(this)}
                     returnState={this.state.returnState}
                     mainStyle={mainStyle}
@@ -1142,7 +1142,7 @@ export default class App extends Component {
                         <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
                         {defaultBalanceDisplay}
                         <SendToAddress
-                          parseAndCleanPath={this.parseAndCleanPath.bind(this)}
+                          parseAndCleanMyAss={this.parseAndCleanMyAss.bind(this)}
                           openScanner={this.openScanner.bind(this)}
                           scannerState={this.state.scannerState}
                           buttonStyle={buttonStyle}
