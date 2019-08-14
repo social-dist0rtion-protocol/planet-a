@@ -48,6 +48,7 @@ import PlanetAStartHandshake from "./planeta/StartHandshake";
 import PlanetAFinalizeHandshake from "./planeta/FinalizeHandshake";
 import planetATransactionHandler from "./planeta/transactionHandler";
 import TransferPassport from "./planeta/TransferPassport";
+import GlobalCO2 from "./planeta/GlobalCO2";
 
 let LOADERIMAGE = burnerlogo
 let HARDCODEVIEW// = "loader"// = "receipt"
@@ -361,9 +362,12 @@ export default class App extends Component {
 
   async poll() {
     if(this.state.account){
+      // TODO: Not sure if there's a benefit to initializing the following three
+      // values as `0.00`. Ideally they should just be initialized as `0`.
       let ethBalance = 0.00
       let daiBalance = 0.00
       let xdaiBalance = 0.00
+      let globalCO2 = 0;
 
       if(this.state.mainnetweb3){
 
@@ -380,15 +384,31 @@ export default class App extends Component {
           this.connectToRPC()
         }
       }
-      if(this.state.xdaiweb3 && this.state.xdaiContract){
+      if(this.state.xdaiweb3 && this.state.xdaiContract && this.state.CO2Contract){
         xdaiBalance = await this.state.xdaiContract.methods.balanceOf(this.state.account).call();
         xdaiBalance = this.state.xdaiweb3.utils.fromWei(""+xdaiBalance,'ether')
+        globalCO2 = await this.state.CO2Contract.methods.balanceOf(
+          require("./planeta/contracts/Air.json").address
+        ).call();
+        // NOTE: The CO2 ERC20 contract has 18 decimals (as any standard ERC20).
+        // 1 CO2 represents 1 Gigaton of CO2. We can hence use web3's fromWei
+        // function here. This is not ideal. See this issue for details:
+        // https://github.com/leapdao/plasma-burner-wallet/issues/246
+        globalCO2 = this.state.xdaiweb3.utils.fromWei(globalCO2, "ether");
       }
 
       const plasma = this.state.xdaiweb3;
       const passports = await fetchAllPassports(plasma, this.state.account);
 
-      this.setState({passports, ethBalance,daiBalance,xdaiBalance,balance:xdaiBalance,hasUpdateOnce:true})
+      this.setState({
+        globalCO2,
+        passports,
+        ethBalance,
+        daiBalance,
+        xdaiBalance,
+        balance:xdaiBalance,
+        hasUpdateOnce:true
+      })
     }
 
 
@@ -1032,6 +1052,7 @@ export default class App extends Component {
                   return (
                     <div>
                       {this.state.scannerOpen ? sendByScan : null}
+                      <GlobalCO2 value={this.state.globalCO2} />
                       <Card>
                         <Passports list={passports} account={account}/>
                         <GoellarsBalance balance={this.state.xdaiBalance}/>
@@ -1429,13 +1450,30 @@ export default class App extends Component {
               onUpdate={async (state) => {
                 //console.log("DAPPARATUS UPDATE",state)
                 if (state.xdaiweb3) {
-                  let xdaiContract;
+                  let xdaiContract, CO2Contract;
+                  // NOTE: We're using the StableCoin ABI here as it features
+                  // a balanceOf method specification, which is all we need to
+                  // use the CO2 contract for.
+                  const ERC20ABI = require("./contracts/StableCoin.abi.js");
+                  const CO2Address = require("./planeta/contracts/CO2.address.js");
+
                   try {
-                    xdaiContract = new state.xdaiweb3.eth.Contract(require("./contracts/StableCoin.abi.js"), CONFIG.SIDECHAIN.DAI_ADDRESS)
+                    xdaiContract = new state.xdaiweb3.eth.Contract(
+                      ERC20ABI,
+                      CONFIG.SIDECHAIN.DAI_ADDRESS
+                    )
                   } catch(err) {
                     console.log("Error loading PDAI contract");
                   }
-                  this.setState({xdaiContract});
+                  try {
+                    CO2Contract = new state.xdaiweb3.eth.Contract(
+                      ERC20ABI,
+                      CO2Address
+                    )
+                  } catch(err) {
+                    console.log("Error loading CO2Contract contract");
+                  }
+                  this.setState({xdaiContract,CO2Contract});
                 }
                 if (state.web3Provider) {
                   state.web3 = new Web3(state.web3Provider)
