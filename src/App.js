@@ -860,8 +860,6 @@ export default class App extends Component {
         <I18nextProvider i18n={i18n}>
           <div id="main" className="main">
 					<div id="stars" />
-					<div id="stars2" />
-					<div id="stars3" />
             <div className="inner-container">
               {extraHead}
               {networkOverlay}
