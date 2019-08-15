@@ -5,9 +5,13 @@ export const PrimaryButton = styled(Button)`
   cursor: pointer;
   color: var(--primary-btn-text-color);
   background-color: var(--primary-btn-bg-color) !important;
-  border: 2px solid var(--primary-btn-border-color);
+  border-bottom: 3px solid var(--primary-btn-border-color);
   &:hover {
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
+    border: 1px solid transparent;
+  }
+  &:focus {
+    outline: 0;
   }
   @media screen and (max-width: 480px){
     padding-left: 0;
@@ -29,7 +33,15 @@ export const ActionButton = styled(Button)`
 export const BorderButton = styled(OutlineButton)`
   cursor: pointer;
   color: var(--secondary-btn-text-color);
-  border: 2px solid var(--secondary-btn-border-color);
+  border-bottom: 3px solid var(--secondary-btn-border-color);
+  background-color: var(--secondary-btn-bg-color) !important;
+  &:hover {
+    color: var(--secondary-btn-text-color);
+    border: 1px solid transparent;
+  }
+  &:focus {
+    outline: 0;
+  }
   @media screen and (max-width: 480px){
     padding-left: 0;
     padding-right: 0;

@@ -11,8 +11,9 @@
   --primary-btn-text-color: white;
   --primary-btn-bg-color: var(--plasma-green);
   --primary-btn-border-color: #319146;
-  --secondary-btn-text-color: #5E5E5E;
-  --secondary-btn-border-color: #BDBDBD;
+  --secondary-btn-bg-color: #8b98a0;
+  --secondary-btn-text-color: white;
+  --secondary-btn-border-color: #7e8990;
   --offset: 32px;
   @media screen and (max-width: 480px){
     --offset: 16px;
@@ -331,7 +332,7 @@ i.fas {
 }
 
 .loader__logo{
-	max-width: 60%;
+	max-width: 80%;
 	mix-blend-mode: screen;
 	padding-bottom: 40px;
 }
@@ -367,13 +368,12 @@ i.fas {
 	fill: white;
 	border-radius: 90px;
 	border: none;
-	background-color: var(--deep-blue);
-	background: radial-gradient(70px at 50% 100%, var(--plasma-yellow) 0%, var(--plasma-green) 100%);
+	background: white;
 	box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-	color: white;
+	color: black;
 	&:hover{
-	background-color: #1c73f3;
-	 }
+            filter: invert(100%);
+	}
 }
 
 .fab_icon--capture{
