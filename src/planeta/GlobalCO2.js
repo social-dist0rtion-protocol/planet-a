@@ -9,6 +9,8 @@ const Aligner = styled.div`
   color: #efcc11;
   text-align: center;
   margin: 1em 0 2em 0;
+  font-family: "Saira", sans-serif;
+  font-weight: bold;
 `;
 
 const CO2Display = styled.h1`

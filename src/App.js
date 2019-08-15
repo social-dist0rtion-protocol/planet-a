@@ -58,8 +58,8 @@ const CONFIG = getConfig();
 // TODO: Consolidate this with theme.js
 let mainStyle = {
   width:"100%",
+  backgroundColor: "linear-gradient(135deg, red, blue)",
   height:"100%",
-  backgroundColor:"black",
   hotColor:"white",
   mainColorAlt:"white",
   mainColor:"white",
@@ -266,8 +266,6 @@ export default class App extends Component {
     })
   }
   componentDidMount(){
-    document.body.style.backgroundColor = mainStyle.backgroundColor
-
     this.detectContext()
 
     console.log("document.getElementsByClassName('className').style",document.getElementsByClassName('.btn').style)
@@ -407,7 +405,7 @@ export default class App extends Component {
         xdaiBalance,
         balance:xdaiBalance,
         hasUpdateOnce:true
-      })
+      }, () => document.querySelector(".root").style.backgroundPosition = "0 0");
     }
 
 
