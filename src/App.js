@@ -266,7 +266,6 @@ export default class App extends Component {
     })
   }
   componentDidMount(){
-		this.changeView("loader");
     document.body.style.backgroundColor = mainStyle.backgroundColor
 
     this.detectContext()
