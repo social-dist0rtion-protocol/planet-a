@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import TxReceipt from "./TxReceipt";
 import TradeReceipt from "./TradeReceipt";
+import PassportReceipt from "./PassportReceipt";
 
 export default class Receipt extends Component {
   render() {
@@ -19,6 +20,8 @@ export default class Receipt extends Component {
     } else if (type === "plant") {
       // TODO: Implement tree receipt
       console.log("display a plant");
+    } else if (type === "passport_transfer") {
+      return <PassportReceipt {...this.props} />;
     } else {
       return <TxReceipt {...this.props} />;
     }
