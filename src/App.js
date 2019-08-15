@@ -45,10 +45,12 @@ import base64url from 'base64url';
 import EthCrypto from 'eth-crypto';
 import styled from "styled-components";
 import { getStoredValue, storeValues, eraseStoredValue } from "./services/localStorage";
+import { BN } from "web3-utils";
 
 let LOADERIMAGE = burnerlogo
 let HARDCODEVIEW// = "loader"// = "receipt"
 
+const MAX_INPUTS = 15;
 const CONFIG = getConfig();
 
 // TODO: Consolidate this with theme.js
@@ -1566,10 +1568,61 @@ async function tokenSend(to, value, gasLimit, txData, cb) {
   }
 }
 
-async function tokenSendV2(from, to, value, color, xdaiweb3, web3, privateKey) {
-  const unspent = await xdaiweb3.getUnspent(from, color)
+async function consolidateUTXOs(utxos, plasma, web3, privateKey) {
+  const { address, color } = utxos[0].output;
+  const inputs = utxos.map(({ outpoint }) => new Input(outpoint));
+  const amount = utxos
+    .reduce((acc, { output: { value } }) => acc.iadd(new BN(value)), new BN(0))
+    .toString(10);
+  const outputs = [new Output(amount, address.toLowerCase(), color)];
+  const transaction = Tx.transfer(inputs, outputs);
 
+  const signedTx = privateKey
+    ? await transaction.signAll(privateKey)
+    : await transaction.signWeb3(web3);
+  const rawTx = signedTx.hex();
+
+  try {
+    await new Promise((resolve, reject) => {
+      plasma.currentProvider.send(
+        {
+          jsonrpc: "2.0",
+          id: 42,
+          method: "eth_sendRawTransaction",
+          params: [rawTx]
+        },
+        (err, res) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve(res);
+        }
+      );
+    });
+  } catch (e) {
+    throw new Error("Consolidate failed.");
+  }
+
+  let receipt;
+  let rounds = 5;
+
+  while (rounds--) {
+    let res = await plasma.eth.getTransaction(signedTx.hash());
+    if (res && res.blockHash) {
+      receipt = res;
+      break;
+    }
+    await new Promise(resolve => setTimeout(() => resolve(), 1000));
+  }
+
+  if (!receipt) {
+    throw new Error("Consolidate UTXOs wasn't included into a block.");
+  }
+}
+
+async function tokenSendV2(from, to, value, color, xdaiweb3, web3, privateKey) {
   let transaction;
+  let unspent = await xdaiweb3.getUnspent(from, color);
   if (Util.isNST(color)) {
     const { outpoint, output: { data }} = unspent.find(
       ({ output }) =>
@@ -1580,7 +1633,16 @@ async function tokenSendV2(from, to, value, color, xdaiweb3, web3, privateKey) {
     const outputs = [new Output(value, to, color, data)];
     transaction = Tx.transfer(inputs, outputs);
   } else {
-    transaction = Tx.transferFromUtxos(unspent, from, to, value, color)
+    while(true) {
+      transaction = Tx.transferFromUtxos(unspent, from, to, value, color);
+      if(transaction.inputs.length > MAX_INPUTS) {
+        console.log(`Cannot send a transaction with ${transaction.inputs.length} inputs. Consolidating.`);
+        await consolidateUTXOs(unspent.slice(0, MAX_INPUTS), xdaiweb3, web3, privateKey);
+      } else {
+        break;
+      }
+      unspent = await xdaiweb3.getUnspent(from, color);
+    }
   }
 
   const signedTx = privateKey ? await transaction.signAll(privateKey) : await transaction.signWeb3(web3);
