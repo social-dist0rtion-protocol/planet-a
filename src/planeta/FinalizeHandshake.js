@@ -34,6 +34,8 @@ export default class FinalizeHandshake extends React.Component {
         strategy
       );
     } catch (err) {
+      console.log(err);
+      // note: cooldown raises an error too, check planeta/utils.js
       setReceipt({ type: "error" });
       return;
     }

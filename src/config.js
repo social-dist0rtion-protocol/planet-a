@@ -1,6 +1,10 @@
 const configs = [
   {
     DOMAINS: ["localhost", "10.0.0.107", "sundai.fritz.box", /192\.168\..*/, /.*\.ngrok\.io/],
+    PLANET_A: {
+      // In seconds
+      COOLDOWN: 0
+    },
     CURRENCY: {
       CURRENCY_LIST: ["USD", "EUR", "GBP"],
       DEFAULT_CURRENCY: "USD"
@@ -43,6 +47,10 @@ const configs = [
   },
   {
     DOMAINS: ["toco2.leap.rocks", "planeta.leap.rocks"],
+    PLANET_A: {
+      // In seconds
+      COOLDOWN: 60*60
+    },
     CURRENCY: {
       EXCHANGE_RATE_QUERY: 5000,
       CURRENCY_LIST: ["EUR", "USD", "GBP"],
