@@ -5,7 +5,7 @@ import getConfig from "../config";
 
 const CONFIG = getConfig();
 const GOELLAR_COLOR = 3;
-const BITMASK_CO2 = BigInt("0xffffffff")
+const BITMASK_CO2 = BigInt("0xffffffff");
 const BITMASK_CO2_LOCKED = JSBI.leftShift(BITMASK_CO2, BigInt(32));
 const EarthContractData = require("./contracts/Earth.json");
 
@@ -60,12 +60,22 @@ function parseHandshake(myAddress, inputs, outputs) {
       )
     ) / 100;
 
+  const myPassport = BigInt(
+    inputs.filter(isMine).filter(isPassport)[0].value
+  ).toString();
+  const theirPassport = BigInt(
+    inputs.filter(isTheirs).filter(isPassport)[0].value
+  ).toString();
   const myDataBefore = inputs.filter(isMine).filter(isPassport)[0].data;
   const myDataAfter = outputs.filter(isMine).filter(isPassport)[0].data;
   const theirDataBefore = inputs.filter(isTheirs).filter(isPassport)[0].data;
   const theirDataAfter = outputs.filter(isTheirs).filter(isPassport)[0].data;
 
   return {
+    myAddress,
+    theirAddress,
+    myPassport,
+    theirPassport,
     myCO2: getCO2(myDataBefore, myDataAfter),
     theirCO2: getCO2(theirDataBefore, theirDataAfter),
     myGoellars: getGoellars(myAddress),
