@@ -1,13 +1,11 @@
 import { Tx, Util } from "leap-core";
 import JSBI from "jsbi";
 import { BigInt } from "jsbi-utils";
+import getConfig from "../config";
 
+const CONFIG = getConfig();
 const GOELLAR_COLOR = 3;
-const BITMASK_CO2 = JSBI.subtract(
-  JSBI.leftShift(BigInt(1), BigInt(32)),
-  BigInt(1)
-);
-
+const BITMASK_CO2 = BigInt("0xffffffff")
 const BITMASK_CO2_LOCKED = JSBI.leftShift(BITMASK_CO2, BigInt(32));
 const EarthContractData = require("./contracts/Earth.json");
 
@@ -102,6 +100,7 @@ export default async function process(plasma, passports, tx) {
   if (!isMe) {
     return;
   }
+  console.log("Transaction about me", tx);
   const inputs = await Promise.all(
     plasmaTx.inputs.map(({ prevout: { index, hash } }) =>
       plasma.eth
@@ -109,12 +108,9 @@ export default async function process(plasma, passports, tx) {
         .then(({ raw }) => Tx.fromRaw(raw).outputs[index])
     )
   );
-  for (let input of inputs) {
-    input.value = BigInt(input.value);
-  }
-  for (let output of outputs) {
-    output.value = BigInt(output.value);
-  }
   const result = parseHandshake(myAddress, inputs, outputs);
-  console.log(result);
+  result.txHash = tx.hash;
+  console.log("Handshake values", result);
+  console.log(`${CONFIG.SIDECHAIN.EXPLORER.URL}tx/${result.txHash}`);
+  return result;
 }
