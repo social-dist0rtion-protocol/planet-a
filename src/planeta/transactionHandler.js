@@ -73,15 +73,14 @@ function parseHandshake(myAddress, inputs, outputs) {
 
   return {
     myAddress,
-    theirAddress,
-    myPassport,
-    theirPassport,
-    myCO2: getCO2(myDataBefore, myDataAfter),
-    theirCO2: getCO2(theirDataBefore, theirDataAfter),
-    myGoellars: getGoellars(myAddress),
-    theirGoellars: getGoellars(theirAddress),
     myDefect: isDefect(myAddress, myDataBefore, myDataAfter),
-    theirDefect: isDefect(theirAddress, theirDataBefore, theirDataAfter)
+    myGoellars: getGoellars(myAddress),
+    myPassport,
+    theirAddress,
+    theirCO2: getCO2(theirDataBefore, theirDataAfter),
+    theirDefect: isDefect(theirAddress, theirDataBefore, theirDataAfter),
+    theirGoellars: getGoellars(theirAddress),
+    theirPassport
   };
 }
 
