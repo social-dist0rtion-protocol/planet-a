@@ -540,7 +540,7 @@ export default class App extends Component {
         //console.log("TX",transactions[t])
         let tx = await web3.eth.getTransaction(transactions[t])
         if (this.state.passports && this.state.passports.length > 0) {
-          planetATransactionHandler(web3, this.state.passports, tx);
+          planetATransactionHandler(this.state.xdaiweb3, this.state.passports, tx);
         }
         // NOTE: NST information is encoded in a transaction's values. Hence if
         // we don't filter out NST transactions, they'll show up as huge
