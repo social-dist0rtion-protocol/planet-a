@@ -26,7 +26,7 @@ import Advanced from './components/Advanced';
 import RecentTransactions from './components/RecentTransactions';
 import Footer from './components/Footer';
 import Loader from './components/Loader';
-import burnerlogo from './assets/burnerwallet.png';
+import planetaLogo from './assets/planeta-logo.gif';
 import BurnWallet from './components/BurnWallet'
 import Bottom from './components/Bottom';
 import Card from './components/StyledCard';
@@ -50,7 +50,7 @@ import planetATransactionHandler from "./planeta/transactionHandler";
 import TransferPassport from "./planeta/TransferPassport";
 import GlobalCO2 from "./planeta/GlobalCO2";
 
-let LOADERIMAGE = burnerlogo
+let LOADERIMAGE = planetaLogo;
 let HARDCODEVIEW// = "loader"// = "receipt"
 
 const CONFIG = getConfig();
@@ -59,8 +59,7 @@ const CONFIG = getConfig();
 let mainStyle = {
   width:"100%",
   height:"100%",
-  backgroundImage:"linear-gradient(#292929, #191919)",
-  backgroundColor:"#191919",
+  backgroundColor:"black",
   hotColor:"white",
   mainColorAlt:"white",
   mainColor:"white",
@@ -267,6 +266,7 @@ export default class App extends Component {
     })
   }
   componentDidMount(){
+		this.changeView("loader");
     document.body.style.backgroundColor = mainStyle.backgroundColor
 
     this.detectContext()
@@ -862,6 +862,9 @@ export default class App extends Component {
       <ThemeProvider theme={theme}>
         <I18nextProvider i18n={i18n}>
           <div id="main" className="main">
+					<div id="stars" />
+					<div id="stars2" />
+					<div id="stars3" />
             <div className="inner-container">
               {extraHead}
               {networkOverlay}
