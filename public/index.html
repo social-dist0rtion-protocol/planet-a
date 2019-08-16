@@ -5,9 +5,9 @@
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no user-scalable=no"
     />
-    <meta name="theme-color" content="#F6DF0D" />
+    <meta name="theme-color" content="#41204e" />
 
     <link rel="apple-touch-icon" href="/icons/icon-512x512.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -41,24 +41,27 @@
       href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed"
       rel="stylesheet"
     />
-    <link href="https://fonts.googleapis.com/css?family=Overpass" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Chivo:400,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Saira:400,700,800,900&display=swap" rel="stylesheet">
     <style>
-      * {
-        --primary: #18242B;
-	--secondary: #2C3F4A;
+      *{
+        --primary: #401f4d;
+        --secondary: #002f4e;
       }
-      body{
+      body {
         display: flex;
         align-items: center;
         justify-content: center;
         min-height: 100vh;
         width: 100%;
-        background-image: url("images/flame.svg"), linear-gradient(to bottom, var(--primary), var(--secondary));
-        background-repeat: no-repeat;
-        background-position: -25vh center, center;
+        background-color: black;
       }
       .root{
+	font-family: "Saira", sans-serif;
+        background-image: linear-gradient(#41204e, #002f4f);
+        background-size: auto 200%;
+        background-position: 0 100%;
+        transition: background-position 1s ease-in-out;
         width: 100%;
       }
     </style>

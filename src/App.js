@@ -26,7 +26,7 @@ import Advanced from './components/Advanced';
 import RecentTransactions from './components/RecentTransactions';
 import Footer from './components/Footer';
 import Loader from './components/Loader';
-import burnerlogo from './assets/burnerwallet.png';
+import planetaLogo from './assets/planeta-logo.gif';
 import BurnWallet from './components/BurnWallet'
 import Bottom from './components/Bottom';
 import Card from './components/StyledCard';
@@ -47,8 +47,10 @@ import PlanetAMoreButtons from "./planeta/MoreButtons";
 import PlanetAStartHandshake from "./planeta/StartHandshake";
 import PlanetAFinalizeHandshake from "./planeta/FinalizeHandshake";
 import planetATransactionHandler from "./planeta/transactionHandler";
-
-let LOADERIMAGE = burnerlogo
+import TransferPassport from "./planeta/TransferPassport";
+import GlobalCO2 from "./planeta/GlobalCO2";
+https://www.lastampa.it/cronaca/2019/08/16/news/ha-le-doglie-prende-il-bus-per-l-ospedale-senza-biglietto-il-controllore-la-fa-scendere-1.37352981
+let LOADERIMAGE = planetaLogo;
 let HARDCODEVIEW// = "loader"// = "receipt"
 
 const CONFIG = getConfig();
@@ -56,9 +58,8 @@ const CONFIG = getConfig();
 // TODO: Consolidate this with theme.js
 let mainStyle = {
   width:"100%",
+  backgroundColor: "linear-gradient(135deg, red, blue)",
   height:"100%",
-  backgroundImage:"linear-gradient(#292929, #191919)",
-  backgroundColor:"#191919",
   hotColor:"white",
   mainColorAlt:"white",
   mainColor:"white",
@@ -201,7 +202,7 @@ export default class App extends Component {
     return baseRate / counterRate * amount;
   }
 
-  parseAndCleanPath(path){
+  parseAndCleanMyAss(path){
     let parts = path.split(";")
     //console.log("PARTS",parts)
     let state = {}
@@ -265,8 +266,6 @@ export default class App extends Component {
     })
   }
   componentDidMount(){
-    document.body.style.backgroundColor = mainStyle.backgroundColor
-
     this.detectContext()
 
     console.log("document.getElementsByClassName('className').style",document.getElementsByClassName('.btn').style)
@@ -360,9 +359,12 @@ export default class App extends Component {
 
   async poll() {
     if(this.state.account){
+      // TODO: Not sure if there's a benefit to initializing the following three
+      // values as `0.00`. Ideally they should just be initialized as `0`.
       let ethBalance = 0.00
       let daiBalance = 0.00
       let xdaiBalance = 0.00
+      let globalCO2 = 0;
 
       if(this.state.mainnetweb3){
 
@@ -379,15 +381,31 @@ export default class App extends Component {
           this.connectToRPC()
         }
       }
-      if(this.state.xdaiweb3 && this.state.xdaiContract){
+      if(this.state.xdaiweb3 && this.state.xdaiContract && this.state.CO2Contract){
         xdaiBalance = await this.state.xdaiContract.methods.balanceOf(this.state.account).call();
         xdaiBalance = this.state.xdaiweb3.utils.fromWei(""+xdaiBalance,'ether')
+        globalCO2 = await this.state.CO2Contract.methods.balanceOf(
+          require("./planeta/contracts/Air.json").address
+        ).call();
+        // NOTE: The CO2 ERC20 contract has 18 decimals (as any standard ERC20).
+        // 1 CO2 represents 1 Gigaton of CO2. We can hence use web3's fromWei
+        // function here. This is not ideal. See this issue for details:
+        // https://github.com/leapdao/plasma-burner-wallet/issues/246
+        globalCO2 = this.state.xdaiweb3.utils.fromWei(globalCO2, "ether");
       }
 
       const plasma = this.state.xdaiweb3;
       const passports = await fetchAllPassports(plasma, this.state.account);
 
-      this.setState({passports, ethBalance,daiBalance,xdaiBalance,balance:xdaiBalance,hasUpdateOnce:true})
+      this.setState({
+        globalCO2,
+        passports,
+        ethBalance,
+        daiBalance,
+        xdaiBalance,
+        balance:xdaiBalance,
+        hasUpdateOnce:true
+      }, () => document.querySelector(".root").style.backgroundPosition = "0 0");
     }
 
 
@@ -755,6 +773,7 @@ export default class App extends Component {
     // This makes it easier to debug stuff on the console. Will keep it here for now.
     window.myweb3 = web3;
     window.myplasma = this.state.xdaiweb3;
+    // TODO: Rename to selectedPassport
     const defaultPassport = getDefaultPassport(account, passports);
 
     let networkOverlay = ""
@@ -840,6 +859,7 @@ export default class App extends Component {
       <ThemeProvider theme={theme}>
         <I18nextProvider i18n={i18n}>
           <div id="main" className="main">
+          {/* UNCOMMENT AND ENABLE BEAUTIFUL STARS <div id="stars" />*/}
             <div className="inner-container">
               {extraHead}
               {networkOverlay}
@@ -939,7 +959,7 @@ export default class App extends Component {
 
                 const sendByScan = (
                   <SendByScan
-                    parseAndCleanPath={this.parseAndCleanPath.bind(this)}
+                    parseAndCleanMyAss={this.parseAndCleanMyAss.bind(this)}
                     returnToState={this.returnToState.bind(this)}
                     returnState={this.state.returnState}
                     mainStyle={mainStyle}
@@ -952,6 +972,34 @@ export default class App extends Component {
                 )
 
                 switch(view) {
+                  case 'planet_a_transfer_passport':
+                  return (
+                    <div>
+                      {this.state.scannerOpen ? sendByScan : null}
+                      <Card>
+                        <NavCard title="Send your passport" goBack={this.goBack.bind(this)}/>
+                        <TransferPassport
+                            changeAlert={this.changeAlert}
+                            changeView={this.changeView}
+                            goBack={this.goBack.bind(this)}
+                            web3={this.state.web3}
+                            plasma={this.state.xdaiweb3}
+                            metaAccount={this.state.metaAccount}
+                            passports={passports}
+                            defaultPassport={defaultPassport}
+                            account={account}
+                            openScanner={this.openScanner.bind(this)}
+                            scannerState={this.state.scannerState}
+                            setReceipt={this.setReceipt}
+                            tokenSendV2={tokenSendV2.bind(this)}
+                        />
+                      </Card>
+                      <Bottom
+                        text="Cancel"
+                        action={this.goBack.bind(this)}
+                      />
+                    </div>
+                  );
                   case 'planet_a_handshake':
                   return (
                     <div>
@@ -1002,6 +1050,7 @@ export default class App extends Component {
                   return (
                     <div>
                       {this.state.scannerOpen ? sendByScan : null}
+                      <GlobalCO2 value={this.state.globalCO2} />
                       <Card>
                         <Passports list={passports} account={account}/>
                         <GoellarsBalance balance={this.state.xdaiBalance}/>
@@ -1115,7 +1164,7 @@ export default class App extends Component {
                             web3={this.state.web3}
                             xdaiweb3={this.state.xdaiweb3}
                             xdaiContract={this.state.xdaiContract}
-                            daiTokenAddr={CONFIG.SIDECHAIN.DAI}
+                            daiTokenAddr={CONFIG.SIDECHAIN.DAI_ADDRESS}
                             //amount={false}
                             privateKey={this.state.withdrawFromPrivateKey}
                             goBack={this.goBack.bind(this)}
@@ -1142,7 +1191,7 @@ export default class App extends Component {
                         <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
                         {defaultBalanceDisplay}
                         <SendToAddress
-                          parseAndCleanPath={this.parseAndCleanPath.bind(this)}
+                          parseAndCleanMyAss={this.parseAndCleanMyAss.bind(this)}
                           openScanner={this.openScanner.bind(this)}
                           scannerState={this.state.scannerState}
                           buttonStyle={buttonStyle}
@@ -1399,13 +1448,30 @@ export default class App extends Component {
               onUpdate={async (state) => {
                 //console.log("DAPPARATUS UPDATE",state)
                 if (state.xdaiweb3) {
-                  let xdaiContract;
+                  let xdaiContract, CO2Contract;
+                  // NOTE: We're using the StableCoin ABI here as it features
+                  // a balanceOf method specification, which is all we need to
+                  // use the CO2 contract for.
+                  const ERC20ABI = require("./contracts/StableCoin.abi.js");
+                  const CO2Address = require("./planeta/contracts/CO2.address.js");
+
                   try {
-                    xdaiContract = new state.xdaiweb3.eth.Contract(require("./contracts/StableCoin.abi.js"), CONFIG.SIDECHAIN.DAI_ADDRESS)
+                    xdaiContract = new state.xdaiweb3.eth.Contract(
+                      ERC20ABI,
+                      CONFIG.SIDECHAIN.DAI_ADDRESS
+                    )
                   } catch(err) {
                     console.log("Error loading PDAI contract");
                   }
-                  this.setState({xdaiContract});
+                  try {
+                    CO2Contract = new state.xdaiweb3.eth.Contract(
+                      ERC20ABI,
+                      CO2Address
+                    )
+                  } catch(err) {
+                    console.log("Error loading CO2Contract contract");
+                  }
+                  this.setState({xdaiContract,CO2Contract});
                 }
                 if (state.web3Provider) {
                   state.web3 = new Web3(state.web3Provider)

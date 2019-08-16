@@ -94,9 +94,9 @@ export default class SendToAddress extends React.Component {
         initialState.toAddress = window.location.pathname.substring(1)
       }else if(window.location.pathname.length>40) {
       //    console.log("window.location.pathname",window.location.pathname)
-      //  console.log("parseAndCleanPath...")
-        initialState = Object.assign(initialState,this.props.parseAndCleanPath(window.location.pathname))
-      //  console.log("parseAndCleanPath:",initialState)
+      //  console.log("parseAndCleanMyAss...")
+        initialState = Object.assign(initialState,this.props.parseAndCleanMyAss(window.location.pathname))
+      //  console.log("parseAndCleanMyAss:",initialState)
       }
     }
 

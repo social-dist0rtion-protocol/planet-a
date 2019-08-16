@@ -1,6 +1,7 @@
 import web3 from "web3";
 import { getStoredValue, storeValues } from "./localStorage";
 
+// TODO: Put this in config.js
 const COUNTRIES = {
   US_OF_AMBROSIA: {
     color: 49156,
