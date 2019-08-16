@@ -7,7 +7,7 @@ const COOLDOWN = getConfig().PLANET_A.COOLDOWN * 1000;
 
 const getCooldownFor = passport => JSON.parse(getStoredValue("cooldown", passport) || "{}");
 
-export function addHandshake(myPassport, theirPassport) {
+export function purge(myPassport) {
   const now = Date.now();
   const cooldown = getCooldownFor(myPassport);
   for (let passport in cooldown) {
@@ -15,6 +15,12 @@ export function addHandshake(myPassport, theirPassport) {
       delete cooldown[passport]
     }
   }
+  return cooldown;
+}
+
+export function addHandshake(myPassport, theirPassport) {
+  const now = Date.now();
+  const cooldown = purge(myPassport);
   cooldown[theirPassport] = now;
   storeValues({cooldown: JSON.stringify(cooldown)}, myPassport);
 }
