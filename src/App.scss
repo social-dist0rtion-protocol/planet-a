@@ -1,21 +1,94 @@
 *{
+  --primary: #401f4d;
+  --secondary: #002f4e;
   --dark-text: #5F727D;
   --blockie-name: #799BAE;
   --deep-blue: #106BF3;
   --plasma-green: #04b52c;
-  --plasma-yellow: #FAFF02;
+  --plasma-yellow: #efcc11;
   --plasma-orange: #F6DF0D;
   --plasma-brown: #896B02;
   --primary-btn-text-color: white;
   --primary-btn-bg-color: var(--plasma-green);
   --primary-btn-border-color: #319146;
-  --secondary-btn-text-color: #5E5E5E;
-  --secondary-btn-border-color: #BDBDBD;
+  --secondary-btn-bg-color: #8b98a0;
+  --secondary-btn-text-color: white;
+  --secondary-btn-border-color: #7e8990;
   --offset: 32px;
   @media screen and (max-width: 480px){
     --offset: 16px;
   }
 }
+
+// NOTE: Stars can be generated here: https://codepen.io/TimDaub/pen/XWrdZyG
+// At a later stage it would probably make sense to include compass directly
+#stars {
+  height: 10px;
+  width: 2px;
+  filter: drop-shadow(0px 0px 2px white);
+  position: relative;
+  background: transparent;
+  box-shadow: 750px 900px #FFF , 101px 1556px rgba(255, 255, 255, 0.3) , 1198px 798px rgba(255, 255, 255, 0.3) , 1182px 378px rgba(255, 255, 255, 0.3) , 369px 1103px rgba(255, 255, 255, 0.3) , 62px 1370px rgba(255, 255, 255, 0.3) , 9px 1999px rgba(255, 255, 255, 0.3) , 630px 1975px rgba(255, 255, 255, 0.3) , 635px 755px rgba(255, 255, 255, 0.3) , 1982px 1053px rgba(255, 255, 255, 0.3) , 1957px 1412px rgba(255, 255, 255, 0.3) , 1414px 1853px rgba(255, 255, 255, 0.3) , 640px 680px rgba(255, 255, 255, 0.3) , 1706px 1237px rgba(255, 255, 255, 0.3) , 59px 1163px rgba(255, 255, 255, 0.3) , 1367px 620px rgba(255, 255, 255, 0.3) , 1774px 1888px rgba(255, 255, 255, 0.3) , 1121px 1628px rgba(255, 255, 255, 0.3) , 1722px 312px rgba(255, 255, 255, 0.3) , 616px 977px rgba(255, 255, 255, 0.3) , 291px 1367px rgba(255, 255, 255, 0.3) , 533px 859px rgba(255, 255, 255, 0.3) , 1696px 1080px rgba(255, 255, 255, 0.3) , 541px 459px rgba(255, 255, 255, 0.3) , 1402px 699px rgba(255, 255, 255, 0.3) , 1740px 22px rgba(255, 255, 255, 0.3) , 1503px 1625px rgba(255, 255, 255, 0.3) , 285px 1794px rgba(255, 255, 255, 0.3) , 521px 428px rgba(255, 255, 255, 0.3) , 1166px 1376px rgba(255, 255, 255, 0.3) , 1176px 117px rgba(255, 255, 255, 0.3) , 1231px 964px rgba(255, 255, 255, 0.3) , 1380px 843px rgba(255, 255, 255, 0.3) , 377px 510px rgba(255, 255, 255, 0.3) , 1500px 941px rgba(255, 255, 255, 0.3) , 1015px 1260px rgba(255, 255, 255, 0.3) , 403px 1979px rgba(255, 255, 255, 0.3) , 536px 1412px rgba(255, 255, 255, 0.3) , 1178px 1469px rgba(255, 255, 255, 0.3) , 1187px 1295px rgba(255, 255, 255, 0.3) , 22px 605px rgba(255, 255, 255, 0.3) , 152px 859px rgba(255, 255, 255, 0.3) , 398px 1172px rgba(255, 255, 255, 0.3) , 1592px 865px rgba(255, 255, 255, 0.3) , 1286px 1338px rgba(255, 255, 255, 0.3) , 1804px 946px rgba(255, 255, 255, 0.3) , 748px 1894px rgba(255, 255, 255, 0.3) , 1944px 230px rgba(255, 255, 255, 0.3) , 1197px 1247px rgba(255, 255, 255, 0.3) , 1535px 1727px rgba(255, 255, 255, 0.3);
+  animation: animStar 50s linear infinite;
+}
+#stars:after {
+  content: " ";
+  height: 2px;
+  left: -4px;
+  position: absolute;
+  top: 4px;
+  width: 10px;
+  background: transparent;
+  box-shadow: 750px 900px #FFF , 101px 1556px rgba(255, 255, 255, 0.3) , 1198px 798px rgba(255, 255, 255, 0.3) , 1182px 378px rgba(255, 255, 255, 0.3) , 369px 1103px rgba(255, 255, 255, 0.3) , 62px 1370px rgba(255, 255, 255, 0.3) , 9px 1999px rgba(255, 255, 255, 0.3) , 630px 1975px rgba(255, 255, 255, 0.3) , 635px 755px rgba(255, 255, 255, 0.3) , 1982px 1053px rgba(255, 255, 255, 0.3) , 1957px 1412px rgba(255, 255, 255, 0.3) , 1414px 1853px rgba(255, 255, 255, 0.3) , 640px 680px rgba(255, 255, 255, 0.3) , 1706px 1237px rgba(255, 255, 255, 0.3) , 59px 1163px rgba(255, 255, 255, 0.3) , 1367px 620px rgba(255, 255, 255, 0.3) , 1774px 1888px rgba(255, 255, 255, 0.3) , 1121px 1628px rgba(255, 255, 255, 0.3) , 1722px 312px rgba(255, 255, 255, 0.3) , 616px 977px rgba(255, 255, 255, 0.3) , 291px 1367px rgba(255, 255, 255, 0.3) , 533px 859px rgba(255, 255, 255, 0.3) , 1696px 1080px rgba(255, 255, 255, 0.3) , 541px 459px rgba(255, 255, 255, 0.3) , 1402px 699px rgba(255, 255, 255, 0.3) , 1740px 22px rgba(255, 255, 255, 0.3) , 1503px 1625px rgba(255, 255, 255, 0.3) , 285px 1794px rgba(255, 255, 255, 0.3) , 521px 428px rgba(255, 255, 255, 0.3) , 1166px 1376px rgba(255, 255, 255, 0.3) , 1176px 117px rgba(255, 255, 255, 0.3) , 1231px 964px rgba(255, 255, 255, 0.3) , 1380px 843px rgba(255, 255, 255, 0.3) , 377px 510px rgba(255, 255, 255, 0.3) , 1500px 941px rgba(255, 255, 255, 0.3) , 1015px 1260px rgba(255, 255, 255, 0.3) , 403px 1979px rgba(255, 255, 255, 0.3) , 536px 1412px rgba(255, 255, 255, 0.3) , 1178px 1469px rgba(255, 255, 255, 0.3) , 1187px 1295px rgba(255, 255, 255, 0.3) , 22px 605px rgba(255, 255, 255, 0.3) , 152px 859px rgba(255, 255, 255, 0.3) , 398px 1172px rgba(255, 255, 255, 0.3) , 1592px 865px rgba(255, 255, 255, 0.3) , 1286px 1338px rgba(255, 255, 255, 0.3) , 1804px 946px rgba(255, 255, 255, 0.3) , 748px 1894px rgba(255, 255, 255, 0.3) , 1944px 230px rgba(255, 255, 255, 0.3) , 1197px 1247px rgba(255, 255, 255, 0.3) , 1535px 1727px rgba(255, 255, 255, 0.3);
+}
+
+#stars2 {
+  height: 5px;
+  width: 1px;
+  filter: drop-shadow(0px 0px 1px white);
+  background: transparent;
+  box-shadow: 737px 437px #FFF , 1404px 655px rgba(255, 255, 255, 0.3) , 1304px 18px rgba(255, 255, 255, 0.3) , 1825px 1192px rgba(255, 255, 255, 0.3) , 194px 754px rgba(255, 255, 255, 0.3) , 608px 1378px rgba(255, 255, 255, 0.3) , 1265px 1378px rgba(255, 255, 255, 0.3) , 1504px 1411px rgba(255, 255, 255, 0.3) , 952px 561px rgba(255, 255, 255, 0.3) , 847px 1980px rgba(255, 255, 255, 0.3) , 663px 1404px rgba(255, 255, 255, 0.3) , 358px 1647px rgba(255, 255, 255, 0.3) , 1042px 24px rgba(255, 255, 255, 0.3) , 1096px 1844px rgba(255, 255, 255, 0.3) , 1756px 920px rgba(255, 255, 255, 0.3) , 1756px 1564px rgba(255, 255, 255, 0.3) , 1790px 894px rgba(255, 255, 255, 0.3) , 1312px 332px rgba(255, 255, 255, 0.3) , 542px 1602px rgba(255, 255, 255, 0.3) , 191px 893px rgba(255, 255, 255, 0.3);
+  animation: animStar 100s linear infinite;
+}
+#stars2:after {
+  content: " ";
+  height: 1px;
+  left: -2px;
+  position: absolute;
+  top: 2px;
+  width: 5px;
+  background: transparent;
+  box-shadow: 737px 437px #FFF , 1404px 655px rgba(255, 255, 255, 0.3) , 1304px 18px rgba(255, 255, 255, 0.3) , 1825px 1192px rgba(255, 255, 255, 0.3) , 194px 754px rgba(255, 255, 255, 0.3) , 608px 1378px rgba(255, 255, 255, 0.3) , 1265px 1378px rgba(255, 255, 255, 0.3) , 1504px 1411px rgba(255, 255, 255, 0.3) , 952px 561px rgba(255, 255, 255, 0.3) , 847px 1980px rgba(255, 255, 255, 0.3) , 663px 1404px rgba(255, 255, 255, 0.3) , 358px 1647px rgba(255, 255, 255, 0.3) , 1042px 24px rgba(255, 255, 255, 0.3) , 1096px 1844px rgba(255, 255, 255, 0.3) , 1756px 920px rgba(255, 255, 255, 0.3) , 1756px 1564px rgba(255, 255, 255, 0.3) , 1790px 894px rgba(255, 255, 255, 0.3) , 1312px 332px rgba(255, 255, 255, 0.3) , 542px 1602px rgba(255, 255, 255, 0.3) , 191px 893px rgba(255, 255, 255, 0.3);
+}
+
+#stars3 {
+  height: 15px;
+  width: 3px;
+  filter: drop-shadow(0px 0px 3px white);
+  background: transparent;
+  box-shadow: 590px 466px #FFF , 1524px 873px rgba(255, 255, 255, 0.3) , 1175px 207px rgba(255, 255, 255, 0.3) , 1943px 1168px rgba(255, 255, 255, 0.3) , 1795px 1500px rgba(255, 255, 255, 0.3) , 1702px 609px rgba(255, 255, 255, 0.3) , 377px 283px rgba(255, 255, 255, 0.3) , 272px 1390px rgba(255, 255, 255, 0.3) , 549px 1567px rgba(255, 255, 255, 0.3) , 1770px 1074px rgba(255, 255, 255, 0.3);
+  animation: animStar 150s linear infinite;
+}
+#stars3:after {
+  content: " ";
+  height: 3px;
+  left: -6px;
+  position: absolute;
+  top: 6px;
+  width: 15px;
+  background: transparent;
+  box-shadow: 590px 466px #FFF , 1524px 873px rgba(255, 255, 255, 0.3) , 1175px 207px rgba(255, 255, 255, 0.3) , 1943px 1168px rgba(255, 255, 255, 0.3) , 1795px 1500px rgba(255, 255, 255, 0.3) , 1702px 609px rgba(255, 255, 255, 0.3) , 377px 283px rgba(255, 255, 255, 0.3) , 272px 1390px rgba(255, 255, 255, 0.3) , 549px 1567px rgba(255, 255, 255, 0.3) , 1770px 1074px rgba(255, 255, 255, 0.3);
+}
+
+@keyframes animStar {
+  from {
+    transform: translateY(0px);
+  }
+  to {
+    transform: translateY(-2000px);
+  }
+}
+
 
 .row {
   margin-left: 0;
@@ -253,13 +326,14 @@ i.fas {
 .loader{
 	text-align: center;
 	--loader-height: 2px;
-	--loader-bg: #516B05;
+	--loader-bg: #efcc11;
 	--loader-main: var(--plasma-yellow);
 	--loader-glow: var(--plasma-yellow);
 }
 
 .loader__logo{
-	max-width: 25%;
+	max-width: 80%;
+	mix-blend-mode: screen;
 	padding-bottom: 40px;
 }
 
@@ -294,13 +368,12 @@ i.fas {
 	fill: white;
 	border-radius: 90px;
 	border: none;
-	background-color: var(--deep-blue);
-	background: radial-gradient(70px at 50% 100%, var(--plasma-yellow) 0%, var(--plasma-green) 100%);
+	background: white;
 	box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-	color: white;
+	color: black;
 	&:hover{
-	background-color: #1c73f3;
-	 }
+            filter: invert(100%);
+	}
 }
 
 .fab_icon--capture{

@@ -5,6 +5,7 @@ const StyledCard = styled(Card).attrs(()=>({
   my: 0,
   p: 3
 }))`
+  background-color: #FAFAFA;
   border-radius: 4px;
   @media screen and (max-width: 480px){
     border-radius: 0;
