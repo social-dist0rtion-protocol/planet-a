@@ -859,7 +859,7 @@ export default class App extends Component {
       <ThemeProvider theme={theme}>
         <I18nextProvider i18n={i18n}>
           <div id="main" className="main">
-					<div id="stars" />
+          {/* UNCOMMENT AND ENABLE BEAUTIFUL STARS <div id="stars" />*/}
             <div className="inner-container">
               {extraHead}
               {networkOverlay}
