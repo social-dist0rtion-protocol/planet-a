@@ -39,17 +39,6 @@ export default class FinalizeHandshake extends React.Component {
       changeView("receipt");
       return;
     }
-
-    setReceipt(
-      // NOTE: Receipt needs to be of type "trade" for correct receipt to be
-      // displayed. "profit" and "emission" needs to be included.
-      Object.assign(finalReceipt, {
-        type: "trade",
-        profit: 0.2,
-        emission: 8
-      })
-    );
-    changeView("receipt");
   }
 
   componentDidMount() {

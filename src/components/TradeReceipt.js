@@ -138,7 +138,7 @@ export default class TradeReceipt extends Component {
 
   render() {
     const {
-      receipt: { from, to, profit, emission }
+      receipt: { myAddress, theirAddress, myGoellars, myCO2 }
     } = this.props;
     const {
       orientation,
@@ -155,7 +155,7 @@ export default class TradeReceipt extends Component {
         </h3>
         <Flex alignItems="center" justifyContent="space-between">
           <Box style={{ textAlign: "center" }} width={1 / 5}>
-            <Blockie address={from} config={{ size: blockieSize }} />
+            <Blockie address={myAddress} config={{ size: blockieSize }} />
             {/* EXXXTREME 90ies CSS skills incoming */}
             <br />
             You
@@ -168,7 +168,7 @@ export default class TradeReceipt extends Component {
                 size={ranNum(10)}
                 rotate={rotate}
               >
-                + ₲{profit}
+                + ₲{myGoellars}
               </Gain>
               <Gain
                 left={positions.emission.left}
@@ -176,13 +176,13 @@ export default class TradeReceipt extends Component {
                 size={ranNum(10)}
                 rotate={!rotate}
               >
-                + {emission}
+                + {myCO2}
                 Gt CO2
               </Gain>
             </Hero>
           </Box>
           <Box style={{ textAlign: "center" }} width={1 / 5}>
-            <Blockie address={to} config={{ size: blockieSize }} />
+            <Blockie address={theirAddress} config={{ size: blockieSize }} />
             {/* EXXXTREME 90ies CSS skills incoming */}
             <br />
             Your <img style={{ width: "2vw" }} src={newtag} /> buddy
@@ -192,18 +192,12 @@ export default class TradeReceipt extends Component {
           <Confetti active={explosion} config={config} />
         </Flex>
         <Sound
-          // url={profit > emission ? kaching : pollution}
-          // NOTE: We want to fuck with the brain of the players lol
-          url={kaching}
+          url={myGoellars > myCO2 ? kaching : pollution}
           playStatus={soundStatus}
           onFinishedPlaying={() =>
             this.setState({ soundStatus: Sound.status.STOPPED })
           }
         />
-        <p>
-          Animation is currently not optimized for FPS value but instead just
-          tries to render as fast as possible. Pls donate DAI to improve this!
-        </p>
         <p>
           <a href="https://gitcoin.co/grants/127/planet-a" target="_blank">
             To send us some money, click here!
