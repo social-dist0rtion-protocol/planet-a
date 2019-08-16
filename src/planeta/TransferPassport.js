@@ -93,6 +93,12 @@ export default class TransferPassport extends Component {
     }
   };
 
+  updateState = async (key, value) => {
+    this.setState({ [key]: value }, () => {
+      this.setState({ canSend: this.canSend() });
+    });
+  };
+
   render() {
     const { passports, account } = this.props;
     const { toAddress, canSend } = this.state;
