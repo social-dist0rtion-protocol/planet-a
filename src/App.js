@@ -47,6 +47,7 @@ import PlanetAMoreButtons from "./planeta/MoreButtons";
 import PlanetAStartHandshake from "./planeta/StartHandshake";
 import PlanetAFinalizeHandshake from "./planeta/FinalizeHandshake";
 import planetATransactionHandler from "./planeta/transactionHandler";
+import TransferPassport from "./planeta/TransferPassport";
 
 let LOADERIMAGE = burnerlogo
 let HARDCODEVIEW// = "loader"// = "receipt"
@@ -201,7 +202,7 @@ export default class App extends Component {
     return baseRate / counterRate * amount;
   }
 
-  parseAndCleanPath(path){
+  parseAndCleanMyAss(path){
     let parts = path.split(";")
     //console.log("PARTS",parts)
     let state = {}
@@ -755,6 +756,7 @@ export default class App extends Component {
     // This makes it easier to debug stuff on the console. Will keep it here for now.
     window.myweb3 = web3;
     window.myplasma = this.state.xdaiweb3;
+    // TODO: Rename to selectedPassport
     const defaultPassport = getDefaultPassport(account, passports);
 
     let networkOverlay = ""
@@ -939,7 +941,7 @@ export default class App extends Component {
 
                 const sendByScan = (
                   <SendByScan
-                    parseAndCleanPath={this.parseAndCleanPath.bind(this)}
+                    parseAndCleanMyAss={this.parseAndCleanMyAss.bind(this)}
                     returnToState={this.returnToState.bind(this)}
                     returnState={this.state.returnState}
                     mainStyle={mainStyle}
@@ -952,6 +954,34 @@ export default class App extends Component {
                 )
 
                 switch(view) {
+                  case 'planet_a_transfer_passport':
+                  return (
+                    <div>
+                      {this.state.scannerOpen ? sendByScan : null}
+                      <Card>
+                        <NavCard title="Send your passport" goBack={this.goBack.bind(this)}/>
+                        <TransferPassport
+                            changeAlert={this.changeAlert}
+                            changeView={this.changeView}
+                            goBack={this.goBack.bind(this)}
+                            web3={this.state.web3}
+                            plasma={this.state.xdaiweb3}
+                            metaAccount={this.state.metaAccount}
+                            passports={passports}
+                            defaultPassport={defaultPassport}
+                            account={account}
+                            openScanner={this.openScanner.bind(this)}
+                            scannerState={this.state.scannerState}
+                            setReceipt={this.setReceipt}
+                            tokenSendV2={tokenSendV2.bind(this)}
+                        />
+                      </Card>
+                      <Bottom
+                        text="Cancel"
+                        action={this.goBack.bind(this)}
+                      />
+                    </div>
+                  );
                   case 'planet_a_handshake':
                   return (
                     <div>
@@ -1142,7 +1172,7 @@ export default class App extends Component {
                         <NavCard title={i18n.t('send_to_address_title')} goBack={this.goBack.bind(this)}/>
                         {defaultBalanceDisplay}
                         <SendToAddress
-                          parseAndCleanPath={this.parseAndCleanPath.bind(this)}
+                          parseAndCleanMyAss={this.parseAndCleanMyAss.bind(this)}
                           openScanner={this.openScanner.bind(this)}
                           scannerState={this.state.scannerState}
                           buttonStyle={buttonStyle}

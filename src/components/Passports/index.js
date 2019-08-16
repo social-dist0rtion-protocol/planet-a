@@ -1,3 +1,4 @@
+// @format
 import React, { Component } from "react";
 import PassportView from "./PassportView";
 import { Flex } from "rimble-ui";
@@ -25,7 +26,7 @@ export function getDefaultPassport(account, passports) {
       : null;
   }
   if (!passport && passports && passports.length === 1) {
-    passport = passports[0]
+    passport = passports[0];
   }
   return passport;
 }
@@ -105,6 +106,12 @@ export class Passports extends Component {
         ) : (
           <Loading>Processing passports data...</Loading>
         )}
+        {list && list.length === 0 ? (
+          <Loading>
+            You don't have a passport yet. Scan a paper wallet to receive one or
+            come to the support desk to receive help!
+          </Loading>
+        ) : null}
       </Container>
     );
   }

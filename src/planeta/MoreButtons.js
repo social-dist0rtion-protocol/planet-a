@@ -6,6 +6,7 @@ export default ({ changeView, defaultPassport, changeAlert }) => {
   const passportAlert = () =>
     changeAlert({ type: "warning", message: "Select a passport" });
   return (
+    <div>
     <Flex mx={-2}>
       <Box flex={1} m={2}>
         <PrimaryButton
@@ -45,5 +46,25 @@ export default ({ changeView, defaultPassport, changeAlert }) => {
         </PrimaryButton>
       </Box>
     </Flex>
+    <Flex mx={-2}>
+      <Box flex={1} m={2}>
+        <PrimaryButton
+          fullWidth
+          onClick={() => {
+            if (defaultPassport) {
+              changeView("planet_a_transfer_passport");
+            } else {
+              passportAlert();
+            }
+          }}
+        >
+          <Flex alignItems="center">
+            <Icon name="Forward" mr={2} />
+            Transfer Passport
+          </Flex>
+        </PrimaryButton>
+      </Box>
+    </Flex>
+    </div>
   );
 };
