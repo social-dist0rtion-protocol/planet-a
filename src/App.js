@@ -1164,7 +1164,7 @@ export default class App extends Component {
                             web3={this.state.web3}
                             xdaiweb3={this.state.xdaiweb3}
                             xdaiContract={this.state.xdaiContract}
-                            daiTokenAddr={CONFIG.SIDECHAIN.DAI}
+                            daiTokenAddr={CONFIG.SIDECHAIN.DAI_ADDRESS}
                             //amount={false}
                             privateKey={this.state.withdrawFromPrivateKey}
                             goBack={this.goBack.bind(this)}
