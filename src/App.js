@@ -29,6 +29,7 @@ import Footer from './components/Footer';
 import Loader from './components/Loader';
 import planetaLogo from './assets/planeta-logo.gif';
 import BurnWallet from './components/BurnWallet'
+import Exchange from './components/Exchange'
 import Bottom from './components/Bottom';
 import Card from './components/StyledCard';
 import { Passports, getDefaultPassport } from './components/Passports';
@@ -1420,6 +1421,47 @@ export default class App extends Component {
                     </div>
                   );
 
+                  case 'exchange':
+                  return (
+                    <div>
+                      {this.state.scannerOpen ? sendByScan : null}
+                      <Card>
+                        <NavCard title={i18n.t('exchange_title')} goBack={this.goBack.bind(this)}/>
+                        <Exchange
+                          eth={eth}
+                          dai={dai}
+                          xdai={pdai}
+                          ethprice={this.state.ethprice}
+                          ethBalance={this.state.ethBalance}
+                          daiBalance={this.state.daiBalance}
+                          xdaiBalance={this.state.xdaiBalance}
+                          mainnetweb3={this.state.mainnetweb3}
+                          xdaiweb3={this.state.xdaiweb3}
+                          daiContract={this.state.daiContract}
+                          xdaiContract={this.state.xdaiContract}
+                          bridgeContract={this.state.bridgeContract}
+                          isVendor={this.state.isVendor}
+                          isAdmin={this.state.isAdmin}
+                          buttonStyle={buttonStyle}
+                          changeAlert={this.changeAlert}
+                          changeView={this.changeView}
+                          setGwei={this.setGwei}
+                          network={this.state.network}
+                          tx={this.state.tx}
+                          pTx={this.state.pTx}
+                          web3={this.state.web3}
+                          send={this.state.send}
+                          nativeSend={this.state.nativeSend}
+                          address={account}
+                          balance={balance}
+                          goBack={this.goBack.bind(this)}
+                          currencyDisplay={this.currencyDisplay}
+                          convertCurrency={this.convertCurrency}
+                          tokenSendV2={tokenSendV2.bind(this)}
+                        />
+                      </Card>
+                    </div>
+                  );
                   case 'loader':
                   return (
                     <div>
