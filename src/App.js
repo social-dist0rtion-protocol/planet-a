@@ -43,7 +43,6 @@ import base64url from 'base64url';
 import EthCrypto from 'eth-crypto';
 import { getStoredValue, storeValues, eraseStoredValue } from "./services/localStorage";
 import { fetchAllPassports } from "./services/plasma";
-import PlanetAMoreButtons from "./planeta/MoreButtons";
 import PlanetAStartHandshake from "./planeta/StartHandshake";
 import PlanetAFinalizeHandshake from "./planeta/FinalizeHandshake";
 import planetATransactionHandler from "./planeta/transactionHandler";
@@ -861,8 +860,7 @@ export default class App extends Component {
           <div id="main" className="main">
           {/* UNCOMMENT AND ENABLE BEAUTIFUL STARS <div id="stars" />*/}
             <div className="inner-container">
-              {extraHead}
-              {networkOverlay}
+
               {web3_setup}
 
               <div>
@@ -985,8 +983,7 @@ export default class App extends Component {
                             web3={this.state.web3}
                             plasma={this.state.xdaiweb3}
                             metaAccount={this.state.metaAccount}
-                            passports={passports}
-                            defaultPassport={defaultPassport}
+                            passport={defaultPassport}
                             account={account}
                             openScanner={this.openScanner.bind(this)}
                             scannerState={this.state.scannerState}
@@ -1052,14 +1049,15 @@ export default class App extends Component {
                       {this.state.scannerOpen ? sendByScan : null}
                       <GlobalCO2 value={this.state.globalCO2} />
                       <Card>
-                        <Passports list={passports} account={account}/>
-                        <GoellarsBalance balance={this.state.xdaiBalance}/>
-
-                        <PlanetAMoreButtons
+                        <Passports
+                          list={passports}
+                          account={account}
                           changeView={this.changeView}
-                          defaultPassport={defaultPassport}
                           changeAlert={this.changeAlert}
                         />
+                        <GoellarsBalance balance={this.state.xdaiBalance}/>
+
+
                         <MainCard
                           buttonStyle={buttonStyle}
                           address={account}
