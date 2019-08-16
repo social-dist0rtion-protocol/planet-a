@@ -79,9 +79,14 @@ export class Passports extends Component {
 
   render() {
     const { currentPassport } = this.state;
-    const { list } = this.props;
+    const { list, account, changeView, changeAlert } = this.props;
     return currentPassport ? (
-      <PassportView close={this.closePassport} passport={currentPassport} />
+      <PassportView
+        close={this.closePassport}
+        passport={currentPassport}
+        changeView={changeView}
+        changeAlert={changeAlert}
+      />
     ) : (
       <Container>
         {list ? (
@@ -94,6 +99,7 @@ export class Passports extends Component {
                 key={id}
                 shortName={shortName}
                 onClick={() => this.selectPassport(id)}
+                single={list.length === 1}
               >
                 <Flex flexDirection="column" justifyContent="flex-start">
                   <PassportCountry>{shortName}</PassportCountry>
