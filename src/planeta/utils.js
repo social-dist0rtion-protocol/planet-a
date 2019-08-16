@@ -133,12 +133,11 @@ export async function finalizeHandshake(
   const theirPassport = unpackReceipt(receipt).value;
   const wait = timeLeft(passport.output.value, theirPassport);
   if (wait > 0) {
-    const e = new Error(
-      `Wait ${Math.round(
-        wait / 1000
-      )} seconds before handshaking with the same player.`
+    const period = Math.round(wait / 1000);
+    const errorMessage = new Error(
+      `Wait ${period} seconds before handshaking with the same player.`
     );
-    throw e;
+    throw errorMessage;
   }
 
   try {
