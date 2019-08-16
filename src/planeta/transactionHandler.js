@@ -2,6 +2,7 @@ import { Tx, Util } from "leap-core";
 import JSBI from "jsbi";
 import { BigInt } from "jsbi-utils";
 import getConfig from "../config";
+import { addHandshake } from "./cooldown";
 
 const CONFIG = getConfig();
 const GOELLAR_COLOR = 3;
@@ -121,5 +122,6 @@ export default async function process(plasma, passports, tx) {
   result.txHash = tx.hash;
   console.log("Handshake values", result);
   console.log(`${CONFIG.SIDECHAIN.EXPLORER.URL}tx/${result.txHash}`);
+  addHandshake(result.myPassport, result.theirPassport);
   return result;
 }

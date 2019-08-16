@@ -49,7 +49,7 @@ import PlanetAFinalizeHandshake from "./planeta/FinalizeHandshake";
 import planetATransactionHandler from "./planeta/transactionHandler";
 import TransferPassport from "./planeta/TransferPassport";
 import GlobalCO2 from "./planeta/GlobalCO2";
-
+https://www.lastampa.it/cronaca/2019/08/16/news/ha-le-doglie-prende-il-bus-per-l-ospedale-senza-biglietto-il-controllore-la-fa-scendere-1.37352981
 let LOADERIMAGE = planetaLogo;
 let HARDCODEVIEW// = "loader"// = "receipt"
 

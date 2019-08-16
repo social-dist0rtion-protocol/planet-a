@@ -12,6 +12,7 @@ import Web3 from "web3";
 import { bytesToHex, padLeft } from "web3-utils";
 import { ecsign, hashPersonalMessage } from "ethereumjs-util";
 import { PlasmaContract } from "./plasma-utils";
+import { timeLeft } from "./cooldown";
 
 const EarthContractData = require("./contracts/Earth.json");
 EarthContractData.code = Buffer.from(
@@ -129,6 +130,15 @@ export async function finalizeHandshake(
 
   let txHash, finalReceipt;
   let rounds = 50;
+  const theirPassport = unpackReceipt(receipt).value;
+  const wait = timeLeft(passport.output.value, theirPassport);
+  if (wait > 0) {
+    const period = Math.round(wait / 1000);
+    const errorMessage = new Error(
+      `Wait ${period} seconds before handshaking with the same player.`
+    );
+    throw errorMessage;
+  }
 
   try {
     txHash = await _finalizeHandshake(
