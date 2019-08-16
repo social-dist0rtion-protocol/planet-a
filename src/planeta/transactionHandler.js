@@ -75,6 +75,7 @@ function parseHandshake(myAddress, inputs, outputs) {
     myAddress,
     myDefect: isDefect(myAddress, myDataBefore, myDataAfter),
     myGoellars: getGoellars(myAddress),
+    myCO2: getCO2(myDataBefore, myDataAfter),
     myPassport,
     theirAddress,
     theirCO2: getCO2(theirDataBefore, theirDataAfter),

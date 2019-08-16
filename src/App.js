@@ -558,7 +558,32 @@ export default class App extends Component {
         //console.log("TX",transactions[t])
         let tx = await web3.eth.getTransaction(transactions[t])
         if (this.state.passports && this.state.passports.length > 0) {
-          planetATransactionHandler(this.state.xdaiweb3, this.state.passports, tx);
+          planetATransactionHandler(
+            this.state.xdaiweb3,
+            this.state.passports,
+            tx
+          ).then(tx => {
+            if(tx) {
+              // NOTE: If we haven't seen any handshakes yet, we simply init
+              // as an empty list
+              const handshakes = JSON.parse(getStoredValue("handshakes", this.state.account)) || [];
+
+              handshakes.push(tx);
+              storeValues({
+                handshakes: JSON.stringify(handshakes)
+              }, this.state.account);
+
+              tx = Object.assign(tx, {type:"trade"});
+              // TODO: What do we do if there's two handshakes but the user
+              // shut their phone down before we reach this point?
+              this.setReceipt(tx);
+              this.changeView("receipt");
+            }
+          }).catch(err => {
+            // NOTE: We can't do much here but log the error to the console.
+            console.log(err);
+          });
+
         }
         // NOTE: NST information is encoded in a transaction's values. Hence if
         // we don't filter out NST transactions, they'll show up as huge
