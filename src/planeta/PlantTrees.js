@@ -24,15 +24,27 @@ export default class PlantTrees extends React.Component {
       setReceipt,
       changeView
     } = this.props;
+    let result;
 
     console.log("lock CO₂ for", amount, "Göllars");
-    const result = await plantTrees(
-      plasma,
-      defaultPassport,
-      amount,
-      metaAccount.privateKey
-    );
-    console.log(result);
+    try {
+      result = await plantTrees(
+        plasma,
+        defaultPassport,
+        amount,
+        metaAccount.privateKey
+      );
+    } catch (err) {
+      setReceipt({ type: "error", message: err.toString() });
+      changeView("receipt");
+      return;
+    }
+    setReceipt({
+      type: "plant",
+      txHash: result,
+      amount
+    });
+    changeView("receipt");
   }
 
   render() {
@@ -44,7 +56,11 @@ export default class PlantTrees extends React.Component {
         <div>
           <Heading.h5>Plant some trees</Heading.h5>
           <Text fontSize={1}>Remove CO₂ from the atmosphere.</Text>
-          <BorderButton mt={2} fullWidth onClick={() => this.handlePlantTrees(1)}>
+          <BorderButton
+            mt={2}
+            fullWidth
+            onClick={() => this.handlePlantTrees(1)}
+          >
             Invest 1 Göllars to remove 1 Gigaton of CO₂
           </BorderButton>
           <hr />

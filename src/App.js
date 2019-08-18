@@ -1012,6 +1012,7 @@ export default class App extends Component {
                             web3={this.state.web3}
                             plasma={this.state.xdaiweb3}
                             metaAccount={this.state.metaAccount}
+                            setReceipt={this.setReceipt}
                             defaultPassport={defaultPassport}
                         />
                       </Card>
