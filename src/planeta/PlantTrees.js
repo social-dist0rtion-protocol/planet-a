@@ -17,7 +17,7 @@ export default class PlantTrees extends React.Component {
 
   async componentDidMount() {
     const maxCO2 = await maxCO2Available(this.props.plasma);
-    this.setState({maxCO2});
+    this.setState({ maxCO2 });
   }
 
   async handlePlantTrees(amount) {
@@ -46,16 +46,19 @@ export default class PlantTrees extends React.Component {
     setReceipt({
       type: "plant",
       txHash: result,
-      amount
+      amount: amount * 16
     });
     changeView("receipt");
   }
 
   render() {
-    const { balance, changeAlert, goBack} = this.props;
+    const { balance, changeAlert, goBack } = this.props;
     const { receipt, maxCO2 } = this.state;
     console.log(maxCO2);
 
+    // WARNING: handlePlantTrees accepts only integers, so no 0.1 Göllars or
+    // stuff like this. I had some troubles using BigInt with a floating point
+    // number.
     return (
       <Flex flexDirection="column">
         <Heading.h5>Plant some trees</Heading.h5>
@@ -64,30 +67,8 @@ export default class PlantTrees extends React.Component {
           <BorderButton
             mt={2}
             fullWidth
-            disabled={balance < 1 || maxCO2 < 1.6}
+            disabled={balance < 1 || maxCO2 < 16}
             onClick={() => this.handlePlantTrees(1)}
-          >
-            Invest 0.1 Göllars to remove 1.6 Gigatons of CO₂
-          </BorderButton>
-          <hr />
-        </div>
-        <div>
-          <BorderButton
-            mt={2}
-            fullWidth
-            disabled={balance < 5 || maxCO2 < 8}
-            onClick={() => this.handlePlantTrees(5)}
-          >
-            Invest 0.5 Göllars to remove 8 Gigatons of CO₂
-          </BorderButton>
-          <hr />
-        </div>
-        <div>
-          <BorderButton
-            mt={2}
-            fullWidth
-            disabled={balance < 10 || maxCO2 < 16}
-            onClick={() => this.handlePlantTrees(10)}
           >
             Invest 1 Göllar to remove 16 Gigatons of CO₂
           </BorderButton>
@@ -97,8 +78,19 @@ export default class PlantTrees extends React.Component {
           <BorderButton
             mt={2}
             fullWidth
+            disabled={balance < 3 || maxCO2 < 3 * 16}
+            onClick={() => this.handlePlantTrees(1)}
+          >
+            Invest 3 Göllar to remove {3 * 16} Gigatons of CO₂
+          </BorderButton>
+          <hr />
+        </div>
+        <div>
+          <BorderButton
+            mt={2}
+            fullWidth
             disabled={balance < 20 || maxCO2 < 80}
-            onClick={() => this.handlePlantTrees(20)}
+            onClick={() => this.handlePlantTrees(5)}
           >
             Invest 5 Göllars to remove 80 Gigatons of CO₂
           </BorderButton>

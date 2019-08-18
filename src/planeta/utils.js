@@ -21,7 +21,7 @@ EarthContractData.code = Buffer.from(
   "hex"
 );
 
-const CO2_PER_GOELLAR = 16;
+const CO2_PER_GOELLAR = 8;
 const AirContractData = require("./contracts/Air.json");
 AirContractData.code = Buffer.from(
   AirContractData.code.replace("0x", ""),
@@ -278,9 +278,11 @@ export async function maxCO2Available(plasma) {
     ).map(Number))
 }
 
+window.BN = BN;
 // 1 Göllar locks 16Gt of CO₂
 export async function plantTrees(plasma, passport, goellars, privateKey) {
   const amount = new BN(CO2_PER_GOELLAR).mul(new BN(goellars));
+    console.log('asd222', amount.toString());
   goellars = toWei(goellars.toString());
   const address = passport.unspent.output.address;
   let goellarOutputs;
@@ -323,6 +325,7 @@ export async function plantTrees(plasma, passport, goellars, privateKey) {
       gt(amount.toString())
     )
   );
+  console.log(airLeapOutput, airCO2Output, amount.toString());
 
   /*
   console.log(
