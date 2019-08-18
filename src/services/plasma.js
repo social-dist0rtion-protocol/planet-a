@@ -14,6 +14,30 @@ const COUNTRIES = {
     address: "0x181fc600915c35F4e44d41f9203A7c389b4A7189",
     fullName: "United States of Baloons",
     shortName: "USB"
+  },
+  POLLUTISTAN: {
+    color: 49160,
+    address: "0xC8836f83D18caCcAB1B7C3C440f74Ea002ac2520",
+    fullName: "Pollutistan",
+    shortName: "PA1"
+  },
+  NEW_SMOGLAND : {
+    color: 49161,
+    address: "0x34b0eB39c31580Ed9D0E21E257A6D574C4011D4f",
+    fullName: "New Smogland",
+    shortName: "PA2"
+  },
+  DEMOCRATIC_REPUBLIC_OF_DEFORESTATION: {
+    color: 49162,
+    address: "0x03B493E1576Af494524a0664D745D83e7Cadd6dF",
+    fullName: "Democratic Republic of Deforestation",
+    shortName: "PA3"
+  },
+  CATACLYSMIA: {
+    color: 49163,
+    address: "0xad3e53a349c4F6515cFd8bC05D0efc4EECdD32d4",
+    fullName: "Cataclysmia",
+    shortName: "PA4"
   }
 };
 
