@@ -44,6 +44,7 @@ import base64url from 'base64url';
 import EthCrypto from 'eth-crypto';
 import { getStoredValue, storeValues, eraseStoredValue } from "./services/localStorage";
 import { fetchAllPassports } from "./services/plasma";
+import PlanetAPlantTrees from "./planeta/PlantTrees";
 import PlanetAStartHandshake from "./planeta/StartHandshake";
 import PlanetAFinalizeHandshake from "./planeta/FinalizeHandshake";
 import planetATransactionHandler from "./planeta/transactionHandler";
@@ -990,6 +991,28 @@ export default class App extends Component {
                             scannerState={this.state.scannerState}
                             setReceipt={this.setReceipt}
                             tokenSendV2={tokenSendV2.bind(this)}
+                        />
+                      </Card>
+                      <Bottom
+                        text="Cancel"
+                        action={this.goBack.bind(this)}
+                      />
+                    </div>
+                  );
+                  case 'planet_a_plant_trees':
+                  return (
+                    <div>
+                      {this.state.scannerOpen ? sendByScan : null}
+                      <Card>
+                        <NavCard title="Love the environment" goBack={this.goBack.bind(this)}/>
+                        <PlanetAPlantTrees
+                            changeAlert={this.changeAlert}
+                            changeView={this.changeView}
+                            goBack={this.goBack.bind(this)}
+                            web3={this.state.web3}
+                            plasma={this.state.xdaiweb3}
+                            metaAccount={this.state.metaAccount}
+                            defaultPassport={defaultPassport}
                         />
                       </Card>
                       <Bottom

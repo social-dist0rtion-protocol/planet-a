@@ -9,9 +9,10 @@
 */
 
 import Web3 from "web3";
-import { bytesToHex, padLeft } from "web3-utils";
+import { bytesToHex, padLeft, toWei } from "web3-utils";
 import { ecsign, hashPersonalMessage } from "ethereumjs-util";
-import { PlasmaContract } from "./plasma-utils";
+import { PlasmaContract, consolidateUTXOs } from "./plasma-utils";
+import { Tx } from "leap-core";
 import { timeLeft } from "./cooldown";
 
 const EarthContractData = require("./contracts/Earth.json");
@@ -27,7 +28,6 @@ AirContractData.code = Buffer.from(
   "hex"
 );
 const BN = Web3.utils.BN;
-const factor18 = new BN("1000000000000000000");
 
 const USA_ADDR = "0x3378420181474D3aad9579907995011D6a545E3D";
 const USB_ADDR = "0x181fc600915c35F4e44d41f9203A7c389b4A7189";
@@ -41,7 +41,7 @@ const CO2_COLOR = 2;
 const GOELLARS_COLOR = 3;
 
 export const gt = lower => o =>
-  new BN(o.output.value).gt(new BN(lower).mul(factor18));
+  new BN(o.output.value).gt(new BN(toWei(lower.toString())));
 // Select a random element from a list, see below for usage
 export const choice = arr => arr[Math.floor(Math.random() * arr.length)];
 
@@ -212,28 +212,41 @@ async function _finalizeHandshake(
 
   // TODO: remove filters.
   const earthLeapOutput = choice(
-    await plasma.getUnspent(EarthContractData.address, LEAP_COLOR)
+    (await plasma.getUnspent(EarthContractData.address, LEAP_COLOR)).filter(
+      gt(0.0001)
+    )
   );
   const earthCO2Output = choice(
     (await plasma.getUnspent(EarthContractData.address, CO2_COLOR)).filter(
-      gt("20")
+      gt(20)
     )
   );
   const earthGoellarsOutput = choice(
     (await plasma.getUnspent(EarthContractData.address, GOELLARS_COLOR)).filter(
-      gt("1")
+      gt(1)
     )
   );
 
   const inputs = [
-    { prevout: earthLeapOutput.outpoint, script: EarthContractData.code },
-    { prevout: earthCO2Output.outpoint },
-    { prevout: earthGoellarsOutput.outpoint },
-    { prevout: theirPassportOutput.outpoint },
-    { prevout: passport.outpoint }
+    {
+      prevout: earthLeapOutput.outpoint,
+      script: EarthContractData.code,
+      address: earthLeapOutput.output.address
+    },
+    {
+      address: earthCO2Output.output.address,
+      prevout: earthCO2Output.outpoint
+    },
+    {
+      address: earthGoellarsOutput.output.address,
+      prevout: earthGoellarsOutput.outpoint
+    },
+    {
+      address: theirPassportOutput.output.address,
+      prevout: theirPassportOutput.outpoint
+    },
+    { address: passport.output.address, prevout: passport.outpoint }
   ];
-
-  const toSign = [null, null, null, null, privateKey];
 
   if (strategy === "defect") {
     const myGoellarsOutput = (await plasma.getUnspent(
@@ -241,10 +254,9 @@ async function _finalizeHandshake(
       GOELLARS_COLOR
     ))[0];
     inputs.push({ prevout: myGoellarsOutput.outpoint });
-    toSign.push(privateKey);
   }
 
-  console.log("finalize", strategy, inputs, toSign);
+  console.log("finalize", strategy, inputs, privateKey);
 
   const earthContract = new PlasmaContract(plasma, EarthContractData.abi);
   return await earthContract.methods
@@ -256,35 +268,79 @@ async function _finalizeHandshake(
       COUNTRY_TO_ADDR[theirPassport.color],
       COUNTRY_TO_ADDR[passport.output.color]
     )
-    .send(inputs, toSign);
+    .send(inputs, privateKey);
 }
 
 // 1 Göllar locks 16Gt of CO₂
-export async function lockCO2(plasma, passport, goellars, privateKey) {
-  const amount = new BN(CO2_PER_GOELLAR).mul(new BN(goellars));
+export async function plantTrees(plasma, passport, goellars, privateKey) {
+  goellars = new BN(toWei(goellars.toString()));
+  const address = passport.unspent.output.address;
+  const amount = new BN(CO2_PER_GOELLAR).mul(goellars);
   console.log("amount", amount.toString());
+  let goellarOutputs;
+
+  while (true) {
+    const goellarUnspent = await plasma.getUnspent(address, GOELLARS_COLOR);
+    goellarOutputs = Tx.calcInputs(
+      goellarUnspent,
+      address,
+      goellars.toString(),
+      GOELLARS_COLOR
+    );
+    // lockCO2 has 3 inputs already in use, so we have up to 12 inputs we
+    // can use for Goellars
+    console.log("mmm", goellarOutputs);
+    if (goellarOutputs.length <= 12) {
+      break;
+    }
+    console.log("consolidating");
+    // Since we are doing an extra transaction to consolidate,
+    // we use all available inputs.
+    await consolidateUTXOs(
+      goellarUnspent.splice(0, 15),
+      plasma,
+      null,
+      privateKey
+    );
+  }
+
+  console.log("outputs", goellarOutputs);
+  const goellarOutpoints = goellarOutputs.map(({ prevout }) => ({
+    prevout,
+    address
+  }));
 
   const airContract = new PlasmaContract(plasma, AirContractData.abi);
   const airLeapOutput = choice(
     await plasma.getUnspent(AirContractData.address, LEAP_COLOR)
-  )[0];
+  );
   const airCO2Output = choice(
     (await plasma.getUnspent(AirContractData.address, CO2_COLOR)).filter(
-      gt("20")
+      gt("40")
     )
   );
-  const goellarsOutput = (await plasma.getUnspent(
-    passport.unspent.output.address,
-    GOELLARS_COLOR
-  ))[0];
 
-  console.log("air", airLeapOutput);
-  console.log("air", airCO2Output);
-  console.log("goe", goellarsOutput);
+  const inputs = [
+    {
+      address: airLeapOutput.output.address,
+      prevout: airLeapOutput.outpoint,
+      script: AirContractData.code
+    },
+    {
+      address: passport.unspent.output.address,
+      prevout: passport.unspent.outpoint
+    },
+    { address: airCO2Output.output.address, prevout: airCO2Output.outpoint },
+    ...goellarOutpoints
+  ];
+
+  console.log("airleap", airLeapOutput);
+  console.log("airco2", airCO2Output);
+  console.log("goe", goellarOutpoints);
 
   console.log(
     "params",
-    goellars,
+    goellars.toString(),
     COUNTRY_TO_ADDR[passport.unspent.output.color],
     passport.unspent.output.value,
     EarthContractData.address
@@ -292,18 +348,10 @@ export async function lockCO2(plasma, passport, goellars, privateKey) {
 
   return await airContract.methods
     .plantTree(
-      goellars,
+      goellars.toString(),
       COUNTRY_TO_ADDR[passport.unspent.output.color],
       passport.unspent.output.value,
       EarthContractData.address
     )
-    .send(
-      [
-        { prevout: airLeapOutput.outpoint, script: AirContractData.code },
-        { prevout: passport.unspent.outpoint },
-        { prevout: airCO2Output.outpoint },
-        { prevout: goellarsOutput.outpoint }
-      ],
-      privateKey
-    );
+    .send(inputs, privateKey);
 }

@@ -35,14 +35,11 @@ export default ({ changeView, passport, changeAlert }) => {
           ml={2}
           fullWidth
           onClick={() => {
-            changeAlert({ type: "warning", message: "Not yet implemented" });
-            /*
-          if (passport) {
-            changeView("planet_a_plant_trees");
-          } else {
-            passportAlert();
-          }
-          */
+            if (passport) {
+              changeView("planet_a_plant_trees");
+            } else {
+              passportAlert();
+            }
           }}
         >
           <Flex mx={-2} alignItems="center">
