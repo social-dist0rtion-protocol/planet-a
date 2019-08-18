@@ -18,6 +18,7 @@ export default class Receipt extends Component {
       // NOTE: Alberto told me that Earth can run out of Goellars or CO2 so
       // we should annoy the shit out of him when an error occurs
       console.log("display an error");
+      return <div>Error {this.props.receipt.message}</div>
     } else if (type === "plant") {
       return <PlantReceipt {...this.props} />;
     } else if (type === "passport_transfer") {

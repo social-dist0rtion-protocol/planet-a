@@ -6,13 +6,18 @@ import { startHandshake } from "./utils";
 import HandshakeButtons from "./HandshakeButtons";
 import { getStoredValue } from "../services/localStorage";
 import { BorderButton } from "../components/Buttons";
-import { plantTrees } from "./utils";
+import { plantTrees, maxCO2Available } from "./utils";
 
 export default class PlantTrees extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
     this.handlePlantTrees = this.handlePlantTrees.bind(this);
+  }
+
+  async componentDidMount() {
+    const maxCO2 = await maxCO2Available(this.props.plasma);
+    this.setState({maxCO2});
   }
 
   async handlePlantTrees(amount) {
@@ -25,8 +30,7 @@ export default class PlantTrees extends React.Component {
       changeView
     } = this.props;
     let result;
-
-    console.log("lock CO₂ for", amount, "Göllars");
+    changeView("loader");
     try {
       result = await plantTrees(
         plasma,
@@ -48,20 +52,55 @@ export default class PlantTrees extends React.Component {
   }
 
   render() {
-    const { changeAlert, goBack } = this.props;
-    const { receipt } = this.state;
+    const { balance, changeAlert, goBack} = this.props;
+    const { receipt, maxCO2 } = this.state;
+    console.log(maxCO2);
 
     return (
       <Flex flexDirection="column">
+        <Heading.h5>Plant some trees</Heading.h5>
+        <Text fontSize={1}>Remove CO₂ from the atmosphere.</Text>
         <div>
-          <Heading.h5>Plant some trees</Heading.h5>
-          <Text fontSize={1}>Remove CO₂ from the atmosphere.</Text>
           <BorderButton
             mt={2}
             fullWidth
+            disabled={balance < 1 || maxCO2 < 1.6}
             onClick={() => this.handlePlantTrees(1)}
           >
-            Invest 1 Göllars to remove 1 Gigaton of CO₂
+            Invest 0.1 Göllars to remove 1.6 Gigatons of CO₂
+          </BorderButton>
+          <hr />
+        </div>
+        <div>
+          <BorderButton
+            mt={2}
+            fullWidth
+            disabled={balance < 5 || maxCO2 < 8}
+            onClick={() => this.handlePlantTrees(5)}
+          >
+            Invest 0.5 Göllars to remove 8 Gigatons of CO₂
+          </BorderButton>
+          <hr />
+        </div>
+        <div>
+          <BorderButton
+            mt={2}
+            fullWidth
+            disabled={balance < 10 || maxCO2 < 16}
+            onClick={() => this.handlePlantTrees(10)}
+          >
+            Invest 1 Göllar to remove 16 Gigatons of CO₂
+          </BorderButton>
+          <hr />
+        </div>
+        <div>
+          <BorderButton
+            mt={2}
+            fullWidth
+            disabled={balance < 20 || maxCO2 < 80}
+            onClick={() => this.handlePlantTrees(20)}
+          >
+            Invest 5 Göllars to remove 80 Gigatons of CO₂
           </BorderButton>
           <hr />
         </div>

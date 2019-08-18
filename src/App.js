@@ -1006,6 +1006,7 @@ export default class App extends Component {
                       <Card>
                         <NavCard title="Love the environment" goBack={this.goBack.bind(this)}/>
                         <PlanetAPlantTrees
+                            balance={balance}
                             changeAlert={this.changeAlert}
                             changeView={this.changeView}
                             goBack={this.goBack.bind(this)}

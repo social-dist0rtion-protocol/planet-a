@@ -9,7 +9,7 @@
 */
 
 import Web3 from "web3";
-import { bytesToHex, padLeft, toWei } from "web3-utils";
+import { bytesToHex, padLeft, fromWei, toWei } from "web3-utils";
 import { ecsign, hashPersonalMessage } from "ethereumjs-util";
 import { PlasmaContract, consolidateUTXOs } from "./plasma-utils";
 import { Tx } from "leap-core";
@@ -160,6 +160,7 @@ export async function finalizeHandshake(
   } catch (err) {
     // ignore for now
     console.log("error finalizing handshake", err);
+    throw err;
     // NOTE: Leap's node currently doesn't implement the "newBlockHeaders"
     // JSON-RPC call. When a transaction is rejected by a node,
     // sendSignedTransaction hence throws an error. We simply ignore this
@@ -271,12 +272,17 @@ async function _finalizeHandshake(
     .send(inputs, privateKey);
 }
 
+export async function maxCO2Available(plasma) {
+    return Math.max(...(await plasma.getUnspent(AirContractData.address, CO2_COLOR)).map(
+      ({ output: { value } }) => fromWei(value)
+    ).map(Number))
+}
+
 // 1 Göllar locks 16Gt of CO₂
 export async function plantTrees(plasma, passport, goellars, privateKey) {
-  goellars = new BN(toWei(goellars.toString()));
+  const amount = new BN(CO2_PER_GOELLAR).mul(new BN(goellars));
+  goellars = toWei(goellars.toString());
   const address = passport.unspent.output.address;
-  const amount = new BN(CO2_PER_GOELLAR).mul(goellars);
-  console.log("amount", amount.toString());
   let goellarOutputs;
 
   while (true) {
@@ -284,12 +290,11 @@ export async function plantTrees(plasma, passport, goellars, privateKey) {
     goellarOutputs = Tx.calcInputs(
       goellarUnspent,
       address,
-      goellars.toString(),
+      goellars,
       GOELLARS_COLOR
     );
     // lockCO2 has 3 inputs already in use, so we have up to 12 inputs we
     // can use for Goellars
-    console.log("mmm", goellarOutputs);
     if (goellarOutputs.length <= 12) {
       break;
     }
@@ -304,7 +309,6 @@ export async function plantTrees(plasma, passport, goellars, privateKey) {
     );
   }
 
-  console.log("outputs", goellarOutputs);
   const goellarOutpoints = goellarOutputs.map(({ prevout }) => ({
     prevout,
     address
@@ -316,9 +320,21 @@ export async function plantTrees(plasma, passport, goellars, privateKey) {
   );
   const airCO2Output = choice(
     (await plasma.getUnspent(AirContractData.address, CO2_COLOR)).filter(
-      gt("40")
+      gt(amount.toString())
     )
   );
+
+  /*
+  console.log(
+    (await plasma.getUnspent(AirContractData.address, CO2_COLOR)).map(
+      ({ output: { value } }) => fromWei(value)
+    )
+  );
+  */
+
+  if (!(airLeapOutput && airCO2Output)) {
+    throw new Error("Not enough clouds in the air");
+  }
 
   const inputs = [
     {
@@ -333,18 +349,6 @@ export async function plantTrees(plasma, passport, goellars, privateKey) {
     { address: airCO2Output.output.address, prevout: airCO2Output.outpoint },
     ...goellarOutpoints
   ];
-
-  console.log("airleap", airLeapOutput);
-  console.log("airco2", airCO2Output);
-  console.log("goe", goellarOutpoints);
-
-  console.log(
-    "params",
-    goellars.toString(),
-    COUNTRY_TO_ADDR[passport.unspent.output.color],
-    passport.unspent.output.value,
-    EarthContractData.address
-  );
 
   return await airContract.methods
     .plantTree(
