@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex, Text, Icon } from "rimble-ui";
-import styled from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 import passportPattern from '../../assets/papyrus.png';
 
 export const Container = styled(Flex).attrs(() => ({
@@ -15,6 +15,21 @@ export const Container = styled(Flex).attrs(() => ({
 }))`
   transition: transform 0.5s ease-in-out;
   cursor: pointer;
+`;
+
+const jump = keyframes`
+  5% {
+    transform: scale3d(1.05, 1.1, 1);
+  }
+  8% {
+    transform: scale3d(1.05, 1.05, 1);
+  }
+  20% {
+    transform: scale3d(0.95, 0.95, 1);
+  }
+  0%, 30%, 100% {
+    transform: scale3d(1, 1, 1);
+  }
 `;
 
 export const PassportCover = styled(Flex).attrs(({ shortName }) => ({
@@ -33,13 +48,16 @@ export const PassportCover = styled(Flex).attrs(({ shortName }) => ({
   border: 2px solid #333;
 
   @supports (background-blend-mode: color-burn) {
+    background-repeat: no-repeat;
     background-blend-mode: color-burn;
     /*  Background made by Olivia Harmon, 
      *  https://www.toptal.com/designers/subtlepatterns/papyrus-pattern/
      */
     background-image: url(${passportPattern});
   }
-`;
+  
+  animation: ${({ single }) => single ? css`${jump} 2.5s infinite linear` : 'none'};
+  `;
 
 export const PassportLabel = styled(Text).attrs(() => ({
   color: "white",

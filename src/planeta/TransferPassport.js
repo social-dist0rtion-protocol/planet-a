@@ -1,6 +1,5 @@
 // @format
 import React, { Component } from "react";
-import { Passports } from "../components/Passports";
 import { Box, Field, Input } from "rimble-ui";
 import { PrimaryButton, BorderButton } from "../components/Buttons";
 import { eraseStoredValue } from "../services/localStorage";
@@ -48,7 +47,7 @@ export default class TransferPassport extends Component {
       changeAlert,
       setReceipt,
       changeView,
-      defaultPassport
+      passport
     } = this.props;
 
     if (this.state.canSend) {
@@ -62,8 +61,8 @@ export default class TransferPassport extends Component {
         receipt = await tokenSendV2(
           account,
           toAddress,
-          defaultPassport.id,
-          defaultPassport.color,
+          passport.id,
+          passport.color,
           plasma,
           web3,
           metaAccount && metaAccount.privateKey
@@ -83,8 +82,8 @@ export default class TransferPassport extends Component {
         to: toAddress,
         from: receipt.from,
         type: "passport_transfer",
-        passport: defaultPassport,
-        result: receipt
+        result: receipt,
+        passport
       });
       changeView("receipt");
       // NOTE: It's important to erase the currentPassport value in localStorage
@@ -100,24 +99,18 @@ export default class TransferPassport extends Component {
   };
 
   render() {
-    const { passports, account } = this.props;
     const { toAddress, canSend } = this.state;
     return (
       <div>
-        <Passports list={passports} account={account} />
-
         <Box mb={4}>
           <Field mb={3} label="To Address">
             <Input
               width={1}
               type="text"
               placeholder="0x..."
-              value={toAddress}
-              ref={input => {
-                this.addressInput = input;
-              }}
-              onChange={event =>
-                this.updateState("toAddress", event.target.value)
+              value={ toAddress }
+              ref={input => { this.addressInput = input }}
+              onChange={event => this.setState({ toAddress: event.target.value})
               }
             />
           </Field>

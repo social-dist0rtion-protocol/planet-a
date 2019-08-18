@@ -1,6 +1,7 @@
 import React from "react";
-import { Flex, Text } from "rimble-ui";
+import Card, { Flex, Text } from "rimble-ui";
 import { IconClose } from "./styles";
+import PlanetAMoreButtons from "../../planeta/MoreButtons";
 
 const Param = ({ label, value, color }) => {
   const locale = localStorage.getItem('i18nextLng')
@@ -34,6 +35,7 @@ const Citizen = props => {
 
 const PassportView = props => {
   const { passport, close } = props;
+  const { changeView, changeAlert } = props;
   const { data } = passport;
   const country = passport.country.fullName;
   if (!passport) {
@@ -54,13 +56,17 @@ const PassportView = props => {
       <Flex
         pb={3}
         mb={3}
-        borderBottom={"1px solid #DFDFDF"}
         width="100%"
         justifyContent="space-around"
       >
         <Param label={"CO₂ Produced (Gigaton)"} value={emitted / 1000} color="emitted" />
         <Param label={"CO₂ Locked (Gigaton)"} value={locked / 1000} color="locked" />
       </Flex>
+      <PlanetAMoreButtons
+        changeView={changeView}
+        passport={passport}
+        changeAlert={changeAlert}
+      />
     </Flex>
   );
 };
