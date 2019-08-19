@@ -248,7 +248,7 @@ export default class TradeReceipt extends Component {
                 rotate={!rotate}
               >
                 + {myCO2}
-                Gt CO2
+                Mt CO₂
               </Gain>
             </Hero>
           </Box>
