@@ -14,43 +14,11 @@ export async function consolidateUTXOs(utxos, plasma, web3, privateKey) {
   const signedTx = privateKey
     ? await transaction.signAll(privateKey)
     : await transaction.signWeb3(web3);
-  const rawTx = signedTx.hex();
 
   try {
-    await new Promise((resolve, reject) => {
-      plasma.currentProvider.send(
-        {
-          jsonrpc: "2.0",
-          id: 42,
-          method: "eth_sendRawTransaction",
-          params: [rawTx]
-        },
-        (err, res) => {
-          if (err) {
-            return reject(err);
-          }
-          resolve(res);
-        }
-      );
-    });
+    return await plasma.eth.sendSignedTransaction(signedTx.hex())
   } catch (e) {
-    throw new Error("Consolidate failed.");
-  }
-
-  let receipt;
-  let rounds = 5;
-
-  while (rounds--) {
-    let res = await plasma.eth.getTransaction(signedTx.hash());
-    if (res && res.blockHash) {
-      receipt = res;
-      break;
-    }
-    await new Promise(resolve => setTimeout(() => resolve(), 1000));
-  }
-
-  if (!receipt) {
-    throw new Error("Consolidate UTXOs wasn't included into a block.");
+    throw new Error("Cannot send transaction.");
   }
 }
 
@@ -105,24 +73,15 @@ class PlasmaMethodCall {
     transaction.outputs = outputs.map(o => new Output(o));
 
     transaction = signMatching(transaction, privateKey);
-    await new Promise((resolve, reject) => {
-      this.plasma.currentProvider.send(
-        {
-          jsonrpc: "2.0",
-          id: 42,
-          method: "eth_sendRawTransaction",
-          params: [transaction.hex()]
-        },
-        (err, response) => {
-          console.log("sendRawTransaction", err, response);
-          if (err) {
-            return reject(err);
-          }
-          return resolve(response.result);
-        }
-      );
-    });
-    return transaction.hash();
+
+    const signedTx = signMatching(transaction, privateKey);
+    try {
+      const ret = await this.plasma.eth.sendSignedTransaction(signedTx.hex())
+      console.log("return", ret);
+      return ret;
+    } catch (e) {
+      throw new Error("Cannot send transaction.");
+    }
   }
 }
 
