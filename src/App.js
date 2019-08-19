@@ -40,6 +40,8 @@ import getConfig from "./config";
 //https://github.com/lesnitsky/react-native-webview-messaging/blob/v1/examples/react-native/web/index.js
 import RNMessageChannel from 'react-native-webview-messaging';
 import eth from './assets/ethereum.png';
+import goerli from './assets/goerli.png';
+import dai from './assets/dai.png';
 
 import base64url from 'base64url';
 import EthCrypto from 'eth-crypto';
@@ -1430,7 +1432,7 @@ export default class App extends Component {
                         <Exchange
                           eth={eth}
                           dai={dai}
-                          xdai={pdai}
+                          xdai={goerli}
                           ethprice={this.state.ethprice}
                           ethBalance={this.state.ethBalance}
                           daiBalance={this.state.daiBalance}
