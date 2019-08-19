@@ -218,7 +218,7 @@ export default class SendToAddress extends React.Component {
           } else {
             this.props.goBack();
             window.history.pushState({},"", "/");
-            let receiptObj = {to:toAddress,from:err.request.account,amount:parseFloat(amount),message:err.error.message,result:err}
+            let receiptObj = {to:toAddress,from:err.request.account,amount:parseFloat(amount),message:err.error.message,type:"error",result:err}
 
             if(this.state.params){
               receiptObj.params = this.state.params

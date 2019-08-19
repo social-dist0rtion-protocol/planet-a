@@ -4,6 +4,7 @@ import TxReceipt from "./TxReceipt";
 import TradeReceipt from "./TradeReceipt";
 import PlantReceipt from "../planeta/PlantReceipt";
 import PassportReceipt from "./PassportReceipt";
+import ErrorReceipt from "./ErrorReceipt";
 
 export default class Receipt extends Component {
   render() {
@@ -14,11 +15,7 @@ export default class Receipt extends Component {
     if (type === "trade") {
       return <TradeReceipt {...this.props} />;
     } else if (type === "error") {
-      // TODO: Display funny error
-      // NOTE: Alberto told me that Earth can run out of Goellars or CO2 so
-      // we should annoy the shit out of him when an error occurs
-      console.log("display an error");
-      return <div>Error {this.props.receipt.message}</div>
+      return <ErrorReceipt {...this.props} />;
     } else if (type === "plant") {
       return <PlantReceipt {...this.props} />;
     } else if (type === "passport_transfer") {
