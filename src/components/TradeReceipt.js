@@ -43,8 +43,8 @@ const Hero = styled.div`
     height: ${props => props.size * 30 + "vw"};
     width: ${props => props.size * 30 + "vw"};
     @media screen and (min-width: 666px) {
-      height: ${props => props.size * 20 + "vw"};
-      width: ${props => props.size * 20 + "vw"};
+      height: 20vw;
+      width: 20vw;
     }
   }
 `;
@@ -73,7 +73,7 @@ const ranPlay = () => {
 };
 
 const Gain = styled.div`
-  position: relative;
+  position: absolute;
   white-space: nowrap;
   top: ${props => props.top + "%"};
   left: ${props => props.left + "%"};
@@ -234,16 +234,16 @@ export default class TradeReceipt extends Component {
             <Hero orientation={orientation} size={1.7}>
               <img src={jif} />
               <Gain
-                left={positions.profit.left}
-                top={positions.profit.top}
+                left={ranNum(marginLimit)}
+                top={ranNum(marginLimit)}
                 size={ranNum(10)}
                 rotate={rotate}
               >
                 + ₲{myGoellars}
               </Gain>
               <Gain
-                left={positions.emission.left}
-                top={positions.emission.top}
+                left={ranNum(marginLimit)}
+                top={ranNum(marginLimit)}
                 size={ranNum(10)}
                 rotate={!rotate}
               >
@@ -258,9 +258,6 @@ export default class TradeReceipt extends Component {
             <br />
             Your <img style={{ width: "2vw" }} src={newtag} /> buddy
           </Box>
-        </Flex>
-        <Flex alignItems="center" justifyContent="center">
-          <Confetti active={explosion} config={config} />
         </Flex>
         {sound}
       </div>
