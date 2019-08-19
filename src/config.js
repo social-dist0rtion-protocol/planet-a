@@ -12,7 +12,7 @@ const configs = [
     SIDECHAIN: {
       NAME: "Leap Testnet",
       RPC: "https://testnet-node.leapdao.org",
-      DAI_ADDRESS: "0x1f89Fb2199220a350287B162B9D0A330A2D2eFAD",
+      DAI_ADDRESS: "0x9Cfae72c21103033C8fd8A8C6Fb02a0CcFE63B5e",
       DAI_SYMBOL: "₲",
       DAI_SHORTNAME: "GÖLR",
       MARKET_MAKER:
@@ -59,7 +59,7 @@ const configs = [
     SIDECHAIN: {
       NAME: "Leap Testnet",
       RPC: "https://testnet-node.leapdao.org",
-      DAI_ADDRESS: "0x1f89Fb2199220a350287B162B9D0A330A2D2eFAD",
+      DAI_ADDRESS: "0x9Cfae72c21103033C8fd8A8C6Fb02a0CcFE63B5e",
       DAI_SYMBOL: "₲",
       DAI_SHORTNAME: "GÖLR",
       MARKET_MAKER:

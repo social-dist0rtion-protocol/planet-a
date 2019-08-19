@@ -29,6 +29,7 @@ AirContractData.code = Buffer.from(
 );
 const BN = Web3.utils.BN;
 
+// TODO: All of this should go into config.js
 const USA_ADDR = "0x3378420181474D3aad9579907995011D6a545E3D";
 const USB_ADDR = "0x181fc600915c35F4e44d41f9203A7c389b4A7189";
 
@@ -38,7 +39,7 @@ const COUNTRY_TO_ADDR = {
 };
 const LEAP_COLOR = 0;
 const CO2_COLOR = 2;
-const GOELLARS_COLOR = 3;
+const GOELLARS_COLOR = 6;
 
 export const gte = lower => o =>
   new BN(o.output.value).gte(new BN(toWei(lower.toString())));
