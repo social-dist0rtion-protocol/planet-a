@@ -345,7 +345,7 @@ export default class App extends Component {
     try{
       daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),CONFIG.ROOTCHAIN.DAI_ADDRESS)
       bridgeContract = new mainnetweb3.eth.Contract(require("./contracts/Bridge.abi.js"), CONFIG.SIDECHAIN.BRIDGE_ADDRESS)
-      göllarsContract = new mainnetweb3.eth.Contract(require("./planeta/contracts/Goellars.json").abi, CONFIG.SIDECHAIN.DAI_ADDRESS)
+      göllarsContract = new mainnetweb3.eth.Contract(require("./planeta/contracts/Goellars.json").abi, CONFIG.SIDECHAIN.GÖLLARS_ADDRESS)
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
@@ -365,7 +365,7 @@ export default class App extends Component {
       // values as `0.00`. Ideally they should just be initialized as `0`.
       let ethBalance = 0.00
       let daiBalance = 0.00
-      let xdaiBalance = 0.00
+      let göllarsBalance = 0.00
       let göllarsCollateral = 0.00;
       let globalCO2 = 0;
 
@@ -384,9 +384,9 @@ export default class App extends Component {
           this.connectToRPC()
         }
       }
-      if(this.state.xdaiweb3 && this.state.xdaiContract && this.state.göllarsContract && this.state.CO2Contract){
-        xdaiBalance = await this.state.xdaiContract.methods.balanceOf(this.state.account).call();
-        xdaiBalance = this.state.xdaiweb3.utils.fromWei(""+xdaiBalance,'ether')
+      if(this.state.xdaiweb3 && this.state.göllarsPlasmaContract && this.state.göllarsContract && this.state.CO2Contract){
+        göllarsBalance = await this.state.göllarsPlasmaContract.methods.balanceOf(this.state.account).call();
+        göllarsBalance = this.state.xdaiweb3.utils.fromWei(""+göllarsBalance,'ether')
         göllarsCollateral = await this.state.göllarsContract.methods.daiBalance(this.state.account).call();
         göllarsCollateral = this.state.mainnetweb3.utils.fromWei(""+göllarsCollateral,'ether')
         globalCO2 = await this.state.CO2Contract.methods.balanceOf(
@@ -407,8 +407,8 @@ export default class App extends Component {
         passports,
         ethBalance,
         daiBalance,
-        xdaiBalance,
-        balance:xdaiBalance,
+        göllarsBalance,
+        balance:göllarsBalance,
         hasUpdateOnce:true,
         göllarsCollateral
       }, () => document.querySelector(".root").style.backgroundPosition = "0 0");
@@ -458,13 +458,13 @@ export default class App extends Component {
         console.log("Checking on pk import...")
         console.log("this.state.balance",this.state.balance)
         console.log("this.state.metaAccount",this.state.metaAccount)
-        console.log("this.state.xdaiBalance",this.state.xdaiBalance)
+        console.log("this.state.göllarsBalance",this.state.göllarsBalance)
         console.log("this.state.daiBalance",this.state.daiBalance)
         console.log("this.state.isVendor",this.state.isVendor)
 
 
-        console.log(!this.state.metaAccount || this.state.balance>=0.05 || this.state.xdaiBalance>=0.05 || this.state.ethBalance>=0.0005 || this.state.daiBalance>=0.05 || (this.state.isVendor&&this.state.isVendor.isAllowed))
-        if(!this.state.metaAccount || this.state.balance>=0.05 || this.state.xdaiBalance>=0.05 || this.state.ethBalance>=0.0005 || this.state.daiBalance>=0.05 || (this.state.isVendor&&this.state.isVendor.isAllowed)){
+        console.log(!this.state.metaAccount || this.state.balance>=0.05 || this.state.göllarsBalance>=0.05 || this.state.ethBalance>=0.0005 || this.state.daiBalance>=0.05 || (this.state.isVendor&&this.state.isVendor.isAllowed))
+        if(!this.state.metaAccount || this.state.balance>=0.05 || this.state.göllarsBalance>=0.05 || this.state.ethBalance>=0.0005 || this.state.daiBalance>=0.05 || (this.state.isVendor&&this.state.isVendor.isAllowed)){
           this.setState({possibleNewPrivateKey:false,withdrawFromPrivateKey:this.state.possibleNewPrivateKey},()=>{
             this.changeView('withdraw_from_private')
           })
@@ -837,7 +837,7 @@ export default class App extends Component {
       )
     }
 
-    let totalBalance = parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice) + parseFloat(this.state.daiBalance) + parseFloat(this.state.xdaiBalance)
+    let totalBalance = parseFloat(this.state.ethBalance) * parseFloat(this.state.ethprice) + parseFloat(this.state.daiBalance) + parseFloat(this.state.göllarsBalance)
     let header = (
       <div style={{height:50}}>
       </div>
@@ -879,7 +879,7 @@ export default class App extends Component {
                 //console.log("VIEW:",view)
 
                 let defaultBalanceDisplay = (
-                  <GoellarsBalance balance={this.state.xdaiBalance}/>
+                  <GoellarsBalance balance={this.state.göllarsBalance}/>
                 )
 
                 // NOTE: This view is to show specific historical transactions.
@@ -1086,7 +1086,7 @@ export default class App extends Component {
                           changeView={this.changeView}
                           changeAlert={this.changeAlert}
                         />
-                        <GoellarsBalance balance={this.state.xdaiBalance}/>
+                        <GoellarsBalance balance={this.state.göllarsBalance}/>
 
 
                         <MainCard
@@ -1192,7 +1192,8 @@ export default class App extends Component {
                             address={account}
                             web3={this.state.web3}
                             xdaiweb3={this.state.xdaiweb3}
-                            daiTokenAddr={CONFIG.SIDECHAIN.DAI_ADDRESS}
+                            daiTokenAddr={CONFIG.SIDECHAIN.GÖLLARS_ADDRESS}
+                            göllarsPlasmaContract={this.state.göllarsPlasmaContract}
                             //amount={false}
                             privateKey={this.state.withdrawFromPrivateKey}
                             goBack={this.goBack.bind(this)}
@@ -1476,17 +1477,18 @@ export default class App extends Component {
               onUpdate={async (state) => {
                 //console.log("DAPPARATUS UPDATE",state)
                 if (state.xdaiweb3) {
-                  let xdaiContract, CO2Contract;
+                  let göllarsPlasmaContract, CO2Contract;
                   // NOTE: We're using the StableCoin ABI here as it features
                   // a balanceOf method specification, which is all we need to
                   // use the CO2 contract for.
                   const ERC20ABI = require("./contracts/StableCoin.abi.js");
                   const CO2Address = require("./planeta/contracts/CO2.address.js");
+                  const göllarsContract = require("./planeta/contracts/Goellars.json").abi;
 
                   try {
-                    xdaiContract = new state.xdaiweb3.eth.Contract(
-                      ERC20ABI,
-                      CONFIG.SIDECHAIN.DAI_ADDRESS
+                    göllarsPlasmaContract = new state.xdaiweb3.eth.Contract(
+                      göllarsContract,
+                      CONFIG.SIDECHAIN.GÖLLARS_ADDRESS
                     )
                   } catch(err) {
                     console.log("Error loading PDAI contract");
@@ -1499,7 +1501,7 @@ export default class App extends Component {
                   } catch(err) {
                     console.log("Error loading CO2Contract contract");
                   }
-                  this.setState({xdaiContract, CO2Contract});
+                  this.setState({göllarsPlasmaContract, CO2Contract});
                 }
                 if (state.web3Provider) {
                   state.web3 = new Web3(state.web3Provider)
@@ -1598,7 +1600,7 @@ async function tokenSend(to, value, gasLimit, txData, cb) {
   }
 
   value = xdaiweb3.utils.toWei(""+value, "ether")
-  const color = await xdaiweb3.getColor(CONFIG.SIDECHAIN.DAI_ADDRESS);
+  const color = await xdaiweb3.getColor(CONFIG.SIDECHAIN.GÖLLARS_ADDRESS);
   try {
     const receipt = await tokenSendV2(
       account,
