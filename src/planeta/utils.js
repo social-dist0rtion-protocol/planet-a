@@ -226,8 +226,6 @@ async function _finalizeHandshake(
     inputs.push({ prevout: myGoellarsOutput.outpoint });
   }
 
-  console.log("finalize", strategy, inputs, privateKey);
-
   const earthContract = new PlasmaContract(plasma, EarthContractData.abi);
   return await earthContract.methods
     .trade(

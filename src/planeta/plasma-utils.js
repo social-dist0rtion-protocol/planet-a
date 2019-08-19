@@ -16,7 +16,7 @@ export async function consolidateUTXOs(utxos, plasma, web3, privateKey) {
     : await transaction.signWeb3(web3);
 
   try {
-    return await plasma.eth.sendSignedTransaction(signedTx.hex())
+    return await plasma.eth.sendSignedTransaction(signedTx.hex());
   } catch (e) {
     throw new Error("Cannot send transaction.");
   }
@@ -76,9 +76,7 @@ class PlasmaMethodCall {
 
     const signedTx = signMatching(transaction, privateKey);
     try {
-      const ret = await this.plasma.eth.sendSignedTransaction(signedTx.hex())
-      console.log("return", ret);
-      return ret;
+      return await this.plasma.eth.sendSignedTransaction(signedTx.hex());
     } catch (e) {
       throw new Error("Cannot send transaction.");
     }
