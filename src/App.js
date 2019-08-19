@@ -1004,7 +1004,7 @@ export default class App extends Component {
                     <div>
                       {this.state.scannerOpen ? sendByScan : null}
                       <Card>
-                        <NavCard title="Love the environment" goBack={this.goBack.bind(this)}/>
+                        <NavCard title="🏞 Love the environment 🏞" goBack={this.goBack.bind(this)}/>
                         <PlanetAPlantTrees
                             balance={balance}
                             changeAlert={this.changeAlert}

@@ -21,7 +21,7 @@ EarthContractData.code = Buffer.from(
   "hex"
 );
 
-const CO2_PER_GOELLAR = 8;
+export const CO2_PER_GOELLAR = 16;
 const AirContractData = require("./contracts/Air.json");
 AirContractData.code = Buffer.from(
   AirContractData.code.replace("0x", ""),
@@ -40,8 +40,8 @@ const LEAP_COLOR = 0;
 const CO2_COLOR = 2;
 const GOELLARS_COLOR = 3;
 
-export const gt = lower => o =>
-  new BN(o.output.value).gt(new BN(toWei(lower.toString())));
+export const gte = lower => o =>
+  new BN(o.output.value).gte(new BN(toWei(lower.toString())));
 // Select a random element from a list, see below for usage
 export const choice = arr => arr[Math.floor(Math.random() * arr.length)];
 
@@ -214,17 +214,17 @@ async function _finalizeHandshake(
   // TODO: remove filters.
   const earthLeapOutput = choice(
     (await plasma.getUnspent(EarthContractData.address, LEAP_COLOR)).filter(
-      gt(0.0001)
+      gte(0.0001)
     )
   );
   const earthCO2Output = choice(
     (await plasma.getUnspent(EarthContractData.address, CO2_COLOR)).filter(
-      gt(20)
+      gte(20)
     )
   );
   const earthGoellarsOutput = choice(
     (await plasma.getUnspent(EarthContractData.address, GOELLARS_COLOR)).filter(
-      gt(1)
+      gte(1)
     )
   );
 
@@ -278,11 +278,9 @@ export async function maxCO2Available(plasma) {
     ).map(Number))
 }
 
-window.BN = BN;
 // 1 Göllar locks 16Gt of CO₂
 export async function plantTrees(plasma, passport, goellars, privateKey) {
   const amount = new BN(CO2_PER_GOELLAR).mul(new BN(goellars));
-    console.log('asd222', amount.toString());
   goellars = toWei(goellars.toString());
   const address = passport.unspent.output.address;
   let goellarOutputs;
@@ -322,7 +320,7 @@ export async function plantTrees(plasma, passport, goellars, privateKey) {
   );
   const airCO2Output = choice(
     (await plasma.getUnspent(AirContractData.address, CO2_COLOR)).filter(
-      gt(amount.toString())
+      gte(amount.toString())
     )
   );
   console.log(airLeapOutput, airCO2Output, amount.toString());
