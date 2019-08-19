@@ -150,9 +150,9 @@ export default class Exchange extends React.Component {
     this.setState({ethBalance:mainnetweb3.utils.fromWei(await mainnetweb3.eth.getBalance(this.state.daiAddress),'ether') })
     if(xdaiweb3){
       //console.log("xdaiweb3:",xdaiweb3,"xdaiAddress",xdaiAddress)
-      let xdaiBalance = await xdaiweb3.eth.getBalance(this.state.daiAddress)
-      //console.log("!! xdaiBalance:",xdaiBalance)
-      this.setState({xdaiBalance:xdaiweb3.utils.fromWei(xdaiBalance,'ether')})
+      let göllarsBalance = await xdaiweb3.eth.getBalance(this.state.daiAddress)
+      //console.log("!! göllarsBalance:",göllarsBalance)
+      this.setState({göllarsBalance:xdaiweb3.utils.fromWei(göllarsBalance,'ether')})
     }*/
     if(this.state.daiToXdaiMode==="withdrawing"){
       let txAge = Date.now() - this.state.loaderBarStartTime
@@ -178,8 +178,8 @@ export default class Exchange extends React.Component {
       let txAge = Date.now() - this.state.loaderBarStartTime
       let percentDone = Math.min(100,((txAge * 100) / CONFIG.SIDECHAIN.TIME_ESTIMATES.DEPOSIT)+5)
 
-      //console.log("watching for ",this.state.xdaiBalance,"to be ",this.state.xdaiBalanceShouldBe-0.0005)
-      if(this.props.xdaiBalance>=(this.state.xdaiBalanceShouldBe-0.0005)){
+      //console.log("watching for ",this.state.göllarsBalance,"to be ",this.state.göllarsBalanceShouldBe-0.0005)
+      if(this.props.göllarsBalance>=(this.state.göllarsBalanceShouldBe-0.0005)){
         this.setState({loaderBarPercent:100,loaderBarStatusText: i18n.t('exchange.funds_bridged'),loaderBarColor:"#62f54a"})
         setTimeout(()=>{
           this.setState({
@@ -240,7 +240,7 @@ export default class Exchange extends React.Component {
       let txAge = Date.now() - this.state.loaderBarStartTime
       let percentDone = Math.min(100,((txAge * 100) / CONFIG.ROOTCHAIN.TIME_ESTIMATES.SEND)+5)
 
-      //console.log("watching for ",this.state.xdaiBalance,"to be ",this.state.xdaiBalanceShouldBe-0.0005)
+      //console.log("watching for ",this.state.göllarsBalance,"to be ",this.state.göllarsBalanceShouldBe-0.0005)
       if(this.props.daiBalance>=(this.state.daiBalanceShouldBe-0.0005)){
         this.setState({loaderBarPercent:100,loaderBarStatusText: i18n.t('exchange.funds_bridged'),loaderBarColor:"#62f54a"})
         setTimeout(()=>{
@@ -387,7 +387,7 @@ export default class Exchange extends React.Component {
     }
 
     if(gwei !== undefined){
-      const color = await this.state.xdaiweb3.getColor(this.props.xdaiContract._address);
+      const color = await this.state.xdaiweb3.getColor(this.props.göllarsContract._address);
       if(this.state.mainnetMetaAccount){
         //send funds using metaaccount on mainnet
         const amountWei = this.state.mainnetweb3.utils.toWei(""+amount,"ether")
@@ -396,7 +396,7 @@ export default class Exchange extends React.Component {
         if (this.props.network === "LeapTestnet" || this.props.network === "LeapMainnet") {
           const allowance = await this.props.daiContract.methods.allowance(
             this.state.daiAddress,
-            this.props.bridgeContract._address
+            this.props.göllarsContract._address
           ).call({from: this.state.daiAddress})
 
           // Only trigger allowance dialogue when amount is more than allowance
@@ -530,8 +530,8 @@ export default class Exchange extends React.Component {
     }
   }
   canSendXdai() {
-    console.log("canSendXdai",this.state.xdaiSendToAddress,this.state.xdaiSendToAddress.length,parseFloat(this.state.xdaiSendAmount),parseFloat(this.props.xdaiBalance))
-    return (this.state.xdaiSendToAddress && this.state.xdaiSendToAddress.length === 42 && parseFloat(this.state.xdaiSendAmount)>0 && parseFloat(this.state.xdaiSendAmount) <= parseFloat(this.props.xdaiBalance))
+    console.log("canSendXdai",this.state.xdaiSendToAddress,this.state.xdaiSendToAddress.length,parseFloat(this.state.xdaiSendAmount),parseFloat(this.props.göllarsBalance))
+    return (this.state.xdaiSendToAddress && this.state.xdaiSendToAddress.length === 42 && parseFloat(this.state.xdaiSendAmount)>0 && parseFloat(this.state.xdaiSendAmount) <= parseFloat(this.props.göllarsBalance))
   }
 
   async sendEth(){
@@ -814,8 +814,8 @@ export default class Exchange extends React.Component {
 
                 this.setState({
                   daiToXdaiMode:"depositing",
-                  xdaiBalanceAtStart:this.props.xdaiBalance,
-                  xdaiBalanceShouldBe:parseFloat(this.props.xdaiBalance)+parseFloat(this.state.daiToXdaiAmount),
+                  xdaiBalanceAtStart:this.props.göllarsBalance,
+                  xdaiBalanceShouldBe:parseFloat(this.props.göllarsBalance)+parseFloat(this.state.daiToXdaiAmount),
                   loaderBarColor:"#3efff8",
                   loaderBarStatusText: i18n.t('exchange.calculate_gas_price'),
                   loaderBarPercent:0,
@@ -825,11 +825,8 @@ export default class Exchange extends React.Component {
                   }
                 })
 
-                const displayCurrency = getStoredValue("currency", address);
-                let amount = convertCurrency(daiToXdaiAmount, `USD/${displayCurrency}`);
-                // TODO: depositDai doesn't use the destination parameter anymore
-                // Remove it.
-                this.depositDai(null, amount, "Sending funds to bridge...", () => {
+                // NOTE: 1 DAI = 1 USD = 1 Göllar
+                this.depositDai(null, daiToXdaiAmount, "Sending funds to bridge...", () => {
                   this.setState({
                     daiToXdaiAmount:"",
                     loaderBarColor:"#4ab3f5",
@@ -1662,7 +1659,7 @@ export default class Exchange extends React.Component {
               <OutlineButton
                 ml={2}
                 onClick={() => {
-                  this.setState({xdaiSendAmount: Math.floor((this.props.xdaiBalance-0.01)*100)/100 },()=>{
+                  this.setState({xdaiSendAmount: Math.floor((this.props.göllarsBalance-0.01)*100)/100 },()=>{
                     this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
                   })
                 }}
@@ -1705,7 +1702,7 @@ export default class Exchange extends React.Component {
             </div>
             <div className="col-4 p-1" style={{marginTop:8,whiteSpace:"nowrap"}}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-                  {this.props.currencyDisplay(this.props.xdaiBalance)}
+                  {this.props.currencyDisplay(this.props.göllarsBalance)}
                 </Scaler>
             </div>
             <div className="col-3 p-1" style={{marginTop:8}}>
