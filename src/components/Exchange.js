@@ -103,7 +103,7 @@ export default class Exchange extends React.Component {
       const pendingValue = rsp.reduce((sum, v) => add(sum, bi(v.value)), bi(0));
       const pendingTokens = parseInt(String(divide(pendingValue, bi(10 ** 16)))) / 100;
       if (pendingTokens > 0) {
-        const pendingMsg = "Pending exits of " + pendingTokens.toString() + " PDAI";
+        const pendingMsg = "Pending exits of " + pendingTokens.toString() + " Goellars";
         this.setState({
           pendingMsg
         });
@@ -118,6 +118,7 @@ export default class Exchange extends React.Component {
     });
   };
   async componentDidMount(){
+    console.log(this.props);
     this.setState({ canSendDai: this.canSendDai(), canSendEth: this.canSendEth(), canSendXdai: this.canSendXdai() })
     this.interval = setInterval(this.poll.bind(this),1500)
     setTimeout(this.poll.bind(this),250)
@@ -878,12 +879,8 @@ export default class Exchange extends React.Component {
                 const { convertCurrency } = this.props;
                 let { daiToXdaiAmount } = this.state;
 
-                // First we convert from the current display value and
-                const displayCurrency = getStoredValue("currency", address);
-                let amount = convertCurrency(daiToXdaiAmount, `USD/${displayCurrency}`);
-
-                // Then we convert that value to wei
-                amount = bi(amount * 10 ** 18);
+                // NOTE: 1 Goellar = 1 USD
+                const amount = bi(daiToXdaiAmount * 10 ** 18);
 
                  this.setState({
                   // NOTE: Technically we're not "depositing" but that was the
@@ -925,7 +922,6 @@ export default class Exchange extends React.Component {
                     `${CONFIG.SIDECHAIN.MARKET_MAKER}/sellExit`,
                     signer,
                   ).then(rsp => {
-                    console.log(rsp);
                     this.updatePendingExits(this.state.daiAddress, this.state.xdaiweb3);
                     this.setState({
                       loaderBarStatusText: i18n.t('exchange.fast_exit_patience'),
@@ -940,11 +936,13 @@ export default class Exchange extends React.Component {
                       type: "success",
                       message: i18n.t("exchange.fast_exit_patience")
                     });
+                  }).then(() => {
+                    // SHIT
                   }).catch(err => {
                     console.log(err);
                     this.props.changeAlert({
                       type: 'warning',
-                      message: 'Failed to exit PDAI'
+                      message: 'Failed to exit Goellars'
                     });
                   });
                 }else{
@@ -989,7 +987,7 @@ export default class Exchange extends React.Component {
             this.setState({daiToXdaiMode:"deposit"})
           }} >
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              DAI to PDAI
+              DAI to Goellars
             </Scaler>
           </PrimaryButton>
 
@@ -997,13 +995,13 @@ export default class Exchange extends React.Component {
             icon={'ArrowDownward'}
             disabled={
               buttonsDisabled ||
-              parseFloat(this.props.xdaiBalance) === 0
+              parseFloat(this.props.göllarsCollateral) === 0
             }
             onClick={()=>{
             this.setState({daiToXdaiMode:"withdraw"})
           }} >
             <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
-              PDAI to DAI
+              Goellars to DAI
             </Scaler>
           </PrimaryButton>
         </Flex>
@@ -1703,7 +1701,7 @@ export default class Exchange extends React.Component {
               <img style={logoStyle} src={this.props.xdai} alt="" />
             </div>
             <div className="col-3 p-1" style={{marginTop:8}}>
-              PDAI
+              Goellars
             </div>
             <div className="col-4 p-1" style={{marginTop:8,whiteSpace:"nowrap"}}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>

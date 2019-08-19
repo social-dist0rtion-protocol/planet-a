@@ -344,14 +344,15 @@ export default class App extends Component {
   }
   connectToRPC(){
     const mainnetweb3 = new Web3(CONFIG.ROOTCHAIN.RPC);
-    let daiContract, bridgeContract;
+    let daiContract, bridgeContract, göllarsContract;
     try{
       daiContract = new mainnetweb3.eth.Contract(require("./contracts/StableCoin.abi.js"),CONFIG.ROOTCHAIN.DAI_ADDRESS)
       bridgeContract = new mainnetweb3.eth.Contract(require("./contracts/Bridge.abi.js"), CONFIG.SIDECHAIN.BRIDGE_ADDRESS)
+      göllarsContract = new mainnetweb3.eth.Contract(require("./planeta/contracts/Goellars.json").abi, CONFIG.SIDECHAIN.DAI_ADDRESS)
     }catch(e){
       console.log("ERROR LOADING DAI Stablecoin Contract",e)
     }
-    this.setState({mainnetweb3,daiContract,bridgeContract})
+    this.setState({mainnetweb3,daiContract,bridgeContract,göllarsContract})
   }
 
   componentWillUnmount() {
@@ -368,6 +369,7 @@ export default class App extends Component {
       let ethBalance = 0.00
       let daiBalance = 0.00
       let xdaiBalance = 0.00
+      let göllarsCollateral = 0.00;
       let globalCO2 = 0;
 
       if(this.state.mainnetweb3){
@@ -385,9 +387,11 @@ export default class App extends Component {
           this.connectToRPC()
         }
       }
-      if(this.state.xdaiweb3 && this.state.xdaiContract && this.state.CO2Contract){
+      if(this.state.xdaiweb3 && this.state.xdaiContract && this.state.göllarsContract && this.state.CO2Contract){
         xdaiBalance = await this.state.xdaiContract.methods.balanceOf(this.state.account).call();
         xdaiBalance = this.state.xdaiweb3.utils.fromWei(""+xdaiBalance,'ether')
+        göllarsCollateral = await this.state.göllarsContract.methods.daiBalance(this.state.account).call();
+        göllarsCollateral = this.state.mainnetweb3.utils.fromWei(""+göllarsCollateral,'ether')
         globalCO2 = await this.state.CO2Contract.methods.balanceOf(
           require("./planeta/contracts/Air.json").address
         ).call();
@@ -408,7 +412,8 @@ export default class App extends Component {
         daiBalance,
         xdaiBalance,
         balance:xdaiBalance,
-        hasUpdateOnce:true
+        hasUpdateOnce:true,
+        göllarsCollateral
       }, () => document.querySelector(".root").style.backgroundPosition = "0 0");
     }
 
@@ -1190,7 +1195,6 @@ export default class App extends Component {
                             address={account}
                             web3={this.state.web3}
                             xdaiweb3={this.state.xdaiweb3}
-                            xdaiContract={this.state.xdaiContract}
                             daiTokenAddr={CONFIG.SIDECHAIN.DAI_ADDRESS}
                             //amount={false}
                             privateKey={this.state.withdrawFromPrivateKey}
@@ -1440,7 +1444,7 @@ export default class App extends Component {
                           mainnetweb3={this.state.mainnetweb3}
                           xdaiweb3={this.state.xdaiweb3}
                           daiContract={this.state.daiContract}
-                          xdaiContract={this.state.xdaiContract}
+                          göllarsCollateral={this.state.göllarsCollateral}
                           bridgeContract={this.state.bridgeContract}
                           isVendor={this.state.isVendor}
                           isAdmin={this.state.isAdmin}
@@ -1539,7 +1543,7 @@ export default class App extends Component {
                   } catch(err) {
                     console.log("Error loading CO2Contract contract");
                   }
-                  this.setState({xdaiContract,CO2Contract});
+                  this.setState({xdaiContract, CO2Contract});
                 }
                 if (state.web3Provider) {
                   state.web3 = new Web3(state.web3Provider)
