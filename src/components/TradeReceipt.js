@@ -6,6 +6,8 @@ import { Blockie } from "dapparatus";
 import handshake from "../assets/handshake.gif";
 import kaching from "../assets/ka-ching.mp3";
 import pollution from "../assets/pollution.mp3";
+import monsterkill from "../assets/unreal-tournament-monster-kill-sound.mp3";
+import humiliation from "../assets/unreal-tournament-humiliation-sound.mp3";
 import newtag from "../assets/new-tag.png";
 import Confetti from "react-dom-confetti";
 import Sound from "react-sound";
@@ -138,7 +140,14 @@ export default class TradeReceipt extends Component {
 
   render() {
     const {
-      receipt: { myAddress, theirAddress, myGoellars, myCO2 }
+      receipt: {
+        myAddress,
+        theirAddress,
+        myGoellars,
+        myCO2,
+        myDefect,
+        theirDefect
+      }
     } = this.props;
     const {
       orientation,
@@ -147,6 +156,45 @@ export default class TradeReceipt extends Component {
       soundStatus,
       positions
     } = this.state;
+
+    let message, sound;
+
+    if (myDefect && theirDefect) {
+      // Both cheated
+    } else if (myDefect && !theirDefect) {
+      // I cheated
+      sound = (
+        <Sound
+          url={monsterkill}
+          playStatus={soundStatus}
+          onFinishedPlaying={() =>
+            this.setState({ soundStatus: Sound.status.STOPPED })
+          }
+        />
+      );
+    } else if (!myDefect && theirDefect) {
+      // My handshake partner cheated; I lost
+      sound = (
+        <Sound
+          url={humiliation}
+          playStatus={soundStatus}
+          onFinishedPlaying={() =>
+            this.setState({ soundStatus: Sound.status.STOPPED })
+          }
+        />
+      );
+    } else {
+      // We both played fair
+      sound = (
+        <Sound
+          url={kaching}
+          playStatus={soundStatus}
+          onFinishedPlaying={() =>
+            this.setState({ soundStatus: Sound.status.STOPPED })
+          }
+        />
+      );
+    }
 
     return (
       <div>
@@ -191,18 +239,7 @@ export default class TradeReceipt extends Component {
         <Flex alignItems="center" justifyContent="center">
           <Confetti active={explosion} config={config} />
         </Flex>
-        <Sound
-          url={myGoellars > myCO2 ? kaching : pollution}
-          playStatus={soundStatus}
-          onFinishedPlaying={() =>
-            this.setState({ soundStatus: Sound.status.STOPPED })
-          }
-        />
-        <p>
-          <a href="https://gitcoin.co/grants/127/planet-a" target="_blank">
-            To send us some money, click here!
-          </a>
-        </p>
+        {sound}
       </div>
     );
   }
