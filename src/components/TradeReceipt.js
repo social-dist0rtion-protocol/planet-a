@@ -9,6 +9,8 @@ import pollution from "../assets/pollution.mp3";
 import monsterkill from "../assets/unreal-tournament-monster-kill-sound.mp3";
 import humiliation from "../assets/unreal-tournament-humiliation-sound.mp3";
 import surprise from "../assets/surprise.gif";
+import rekt from "../assets/rekt.gif";
+import sadtrombone from "../assets/sad-trombone.mp3";
 import newtag from "../assets/new-tag.png";
 import pingu from "../assets/pingu.gif";
 import Confetti from "react-dom-confetti";
@@ -167,8 +169,16 @@ export default class TradeReceipt extends Component {
     if (myDefect && theirDefect) {
       // Both cheated
       message = "(╯°□°）╯︵ ┻━┻ OH noes! Both of you were greedy!";
-      // TODO: Add failure sound effect.
-      // TODO: Find a gif to show to both defectors...
+      jif = rekt;
+      sound = (
+        <Sound
+          url={sadtrombone}
+          playStatus={soundStatus}
+          onFinishedPlaying={() =>
+            this.setState({ soundStatus: Sound.status.STOPPED })
+          }
+        />
+      );
     } else if (myDefect && !theirDefect) {
       // I cheated
       message = "🔪  M-M-Monsterkill !!1 💣";
