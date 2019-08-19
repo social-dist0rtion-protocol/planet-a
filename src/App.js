@@ -567,11 +567,20 @@ export default class App extends Component {
             if(tx) {
               // NOTE: If we haven't seen any handshakes yet, we simply init
               // as an empty list
-              const handshakes = JSON.parse(getStoredValue("handshakes", this.state.account)) || [];
+              const handshakes = JSON.parse(getStoredValue("handshakesByHash", this.state.account)) || {};
+              const { txHash } = tx;
 
-              handshakes.push(tx);
+              if (handshakes[txHash]) {
+                // NOTE: In some cases, transactions are emitted twice by the
+                // transactionHandler. If we've seen such a transaction already
+                // we simply ignore it by returning and not displaying it to
+                // the user.
+                return;
+              }
+
+              handshakes[txHash] = tx;
               storeValues({
-                handshakes: JSON.stringify(handshakes)
+                handshakesByHash: JSON.stringify(handshakes)
               }, this.state.account);
 
               tx = Object.assign(tx, {type:"trade"});
