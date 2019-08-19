@@ -8,7 +8,9 @@ import kaching from "../assets/ka-ching.mp3";
 import pollution from "../assets/pollution.mp3";
 import monsterkill from "../assets/unreal-tournament-monster-kill-sound.mp3";
 import humiliation from "../assets/unreal-tournament-humiliation-sound.mp3";
+import surprise from "../assets/surprise.gif";
 import newtag from "../assets/new-tag.png";
+import pingu from "../assets/pingu.gif";
 import Confetti from "react-dom-confetti";
 import Sound from "react-sound";
 
@@ -28,19 +30,21 @@ const config = {
 const Hero = styled.div`
   margin: auto;
   padding: 0.2em;
-  height: ${props => props.size * 15 + "vw"};
-  width: ${props => props.size * 15 + "vw"};
   text-align: center;
   font-size: 11vw;
   font-size: ${props => props.size * 11 + "vw"};
   border-radius: 50%;
   line-height: 1.05;
-  background-image: url(${handshake});
-  background-repeat:no-repeat;
-  background-position: ${props => props.size * -4.5 + "vw"};
-  background-size: ${props => props.size * 28 + "vw"};
-	// TODO: Right now this transforms the whole Hero component, so also the text
-  //transform: scaleX(${props => props.orientation});
+  img {
+    margin-top: -5vw;
+    border-radius: 50%;
+    height: ${props => props.size * 30 + "vw"};
+    width: ${props => props.size * 30 + "vw"};
+    @media screen and (min-width: 666px) {
+      height: ${props => props.size * 20 + "vw"};
+      width: ${props => props.size * 20 + "vw"};
+    }
+  }
 `;
 
 const pop = keyframes`
@@ -87,7 +91,7 @@ const Gain = styled.div`
   transition: all 1.5s ease;
 `;
 
-const blockieSize = 10;
+const blockieSize = 6;
 const marginLimit = 60;
 
 export default class TradeReceipt extends Component {
@@ -157,12 +161,18 @@ export default class TradeReceipt extends Component {
       positions
     } = this.state;
 
-    let message, sound;
+    // U done goofed?
+    let message, sound, jif;
 
     if (myDefect && theirDefect) {
       // Both cheated
+      message = "(╯°□°）╯︵ ┻━┻ OH noes! Both of you were greedy!";
+      // TODO: Add failure sound effect.
+      // TODO: Find a gif to show to both defectors...
     } else if (myDefect && !theirDefect) {
       // I cheated
+      message = "🔪  M-M-Monsterkill !!1 💣";
+      jif = pingu;
       sound = (
         <Sound
           url={monsterkill}
@@ -174,6 +184,8 @@ export default class TradeReceipt extends Component {
       );
     } else if (!myDefect && theirDefect) {
       // My handshake partner cheated; I lost
+      message = "( ͡° ͜ʖ ͡°) You got rekt! ( ͡° ͜ʖ ͡°)";
+      jif = surprise;
       sound = (
         <Sound
           url={humiliation}
@@ -185,6 +197,8 @@ export default class TradeReceipt extends Component {
       );
     } else {
       // We both played fair
+      message = "😚 Congraz, you both played fairly! (✿◠‿◠)";
+      jif = handshake;
       sound = (
         <Sound
           url={kaching}
@@ -198,9 +212,7 @@ export default class TradeReceipt extends Component {
 
     return (
       <div>
-        <h3 style={{ textAlign: "center", marginBottom: "1em" }}>
-          🎉 PROFIT!!1🎉
-        </h3>
+        <h3 style={{ textAlign: "center", marginBottom: "1em" }}>{message}</h3>
         <Flex alignItems="center" justifyContent="space-between">
           <Box style={{ textAlign: "center" }} width={1 / 5}>
             <Blockie address={myAddress} config={{ size: blockieSize }} />
@@ -210,6 +222,7 @@ export default class TradeReceipt extends Component {
           </Box>
           <Box style={{ textAlign: "center" }} width={3 / 5}>
             <Hero orientation={orientation} size={1.7}>
+              <img src={jif} />
               <Gain
                 left={positions.profit.left}
                 top={positions.profit.top}
