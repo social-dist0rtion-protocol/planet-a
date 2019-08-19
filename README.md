@@ -68,6 +68,10 @@ The [planet-a-contracts](https://github.com/social-dist0rtion-protocol/planet-a-
 `Air` needs:
 - LeapToken
 
+## Attribution
+
+- [Sad Trombone Licensed as Attribution 3.0 and recorded by Joe Lamb](http://soundbible.com/1830-Sad-Trombone.html)
+
 ## License
 
 MIT

@@ -6,7 +6,13 @@ import { Blockie } from "dapparatus";
 import handshake from "../assets/handshake.gif";
 import kaching from "../assets/ka-ching.mp3";
 import pollution from "../assets/pollution.mp3";
+import monsterkill from "../assets/unreal-tournament-monster-kill-sound.mp3";
+import humiliation from "../assets/unreal-tournament-humiliation-sound.mp3";
+import surprise from "../assets/surprise.gif";
+import rekt from "../assets/rekt.gif";
+import sadtrombone from "../assets/sad-trombone.mp3";
 import newtag from "../assets/new-tag.png";
+import pingu from "../assets/pingu.gif";
 import Confetti from "react-dom-confetti";
 import Sound from "react-sound";
 
@@ -26,19 +32,21 @@ const config = {
 const Hero = styled.div`
   margin: auto;
   padding: 0.2em;
-  height: ${props => props.size * 15 + "vw"};
-  width: ${props => props.size * 15 + "vw"};
   text-align: center;
   font-size: 11vw;
   font-size: ${props => props.size * 11 + "vw"};
   border-radius: 50%;
   line-height: 1.05;
-  background-image: url(${handshake});
-  background-repeat:no-repeat;
-  background-position: ${props => props.size * -4.5 + "vw"};
-  background-size: ${props => props.size * 28 + "vw"};
-	// TODO: Right now this transforms the whole Hero component, so also the text
-  //transform: scaleX(${props => props.orientation});
+  img {
+    margin-top: -5vw;
+    border-radius: 50%;
+    height: ${props => props.size * 30 + "vw"};
+    width: ${props => props.size * 30 + "vw"};
+    @media screen and (min-width: 666px) {
+      height: 20vw;
+      width: 20vw;
+    }
+  }
 `;
 
 const pop = keyframes`
@@ -65,7 +73,7 @@ const ranPlay = () => {
 };
 
 const Gain = styled.div`
-  position: relative;
+  position: absolute;
   white-space: nowrap;
   top: ${props => props.top + "%"};
   left: ${props => props.left + "%"};
@@ -85,7 +93,7 @@ const Gain = styled.div`
   transition: all 1.5s ease;
 `;
 
-const blockieSize = 10;
+const blockieSize = 6;
 const marginLimit = 60;
 
 export default class TradeReceipt extends Component {
@@ -138,7 +146,14 @@ export default class TradeReceipt extends Component {
 
   render() {
     const {
-      receipt: { from, to, profit, emission }
+      receipt: {
+        myAddress,
+        theirAddress,
+        myGoellars,
+        myCO2,
+        myDefect,
+        theirDefect
+      }
     } = this.props;
     const {
       orientation,
@@ -148,67 +163,103 @@ export default class TradeReceipt extends Component {
       positions
     } = this.state;
 
-    return (
-      <div>
-        <h3 style={{ textAlign: "center", marginBottom: "1em" }}>
-          🎉 PROFIT!!1🎉
-        </h3>
-        <Flex alignItems="center" justifyContent="space-between">
-          <Box style={{ textAlign: "center" }} width={1 / 5}>
-            <Blockie address={from} config={{ size: blockieSize }} />
-            {/* EXXXTREME 90ies CSS skills incoming */}
-            <br />
-            You
-          </Box>
-          <Box style={{ textAlign: "center" }} width={3 / 5}>
-            <Hero orientation={orientation} size={1.7}>
-              <Gain
-                left={positions.profit.left}
-                top={positions.profit.top}
-                size={ranNum(10)}
-                rotate={rotate}
-              >
-                + ₲{profit}
-              </Gain>
-              <Gain
-                left={positions.emission.left}
-                top={positions.emission.top}
-                size={ranNum(10)}
-                rotate={!rotate}
-              >
-                + {emission}
-                Gt CO2
-              </Gain>
-            </Hero>
-          </Box>
-          <Box style={{ textAlign: "center" }} width={1 / 5}>
-            <Blockie address={to} config={{ size: blockieSize }} />
-            {/* EXXXTREME 90ies CSS skills incoming */}
-            <br />
-            Your <img style={{ width: "2vw" }} src={newtag} /> buddy
-          </Box>
-        </Flex>
-        <Flex alignItems="center" justifyContent="center">
-          <Confetti active={explosion} config={config} />
-        </Flex>
+    // U done goofed?
+    let message, sound, jif;
+
+    if (myDefect && theirDefect) {
+      // Both cheated
+      message = "(╯°□°）╯︵ ┻━┻ OH noes! Both of you were greedy!";
+      jif = rekt;
+      sound = (
         <Sound
-          // url={profit > emission ? kaching : pollution}
-          // NOTE: We want to fuck with the brain of the players lol
+          url={sadtrombone}
+          playStatus={soundStatus}
+          onFinishedPlaying={() =>
+            this.setState({ soundStatus: Sound.status.STOPPED })
+          }
+        />
+      );
+    } else if (myDefect && !theirDefect) {
+      // I cheated
+      message = "🔪  M-M-Monsterkill !!1 💣";
+      jif = pingu;
+      sound = (
+        <Sound
+          url={monsterkill}
+          playStatus={soundStatus}
+          onFinishedPlaying={() =>
+            this.setState({ soundStatus: Sound.status.STOPPED })
+          }
+        />
+      );
+    } else if (!myDefect && theirDefect) {
+      // My handshake partner cheated; I lost
+      message = "( ͡° ͜ʖ ͡°) You got rekt! ( ͡° ͜ʖ ͡°)";
+      jif = surprise;
+      sound = (
+        <Sound
+          url={humiliation}
+          playStatus={soundStatus}
+          onFinishedPlaying={() =>
+            this.setState({ soundStatus: Sound.status.STOPPED })
+          }
+        />
+      );
+    } else {
+      // We both played fair
+      message = "😚 Congraz, you both played fairly! (✿◠‿◠)";
+      jif = handshake;
+      sound = (
+        <Sound
           url={kaching}
           playStatus={soundStatus}
           onFinishedPlaying={() =>
             this.setState({ soundStatus: Sound.status.STOPPED })
           }
         />
-        <p>
-          Animation is currently not optimized for FPS value but instead just
-          tries to render as fast as possible. Pls donate DAI to improve this!
-        </p>
-        <p>
-          <a href="https://gitcoin.co/grants/127/planet-a" target="_blank">
-            To send us some money, click here!
-          </a>
-        </p>
+      );
+    }
+
+    return (
+      <div>
+        <h3 style={{ textAlign: "center", marginBottom: "1em" }}>{message}</h3>
+        <Flex alignItems="center" justifyContent="space-between">
+          <Box style={{ textAlign: "center" }} width={1 / 5}>
+            <Blockie address={myAddress} config={{ size: blockieSize }} />
+            {/* EXXXTREME 90ies CSS skills incoming */}
+            <br />
+            You
+          </Box>
+          <Box style={{ textAlign: "center" }} width={3 / 5}>
+            <Hero orientation={orientation} size={1.7}>
+              <img src={jif} />
+              <Gain
+                left={ranNum(marginLimit)}
+                top={ranNum(marginLimit)}
+                size={ranNum(10)}
+                rotate={rotate}
+              >
+                + ₲{myGoellars}
+              </Gain>
+              <Gain
+                left={ranNum(marginLimit)}
+                top={ranNum(marginLimit)}
+                size={ranNum(10)}
+                rotate={!rotate}
+              >
+                + {myCO2}
+                Gt CO2
+              </Gain>
+            </Hero>
+          </Box>
+          <Box style={{ textAlign: "center" }} width={1 / 5}>
+            <Blockie address={theirAddress} config={{ size: blockieSize }} />
+            {/* EXXXTREME 90ies CSS skills incoming */}
+            <br />
+            Your <img style={{ width: "2vw" }} src={newtag} /> buddy
+          </Box>
+        </Flex>
+        {sound}
       </div>
     );
   }
