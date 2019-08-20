@@ -150,7 +150,7 @@ export async function finalizeHandshake(
   }
 
   try {
-    txHash = await _finalizeHandshake(
+    return await _finalizeHandshake(
       plasma,
       passport,
       receipt,
@@ -158,41 +158,8 @@ export async function finalizeHandshake(
       strategy
     );
   } catch (err) {
-    // ignore for now
-    console.log("error finalizing handshake", err);
+    console.log("Error finalizing handshake", err);
     throw err;
-    // NOTE: Leap's node currently doesn't implement the "newBlockHeaders"
-    // JSON-RPC call. When a transaction is rejected by a node,
-    // sendSignedTransaction hence throws an error. We simply ignore this
-    // error here and use the polling tactic below. For more details see:
-    // https://github.com/leapdao/leap-node/issues/255
-
-    // const messageToIgnore = "Failed to subscribe to new newBlockHeaders to confirm the transaction receipts.";
-    // NOTE: In the case where we want to ignore web3's error message, there's
-    // "\r\n {}" included in the error message, which is why we cannot
-    // compare with the equal operator, but have to use String.includes.
-    // if (!err.message.includes(messageToIgnore)) {
-    //  throw err;
-    // }
-  }
-
-  while (rounds--) {
-    // redundancy rules ✊
-    let res = await plasma.eth.getTransaction(txHash);
-
-    if (res && res.blockHash) {
-      finalReceipt = res;
-      break;
-    }
-
-    // wait ~100ms
-    await new Promise(resolve => setTimeout(() => resolve(), 100));
-  }
-
-  if (finalReceipt) {
-    return finalReceipt;
-  } else {
-    throw new Error("Transaction wasn't included into a block.");
   }
 }
 
@@ -228,7 +195,7 @@ async function _finalizeHandshake(
     )
   );
 
-  console.log('handshake', earthLeapOutput, earthCO2Output, earthGoellarsOutput)
+  //console.log('handshake', earthLeapOutput, earthCO2Output, earthGoellarsOutput)
 
   const inputs = [
     {
@@ -258,8 +225,6 @@ async function _finalizeHandshake(
     ))[0];
     inputs.push({ prevout: myGoellarsOutput.outpoint });
   }
-
-  console.log("finalize", strategy, inputs, privateKey);
 
   const earthContract = new PlasmaContract(plasma, EarthContractData.abi);
   return await earthContract.methods
@@ -325,7 +290,7 @@ export async function plantTrees(plasma, passport, goellars, privateKey) {
       gte(amount.toString())
     )
   );
-  console.log(airLeapOutput, airCO2Output, amount.toString());
+  //console.log(airLeapOutput, airCO2Output, amount.toString());
 
   /*
   console.log(

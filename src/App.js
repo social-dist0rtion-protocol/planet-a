@@ -1667,44 +1667,7 @@ async function consolidateUTXOs(utxos, plasma, web3, privateKey) {
   const signedTx = privateKey
     ? await transaction.signAll(privateKey)
     : await transaction.signWeb3(web3);
-  const rawTx = signedTx.hex();
-
-  try {
-    await new Promise((resolve, reject) => {
-      plasma.currentProvider.send(
-        {
-          jsonrpc: "2.0",
-          id: 42,
-          method: "eth_sendRawTransaction",
-          params: [rawTx]
-        },
-        (err, res) => {
-          if (err) {
-            return reject(err);
-          }
-          resolve(res);
-        }
-      );
-    });
-  } catch (e) {
-    throw new Error("Consolidate failed.");
-  }
-
-  let receipt;
-  let rounds = 5;
-
-  while (rounds--) {
-    let res = await plasma.eth.getTransaction(signedTx.hash());
-    if (res && res.blockHash) {
-      receipt = res;
-      break;
-    }
-    await new Promise(resolve => setTimeout(() => resolve(), 1000));
-  }
-
-  if (!receipt) {
-    throw new Error("Consolidate UTXOs wasn't included into a block.");
-  }
+  return await plasma.eth.sendSignedTransaction(signedTx.hex())
 }
 
 async function tokenSendV2(from, to, value, color, xdaiweb3, web3, privateKey) {
