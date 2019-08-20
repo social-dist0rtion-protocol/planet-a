@@ -21,7 +21,7 @@ EarthContractData.code = Buffer.from(
   "hex"
 );
 
-export const CO2_PER_GOELLAR = 16;
+export const CO2_PER_GOELLAR = 2;
 const AirContractData = require("./contracts/Air.json");
 AirContractData.code = Buffer.from(
   AirContractData.code.replace("0x", ""),
@@ -98,9 +98,9 @@ export async function startHandshake(
   let passportDataAfter;
 
   if (strategy === "collaborate") {
-    passportDataAfter = calculateUpdatedCO2(passport.output.data, "400");
+    passportDataAfter = calculateUpdatedCO2(passport.output.data, "1");
   } else if (strategy === "defect") {
-    passportDataAfter = calculateUpdatedCO2(passport.output.data, "20000");
+    passportDataAfter = calculateUpdatedCO2(passport.output.data, "100");
     passportDataAfter = calculateStartDefect(passportDataAfter);
   }
 
@@ -214,12 +214,12 @@ async function _finalizeHandshake(
   // TODO: remove filters.
   const earthLeapOutput = choice(
     (await plasma.getUnspent(EarthContractData.address, LEAP_COLOR)).filter(
-      gte(0.0001)
+      gte(0.00001)
     )
   );
   const earthCO2Output = choice(
     (await plasma.getUnspent(EarthContractData.address, CO2_COLOR)).filter(
-      gte(20)
+      gte(1)
     )
   );
   const earthGoellarsOutput = choice(
@@ -227,6 +227,8 @@ async function _finalizeHandshake(
       gte(1)
     )
   );
+
+  console.log('handshake', earthLeapOutput, earthCO2Output, earthGoellarsOutput)
 
   const inputs = [
     {

@@ -30,7 +30,7 @@ function parseHandshake(myAddress, inputs, outputs) {
   // Defect detection
   const getDefectInInputs = address => {
     const defect = inputs.filter(isOwner(address)).filter(isGoellar);
-    return defect.length > 0 ? defect[0].value : BigInt(0);
+    return defect.length > 0 ? BigInt(defect[0].value) : BigInt(0);
   };
   const getDefectInPassport = (dataBefore, dataAfter) =>
     JSBI.subtract(bitmaskCO2Locked(dataAfter), bitmaskCO2Locked(dataBefore));
@@ -47,9 +47,9 @@ function parseHandshake(myAddress, inputs, outputs) {
   const getCO2 = (dataBefore, dataAfter) =>
     JSBI.toNumber(
       JSBI.subtract(bitmaskCO2(dataAfter), bitmaskCO2(dataBefore))
-    ) / 1000;
+    );
   const getGoellars = address =>
-    // FIXME: dividing to 1e16 to get an int, the dividing by 100 to get the
+    // FIXME: dividing to 1e14 to get an int, the dividing by 10000 to get the
     // float...
     JSBI.toNumber(
       JSBI.divide(
@@ -57,9 +57,9 @@ function parseHandshake(myAddress, inputs, outputs) {
           BigInt(outputs.filter(isOwner(address)).filter(isGoellar)[0].value),
           getDefectInInputs(address)
         ),
-        BigInt("10000000000000000")
+        BigInt("100000000000000")
       )
-    ) / 100;
+    ) / 10000;
 
   const myPassport = BigInt(
     inputs.filter(isMine).filter(isPassport)[0].value
@@ -121,8 +121,8 @@ export default async function process(plasma, passports, tx) {
   );
   const result = parseHandshake(myAddress, inputs, outputs);
   result.txHash = tx.hash;
-  console.log("Handshake values", result);
-  console.log(`${CONFIG.SIDECHAIN.EXPLORER.URL}tx/${result.txHash}`);
+  console.log("handshake values", result);
+  console.log("handshake", `${CONFIG.SIDECHAIN.EXPLORER.URL}tx/${result.txHash}`);
   addHandshake(result.myPassport, result.theirPassport);
   return result;
 }
