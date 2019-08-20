@@ -260,3 +260,19 @@ async function _finalizeHandshake(
     )
     .send(inputs, toSign);
 }
+
+export function samePassports(oldList, newList){
+  if (typeof oldList !== typeof newList) return false;
+  if (oldList.length !== newList.length){
+    return false;
+  }
+  for (let i = 0; i < oldList.length; i++){
+    const sameId = oldList[i].id === newList[i].id;
+    const sameColor = oldList[i].color === newList[i].color;
+    const sameParams = sameId && sameColor;
+    if (!sameParams){
+      return false;
+    }
+  }
+  return true;
+}
