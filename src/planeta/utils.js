@@ -20,6 +20,7 @@ EarthContractData.code = Buffer.from(
   EarthContractData.code.replace("0x", ""),
   "hex"
 );
+console.log("earth address", EarthContractData.address);
 
 export const CO2_PER_GOELLAR = 2;
 const AirContractData = require("./contracts/Air.json");
@@ -120,6 +121,8 @@ export async function startHandshake(
     passportDataAfter,
     signature
   ].join(";");
+
+  console.log(passport.output.data, passportDataAfter);
 
   return receipt;
 }
