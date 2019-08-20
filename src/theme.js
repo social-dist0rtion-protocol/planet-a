@@ -40,12 +40,26 @@ export default {
     disabled: 0.4
   },
   colors: {
+    // EthBerlinZwei
     passportUSA: "#FFD200",
+    passportBorderUSA: "#876224",
+
     passportUSB: "#FF0000",
-    passportPA1: "#0000FF",
-    passportPA2: "#0076BA",
-    passportPA3: "#939a00",
-    passportPA4: "#6F8700",
+    passportBorderUSB: "#750000",
+
+    passportPLAN: "#0000FF",
+    passportBorderPLAN: "#000065",
+
+    // CCCamp Colors
+    passportSMOG: "#9ABA00",
+    passportBorderSMOG: "#5b7500",
+
+    passportDRED: "#eab907",
+    passportBorderDRED: "#9d6d16",
+
+    passportCASM: "#0176BB",
+    passportBorderCASM: "#01436c",
+
     emitted: '#4C6FED',
     locked: "#05B62C",
     primary: 'black',
