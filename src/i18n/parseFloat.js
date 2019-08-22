@@ -1,12 +1,10 @@
 // NOTE: This module implements a localized parseFloat function
 // that can be used to parse user input into correct floating point numbers.
-import numeral from "numeral";
 import parseDecimalNumber from "parse-decimal-number";
+import options from './languageOptions';
 import i18next from "./index";
 
 const { language } = i18next;
-// NOTE: I'm not sure if it's fine to split by the IETF language tag by -
-// to get the locale... numeral, however, only takes that, not the minus.
-const options = numeral.localeData(language.split("-")[0]).delimiters;
+const shortName = language.slice(0,2);
 
-export default parseDecimalNumber.withOptions(options);
+export default parseDecimalNumber.withOptions(options[shortName]);
