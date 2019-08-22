@@ -1,7 +1,7 @@
 // @format
 import React from "react";
 import { Flex, Icon, Box } from "rimble-ui";
-import { PrimaryButton } from "../components/Buttons";
+import { PrimaryButton, BorderButton } from "../components/Buttons";
 
 export default ({ changeView, passport, changeAlert }) => {
   const passportAlert = () =>
@@ -49,7 +49,8 @@ export default ({ changeView, passport, changeAlert }) => {
         </PrimaryButton>
       </Flex>
       <Flex>
-        <PrimaryButton
+        <BorderButton
+          style={{ opacity: 0.5 }}
           fullWidth
           onClick={() => {
             if (passport) {
@@ -63,7 +64,7 @@ export default ({ changeView, passport, changeAlert }) => {
             <Icon name="Forward" mr={2} />
             Transfer Passport
           </Flex>
-        </PrimaryButton>
+        </BorderButton>
       </Flex>
     </Flex>
   );
