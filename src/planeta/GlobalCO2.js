@@ -1,7 +1,7 @@
 // @format
 import React, { Component } from "react";
 import styled from "styled-components";
-import { Heading, Flex } from "rimble-ui";
+import { Heading, Flex, Text } from "rimble-ui";
 
 const Aligner = styled(Flex).attrs(() => ({
   alignItems: "center",
@@ -19,14 +19,19 @@ const Aligner = styled(Flex).attrs(() => ({
   h1 {
     flex: 1 1 0;
     text-align: right;
-    margin: 0 16px 0 0;
+    margin: 0;
+    margin-right: 16px;
   }
-  h5 {
+`;
+
+const Label = styled(Text).attrs(() => ({
+  px: 3,
+  fontWeight: "bold"
+}))`
     flex: 1.5 1.5 0;
     text-align: left;
-    color: #7a689c;
+    color: #cec6ff;
     margin: 0;
-  }
 `;
 
 const CO2Display = styled.h1`
@@ -56,15 +61,17 @@ export default class GlobalCO2 extends Component {
       return (
         <>
           <Aligner>
-            <Heading.h5 px={3}>Global Atmospheric CO₂</Heading.h5>
+            <Label>Global Atmospheric CO₂</Label>
             <CO2Display>{Math.round(value)}</CO2Display>
           </Aligner>
           <Aligner>
-            <Heading.h5 px={3}>{message}</Heading.h5>
+            <Label>{message}</Label>
             <NextDisplay>{Math.round(toNext)}</NextDisplay>
           </Aligner>
           <Aligner>
-            <p>values in <em>Gigatons</em></p>
+            <p>
+              values in <em>Gigatons</em>
+            </p>
           </Aligner>
         </>
       );
