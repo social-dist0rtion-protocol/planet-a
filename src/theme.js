@@ -40,12 +40,20 @@ export default {
     disabled: 0.4
   },
   colors: {
-    // EthBerlinZwei
-    passportUSA: "#FFD200",
-    passportBorderUSA: "#876224",
 
-    passportUSB: "#FF0000",
-    passportBorderUSB: "#750000",
+    // Ethereum Meetup
+    passportUSA: "#6846c3",
+    passportBorderUSA: "#443a87",
+
+    passportUSB: "#077154",
+    passportBorderUSB: "#104c36",
+
+    // EthBerlinZwei
+    passportTORN: "#FFD200",
+    passportBorderTORN: "#876224",
+
+    passportHEAT: "#FF0000",
+    passportBorderHEAT: "#750000",
 
     passportPLAN: "#0000FF",
     passportBorderPLAN: "#000065",
