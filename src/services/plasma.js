@@ -63,7 +63,7 @@ export const sliceHex = (hexString, start = 0, end = hexString.length) => {
 };
 export const extractData = passport => {
   const rawData = passport.output.data;
-  const address = passport.output.address;
+  const value = passport.output.value;
 
   const nameHex = sliceHex(rawData, 0, 20);
   const imageHex = sliceHex(rawData, 20, 24);
@@ -72,7 +72,7 @@ export const extractData = passport => {
 
   const { hexToString, hexToNumber } = web3.utils;
 
-  const name = hexToString(nameHex) || PLAYERS[address].name || "smth wrong, tell us pls";
+  const name = hexToString(nameHex) || PLAYERS[value] ? PLAYERS[value].name : "smth wrong, pls tell us";
   const image = hexToString(imageHex);
   const locked = hexToNumber(lockedHex);
   const emitted = hexToNumber(emittedHex);
