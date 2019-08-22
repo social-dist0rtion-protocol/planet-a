@@ -1,7 +1,7 @@
 // @format
 import React, { Component } from "react";
 import styled from "styled-components";
-import { Heading, Flex, Text } from "rimble-ui";
+import { Heading, Flex, Text, Box } from "rimble-ui";
 
 const Aligner = styled(Flex).attrs(() => ({
   alignItems: "center",
@@ -28,10 +28,10 @@ const Label = styled(Text).attrs(() => ({
   px: 3,
   fontWeight: "bold"
 }))`
-    flex: 1.5 1.5 0;
-    text-align: left;
-    color: #cec6ff;
-    margin: 0;
+  flex: 1.5 1.5 0;
+  text-align: left;
+  color: #cec6ff;
+  margin: 0;
 `;
 
 const CO2Display = styled.h1`
@@ -59,7 +59,11 @@ export default class GlobalCO2 extends Component {
 
     if (value) {
       return (
-        <>
+        <a
+          style={{ textDecoration: "none" }}
+          href="https://planet-a.github.io/"
+          target="_blank"
+        >
           <Aligner>
             <Label>Global Atmospheric CO₂</Label>
             <CO2Display>{Math.round(value)}</CO2Display>
@@ -68,12 +72,15 @@ export default class GlobalCO2 extends Component {
             <Label>{message}</Label>
             <NextDisplay>{Math.round(toNext)}</NextDisplay>
           </Aligner>
-          <Aligner>
-            <p>
-              values in <em>Gigatons</em>
-            </p>
-          </Aligner>
-        </>
+          <Flex style={{ color: "#a2852e" }}>
+            <Box p={3} width={1 / 2} style={{ opacity: 0.4 }}>
+              (view Dashboard)
+            </Box>
+            <Box p={3} width={1 / 2} style={{ textAlign: "right" }}>
+              values in <em>Gigatons</em>{" "}
+            </Box>
+          </Flex>
+        </a>
       );
     } else {
       return null;
