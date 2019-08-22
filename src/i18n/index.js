@@ -11,36 +11,9 @@ const options = {
   debug: true,
 
   resources: {
-    fr: {
-      common: fr.fr
-    },
     en: {
       common: en.en
-    },
-    es: {
-      common: es.es
-    },
-    ca: {
-      common: ca.ca
-    },
-    de: {
-      common: de.de
-    },
-    ro: {
-      common: ro.ro
-    },
-    he: {
-      common: he.he
-    },
-    ru: {
-      common: ru.ru
-    },
-    pt: {
-      common: pt.pt
-    },
-    ja: {
-      common: ja.ja
-    },
+    }
   },
 
   fallbackLng: "en",
