@@ -7,13 +7,13 @@ before_install:
   - pip install --user awscli
   - export PATH=$PATH:$HOME/.local/bin
 
-install: yarn
+install: npm i
 
 script:
   - unset CI
-  - yarn run build
+  - npm run build
 
-cache: yarn
+cache: npm
 
 deploy:
   - provider: s3
@@ -26,7 +26,7 @@ deploy:
     skip_cleanup: true
     region: 'eu-west-1'
     on:
-      branch: feat/caching
+      branch: master
 
 after_deploy:
   - aws configure set preview.cloudfront true
