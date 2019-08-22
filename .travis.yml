@@ -1,0 +1,33 @@
+language: node_js
+
+node_js:
+  - '8.11'
+
+before_install:
+  - pip install --user awscli
+  - export PATH=$PATH:$HOME/.local/bin
+
+install: yarn
+
+script:
+  - unset CI
+  - yarn run build
+
+cache: yarn
+
+deploy:
+  - provider: s3
+    cache_control: "max-age=31536000"
+    access_key_id: $AWS_ACCESS_KEY_ID
+    secret_access_key: $AWS_SECRET_ACCESS_KEY
+    bucket: $PROD_S3_BUCKET
+    acl: public_read
+    local_dir: build
+    skip_cleanup: true
+    region: 'eu-west-1'
+    on:
+      branch: feat/caching
+
+after_deploy:
+  - aws configure set preview.cloudfront true
+  - aws cloudfront create-invalidation --distribution-id $PROD_CLOUDFRONT_DISTRIBUTION --paths "/*"
