@@ -14,6 +14,7 @@
     "i18next-browser-languagedetector": "^2.2.4",
     "iban": "0.0.12",
     "identity-obj-proxy": "3.0.0",
+    "jsbi": "^3.1.0",
     "jsbi-utils": "^1.0.0",
     "leap-core": "^0.32.4",
     "leap-provider": "^1.0.0",
