@@ -1,5 +1,6 @@
 import web3 from "web3";
 import { getStoredValue, storeValues } from "./localStorage";
+const PLAYERS = require("../assets/players.json");
 
 // TODO: Put this in config.js
 const COUNTRIES = {
@@ -53,6 +54,8 @@ const COUNTRIES = {
   },
 };
 
+
+
 export const sliceHex = (hexString, start = 0, end = hexString.length) => {
   return `0x${hexString
     .slice(2) // strip 0x
@@ -60,6 +63,7 @@ export const sliceHex = (hexString, start = 0, end = hexString.length) => {
 };
 export const extractData = passport => {
   const rawData = passport.output.data;
+  const address = passport.output.address;
 
   const nameHex = sliceHex(rawData, 0, 20);
   const imageHex = sliceHex(rawData, 20, 24);
@@ -68,7 +72,7 @@ export const extractData = passport => {
 
   const { hexToString, hexToNumber } = web3.utils;
 
-  const name = hexToString(nameHex) || "Mr. Mysterious";
+  const name = hexToString(nameHex) || PLAYERS[address].name || "smth wrong, tell us pls";
   const image = hexToString(imageHex);
   const locked = hexToNumber(lockedHex);
   const emitted = hexToNumber(emittedHex);
