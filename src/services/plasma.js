@@ -38,7 +38,19 @@ const COUNTRIES = {
     address: "0xad3e53a349c4F6515cFd8bC05D0efc4EECdD32d4",
     fullName: "Cataclysmia",
     shortName: "CASM"
-  }
+  },
+  TORNAYDA: {
+    color: 49164,
+    address: "0x56998c1670739F9cb3b5f79A16B600A2Fd952BCA",
+    fullName: "Tornayda",
+    shortName: "TORN"
+  },
+  KINGDOM_OF_HEATWAVE:{
+    color: 49165,
+    address: "0x0A8ab7671d216706f59eED84E25Ea7381e808323",
+    fullName: "Kingdom of Heatwave",
+    shortName: "HEAT"
+  },
 };
 
 export const sliceHex = (hexString, start = 0, end = hexString.length) => {
