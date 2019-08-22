@@ -34,12 +34,13 @@ const threshold = {
 const getMsgData = (tx, tokenAddr) => {
   const { v, r, s } = tx.getConditionSig(CONFIG.priv);
   const abi = earth.abi;
+  const cons = abi.find(a => a.name === 'consolidate');
   const methodSig = keccak256(
-    `${abi[0].name}(${abi[0].inputs.map(i => i.type).join(",")})`
+    `${cons.name}(${cons.inputs.map(i => i.type).join(",")})`
   )
     .toString("hex")
     .substr(0, 8);
-  const params = ethers.utils.defaultAbiCoder.encode(abi[0].inputs, [
+  const params = ethers.utils.defaultAbiCoder.encode(cons.inputs, [
     tokenAddr,
     v,
     r,
@@ -131,9 +132,10 @@ const consolidate = async () => {
     process.exit(1);
     return;
   }
-  const txHash = await plasma.sendTransaction(condition);
-  console.log(`https://testnet.leapdao.org/explorer/tx/${txHash}`);
+  const { transactionHash } = await plasma.provider.sendTransaction(condition).then(tx => tx.wait());
+  console.log(`https://testnet.leapdao.org/explorer/tx/${transactionHash}`);
   console.log("✅");
+  process.exit(0);
 };
 
 consolidate();
