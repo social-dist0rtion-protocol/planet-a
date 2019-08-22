@@ -10,8 +10,8 @@ before_install:
 install: yarn
 
 script:
-	- unset CI
-	- yarn run build
+  - unset CI
+  - yarn run build
 
 cache: yarn
 
