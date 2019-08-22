@@ -120,7 +120,6 @@ export async function startHandshake(
     passportDataAfter,
     signature
   ].join(";");
-
   return receipt;
 }
 
