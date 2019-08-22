@@ -1,6 +1,6 @@
 const configs = [
   {
-    DOMAINS: ["localhost", "10.0.0.107", "sundai.fritz.box", /192\.168\..*/, /.*\.ngrok\.io/],
+    DOMAINS: ["localhost", "151.217.248.171", "10.0.0.107", "sundai.fritz.box", /192\.168\..*/, /.*\.ngrok\.io/],
     PLANET_A: {
       // In seconds
       COOLDOWN: 0

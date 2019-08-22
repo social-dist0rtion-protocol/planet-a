@@ -168,8 +168,10 @@ export default class SendToAddress extends React.Component {
 
       if(parseFloat(this.props.balance) <= 0){
         this.props.changeAlert({type: 'warning', message: "No Funds."})
-      }else if(parseFloat(this.props.balance)<parseFloat(amount)){
-        // this.props.changeAlert({type: 'warning', message: 'Not enough funds: '+currencyDisplay(Math.floor((parseFloat())*100)/100)})
+          // NOTE: We don't i18nParseFloat here as we already expect it to be
+          // a float when it's set as state and converted by the convertCurrency
+          // method
+      }else if(parseFloat(this.props.balance) < parseFloat(amount)){
         this.props.changeAlert({type: 'warning', message: `Not enough funds: ${this.props.balance}`})
       }else{
         console.log("SWITCH TO LOADER VIEW...",amount)
@@ -201,7 +203,7 @@ export default class SendToAddress extends React.Component {
             //   message: 'Sent! '+result.transactionHash,
             // });
 
-            let receiptObj = {to:toAddress,from:result.from,amount:parseFloat(amount),message:this.state.message,result:result}
+            let receiptObj = {to:toAddress,from:result.from,amount,message:this.state.message,result:result}
 
             if(this.state.params){
               receiptObj.params = this.state.params
@@ -218,7 +220,10 @@ export default class SendToAddress extends React.Component {
           } else {
             this.props.goBack();
             window.history.pushState({},"", "/");
-            let receiptObj = {to:toAddress,from:err.request.account,amount:parseFloat(amount),message:err.error.message,type:"error",result:err}
+            // NOTE: We don't i18nParseFloat here as we already expect it to be
+            // a float when it's set as state and converted by the convertCurrency
+            // method
+            let receiptObj = {to:toAddress,from:err.request.account,amount,message:err.error.message,result:err}
 
             if(this.state.params){
               receiptObj.params = this.state.params
@@ -269,7 +274,7 @@ export default class SendToAddress extends React.Component {
         width={1}
         type="number"
         placeholder={0}
-        step={0.1}
+        step="any"
         value={this.state.amount}
         ref={(input) => { this.amountInput = input; }}
         onChange={event => this.updateState('amount', event.target.value)}
@@ -280,6 +285,7 @@ export default class SendToAddress extends React.Component {
         <Input
           width={1}
           type="number"
+          step="any"
           readOnly
           placeholder={this.props.currencyDisplay(0)}
           value={this.state.amount}

@@ -11,6 +11,7 @@ import {
   Text,
 } from 'rimble-ui'
 import { PrimaryButton } from "./Buttons";
+import i18nParseFloat from "../i18n/parseFloat";
 
 
 // TODO: Can this be state of SendToAddress?
@@ -66,7 +67,7 @@ export default class SendToAddress extends React.Component {
   }
 
   canWithdraw() {
-    return (parseFloat(this.state.amount) > 0 && parseFloat(this.state.amount) <= parseFloat(this.state.fromBalance))
+    return (i18nParseFloat(this.state.amount) > 0 && i18nParseFloat(this.state.amount) <= parseFloat(this.state.fromBalance))
   }
 
   withdraw = async () => {
@@ -190,6 +191,7 @@ export default class SendToAddress extends React.Component {
             <Input
               width={1}
               type="number"
+              step="any"
               placeholder={currencyDisplay(0)}
               value={this.state.amount}
               onChange={event => this.updateState('amount', event.target.value)}
