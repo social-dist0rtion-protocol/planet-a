@@ -6,6 +6,7 @@ const { Tx, helpers, Input, Output } = require("leap-core");
 
 const erc20ABI = require("../src/contracts/StableCoin.abi");
 const earth = require("../src/planeta/contracts/Earth");
+const air = require("../src/planeta/contracts/Air");
 
 const { LeapEthers } = helpers;
 
@@ -14,8 +15,9 @@ const CONFIG = {
   priv: process.env.PRIV_KEY
 };
 
-const scriptBuf = Buffer.from(earth.code.replace("0x", ""), "hex");
-const contractAddress = bufferToHex(ripemd160(scriptBuf));
+const code = process.env.TYPE === 'air' ? air.code : earth.code; 
+const scriptBuf = Buffer.from(code.replace("0x", ""), "hex");
+const contractAddress = process.env.CONTRACT_ADDR || bufferToHex(ripemd160(scriptBuf));
 
 const factor18 = bi("1000000000000000000");
 
@@ -23,7 +25,7 @@ const plasma = new LeapEthers(
   new LeapProvider(process.env.NODE_URL || "https://testnet-node.leapdao.org")
 );
 
-const GAS_COST = bi(7001310);
+const GAS_COST = process.env.TYPE === 'air'? bi(7007558) : bi(7001310);
 
 const threshold = {
   1: bi(1), // 1 LEAP
@@ -84,7 +86,6 @@ const consolidate = async () => {
   const gasUtxos = await plasma.getUnspent(contractAddress, 0);
 
   const tokenInputs = dustUtxos.map(u => {
-    console.log("utxo", u);
     return new Input({ prevout: u.outpoint });
   });
 
@@ -103,8 +104,6 @@ const consolidate = async () => {
       0
     )
   ];
-
-  console.log(outputs);
 
   let condition = Tx.spendCond(inputs, outputs);
 
