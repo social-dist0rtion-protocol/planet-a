@@ -11,7 +11,7 @@ const Param = ({ label, value, color }) => {
   });
   return (
     <Flex flexDirection={"Column"} alignItems="center" pt={2} px={4}>
-      <Text fontSize={2} color={"silver"}>
+      <Text fontSize={2} color={"silver"} textAlign="center">
         {label}
       </Text>
       <Text fontSize={5} fontWeight={4} color={color}>
