@@ -62,7 +62,10 @@ const consolidate = async () => {
 
   const utxos = await plasma.getUnspent(contractAddress, CONFIG.color);
   console.log("UTXOs:", utxos.length);
-
+  if (utxos.length <= 21) {
+      console.log('Too little UTXOs to consolidate');
+      process.exit(0);
+  }
   let dustUtxos = utxos.filter(u =>
     lessThan(
       bi(u.output.value),
@@ -70,6 +73,9 @@ const consolidate = async () => {
     )
   );
   dustUtxos = dustUtxos.slice(0, dustUtxos.length > 10 ? 10 : dustUtxos.length);
+  if (utxos.length - dustUtxos.length < 20) {
+      dustUtxos = dustUtxos.slice(0, utxos.length - 20);
+  }
   console.log("UTXOs to consolidate:", dustUtxos.length);
 
   const gasToken = new ethers.Contract(
