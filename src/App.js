@@ -399,16 +399,8 @@ export default class App extends Component {
       const plasma = this.state.xdaiweb3;
       const passports = await fetchAllPassports(plasma, this.state.account);
 
-      if (!samePassports(passports, this.state.passports)){
-        console.log('New Passports!');
-        console.log(passports, this.state.passports);
-        this.setState((state)=>({
-          ...state,
-          passports,
-        }))
-      }
-
       this.setState(()=>({
+        passports,
         globalCO2,
         ethBalance,
         daiBalance,
