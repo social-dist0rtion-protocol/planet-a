@@ -7,9 +7,10 @@ before_install:
   - pip install --user awscli
   - export PATH=$PATH:$HOME/.local/bin
 
-install: yarn
-
-script: yarn run build
+script:
+	- yarn
+	- unset CI
+	- yarn run build
 
 cache: yarn
 
