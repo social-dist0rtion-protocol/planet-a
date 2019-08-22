@@ -22,7 +22,7 @@ deploy:
     secret_access_key: $AWS_SECRET_ACCESS_KEY
     bucket: $PROD_S3_BUCKET
     acl: public_read
-    local_dir: '.'
+    local_dir: build
     skip_cleanup: true
     region: 'eu-west-1'
     on:
