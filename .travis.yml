@@ -7,13 +7,13 @@ before_install:
   - pip install --user awscli
   - export PATH=$PATH:$HOME/.local/bin
 
-install: yarn
+install: npm
 
 script:
   - unset CI
-  - yarn run build
+  - npm run build
 
-cache: yarn
+cache: npm
 
 deploy:
   - provider: s3
