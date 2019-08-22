@@ -40,8 +40,34 @@ export default {
     disabled: 0.4
   },
   colors: {
+
+    // Ethereum Meetup
     passportUSA: "#6846c3",
+    passportBorderUSA: "#443a87",
+
     passportUSB: "#077154",
+    passportBorderUSB: "#104c36",
+
+    // EthBerlinZwei
+    passportTORN: "#FFD200",
+    passportBorderTORN: "#876224",
+
+    passportHEAT: "#FF0000",
+    passportBorderHEAT: "#750000",
+
+    passportPLAN: "#0000FF",
+    passportBorderPLAN: "#000065",
+
+    // CCCamp Colors
+    passportSMOG: "#9ABA00",
+    passportBorderSMOG: "#5b7500",
+
+    passportDRED: "#eab907",
+    passportBorderDRED: "#9d6d16",
+
+    passportCASM: "#0176BB",
+    passportBorderCASM: "#01436c",
+
     emitted: '#4C6FED',
     locked: "#05B62C",
     primary: 'black',

@@ -39,14 +39,16 @@ export const PassportCover = styled(Flex).attrs(({ shortName }) => ({
   px: 3,
   py: 2,
   height: 4,
+  width: '105px',
   justifyContent: "space-between"
 }))`
   border-radius: 4px 8px 8px 4px;
   box-shadow: inset -1px 0 rgba(255, 255, 255, 0.2),
     0 1px 3px rgba(0, 0, 0, 0.2);
   position: relative;
-  border: 2px solid #333;
-
+  border: 2px solid;
+  border-color:  ${({theme, shortName}) => theme.colors[`passportBorder${shortName}`] || '#333'};
+  
   @supports (background-blend-mode: color-burn) {
     background-repeat: no-repeat;
     background-blend-mode: color-burn;

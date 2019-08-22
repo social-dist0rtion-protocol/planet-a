@@ -50,6 +50,7 @@ import PlanetAFinalizeHandshake from "./planeta/FinalizeHandshake";
 import planetATransactionHandler from "./planeta/transactionHandler";
 import TransferPassport from "./planeta/TransferPassport";
 import GlobalCO2 from "./planeta/GlobalCO2";
+import { samePassports } from "./planeta/utils";
 let LOADERIMAGE = planetaLogo;
 let HARDCODEVIEW// = "loader"// = "receipt"
 
@@ -398,15 +399,23 @@ export default class App extends Component {
       const plasma = this.state.xdaiweb3;
       const passports = await fetchAllPassports(plasma, this.state.account);
 
-      this.setState({
+      if (!samePassports(passports, this.state.passports)){
+        console.log('New Passports!');
+        console.log(passports, this.state.passports);
+        this.setState((state)=>({
+          ...state,
+          passports,
+        }))
+      }
+
+      this.setState(()=>({
         globalCO2,
-        passports,
         ethBalance,
         daiBalance,
         xdaiBalance,
         balance:xdaiBalance,
         hasUpdateOnce:true
-      }, () => document.querySelector(".root").style.backgroundPosition = "0 0");
+      }), () => document.querySelector(".root").style.backgroundPosition = "0 0");
     }
 
 
