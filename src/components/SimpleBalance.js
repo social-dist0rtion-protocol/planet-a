@@ -16,7 +16,8 @@ const StyledBalance = styled.div`
   }
 
   span {
-    font-size: 200%;
+    font-size: 2.5em;
+    font-weight: 700;
   }
 
   .integer {
@@ -49,14 +50,11 @@ export default ({ mainAmount, otherAmounts, currencyDisplay }) => {
     (acc, curr) => acc + parseInt(curr, 10),
     0
   );
-  const parts = currencyDisplay(mainAmount, true);
 
   return (
     <>
       <StyledBalance>
-        {parts.map(({ type, value }) => (
-          <Text.span className={type} key={type}>{value}</Text.span>
-        ))}
+        <Text.span>{currencyDisplay(mainAmount)}</Text.span>
         {otherAssetsTotal > 0 && (
           <Text className="otherAssets" italic fontSize={1} textAlign="center">
             +{currencyDisplay(otherAssetsTotal)} in other assets

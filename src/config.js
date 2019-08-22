@@ -1,13 +1,13 @@
 const configs = [
   {
     DOMAINS: ["localhost", "10.0.0.107", "sundai.fritz.box", /192\.168\..*/, /.*\.ngrok\.io/],
-    PLANET_A: {
-      // In seconds
-      COOLDOWN: 0
-    },
     CURRENCY: {
       CURRENCY_LIST: ["USD", "EUR", "GBP"],
       DEFAULT_CURRENCY: "USD"
+    },
+    LINKS: {
+      CODE: "https://github.com/leapdao/burner-wallet",
+      ABOUT: "https://leapdao.org/",
     },
     SIDECHAIN: {
       NAME: "Leap Testnet",
@@ -142,6 +142,10 @@ const configs = [
       CURRENCY_LIST: ["EUR", "USD", "GBP"],
       DEFAULT_CURRENCY: "USD"
     },
+    LINKS: {
+      CODE: "https://github.com/leapdao/burner-wallet",
+      ABOUT: "https://leapdao.org/",
+    },
     SIDECHAIN: {
       NAME: "Leap Testnet",
       RPC: "https://testnet-node.leapdao.org",
@@ -177,19 +181,23 @@ const configs = [
     }
   },
   {
-    DOMAINS: ["sundai.io"],
+    DOMAINS: ["peep.cash"],
     CURRENCY: {
       EXCHANGE_RATE_QUERY: 5000,
       CURRENCY_LIST: ["EUR", "USD", "GBP"],
       DEFAULT_CURRENCY: "USD"
     },
+    LINKS: {
+      CODE: "https://github.com/leapdao/burner-wallet",
+      ABOUT: "https://leapdao.org/",
+    },
     SIDECHAIN: {
       NAME: "Leap Network",
       RPC: "wss://mainnet-node1.leapdao.org:1443",
-      DAI_ADDRESS: "0x3cC0DF021dD36eb378976142Dc1dE3F5726bFc48",
+      DAI_ADDRESS: "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
       MARKET_MAKER:
         "https://k238oyefqc.execute-api.eu-west-1.amazonaws.com/mainnet",
-      BRIDGE_ADDRESS: "0x0036192587fD788B75829fbF79BE7F06E4F23B21",
+      BRIDGE_ADDRESS: "0x495AeB6FD65D39AA49482a938b85f7A70b075750",
       EXPLORER: {
         URL: "https://mainnet.leapdao.org/explorer/",
         NAME: "LeapDAO Mainnet Explorer"

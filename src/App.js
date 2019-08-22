@@ -43,14 +43,9 @@ import eth from './assets/ethereum.png';
 import base64url from 'base64url';
 import EthCrypto from 'eth-crypto';
 import { getStoredValue, storeValues, eraseStoredValue } from "./services/localStorage";
-import { fetchAllPassports } from "./services/plasma";
-import PlanetAPlantTrees from "./planeta/PlantTrees";
-import PlanetAStartHandshake from "./planeta/StartHandshake";
-import PlanetAFinalizeHandshake from "./planeta/FinalizeHandshake";
-import planetATransactionHandler from "./planeta/transactionHandler";
-import TransferPassport from "./planeta/TransferPassport";
-import GlobalCO2 from "./planeta/GlobalCO2";
-let LOADERIMAGE = planetaLogo;
+import { BN } from "web3-utils";
+
+let LOADERIMAGE = burnerlogo
 let HARDCODEVIEW// = "loader"// = "receipt"
 
 const MAX_INPUTS = 15;
@@ -159,7 +154,7 @@ export default class App extends Component {
 
   // NOTE: This function is for _displaying_ a currency value to a user. It
   // adds a currency unit to the beginning or end of the number!
-  currencyDisplay(amount, toParts=false, convert=true) {
+  currencyDisplay(amount, convert=true) {
     const { account } = this.state;
     const locale = getStoredValue('i18nextLng');
     const symbol = getStoredValue('currency', account) || CONFIG.CURRENCY.DEFAULT_CURRENCY;
@@ -173,7 +168,8 @@ export default class App extends Component {
       currency: symbol,
       maximumFractionDigits: 2
     });
-    return toParts ? formatter.formatToParts(amount) : formatter.format(amount);
+
+    return formatter.format(amount);
   }
 
   /*
@@ -1667,7 +1663,44 @@ async function consolidateUTXOs(utxos, plasma, web3, privateKey) {
   const signedTx = privateKey
     ? await transaction.signAll(privateKey)
     : await transaction.signWeb3(web3);
-  return await plasma.eth.sendSignedTransaction(signedTx.hex())
+  const rawTx = signedTx.hex();
+
+  try {
+    await new Promise((resolve, reject) => {
+      plasma.currentProvider.send(
+        {
+          jsonrpc: "2.0",
+          id: 42,
+          method: "eth_sendRawTransaction",
+          params: [rawTx]
+        },
+        (err, res) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve(res);
+        }
+      );
+    });
+  } catch (e) {
+    throw new Error("Consolidate failed.");
+  }
+
+  let receipt;
+  let rounds = 5;
+
+  while (rounds--) {
+    let res = await plasma.eth.getTransaction(signedTx.hash());
+    if (res && res.blockHash) {
+      receipt = res;
+      break;
+    }
+    await new Promise(resolve => setTimeout(() => resolve(), 1000));
+  }
+
+  if (!receipt) {
+    throw new Error("Consolidate UTXOs wasn't included into a block.");
+  }
 }
 
 async function tokenSendV2(from, to, value, color, xdaiweb3, web3, privateKey) {
