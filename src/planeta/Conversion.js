@@ -10,8 +10,7 @@ export default class Conversion extends React.Component {
   render() {
     const { globalCO2, goBack } = this.props;
     const diff = Math.max(globalCO2 - 3420, 0);
-    const factor = diff * diff * 0.0001 + 1;
-    console.log(diff, factor, globalCO2);
+    const factor = diff * diff * 0.00005 + 1;
 
     return (
       <Flex flexDirection="column">
