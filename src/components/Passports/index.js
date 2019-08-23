@@ -63,16 +63,16 @@ export class Passports extends Component {
     this.closePassport = this.closePassport.bind(this);
   }
 
-  componentDidUpdate(prevProps) {
-    const { list } = this.props;
-    const { storedPassport } = this.state;
-    if (storedPassport && list !== prevProps.list) {
-      const { id, color } = storedPassport;
-      this.setState({
-        currentPassport: findPassport( list, id, color )
-      });
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   const { list } = this.props;
+  //   const { storedPassport } = this.state;
+  //   if (storedPassport && list !== prevProps.list) {
+  //     const { id, color } = storedPassport;
+  //     this.setState({
+  //       currentPassport: findPassport( list, id, color )
+  //     });
+  //   }
+  // }
 
   selectPassport(id, color) {
     const { account, list } = this.props;
