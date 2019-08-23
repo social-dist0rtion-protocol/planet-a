@@ -44,6 +44,8 @@ import base64url from 'base64url';
 import EthCrypto from 'eth-crypto';
 import { getStoredValue, storeValues, eraseStoredValue } from "./services/localStorage";
 import { fetchAllPassports } from "./services/plasma";
+import PlanetA from "./planeta/PlantTrees";
+import PlanetAConversion from "./planeta/Conversion";
 import PlanetAPlantTrees from "./planeta/PlantTrees";
 import PlanetAStartHandshake from "./planeta/StartHandshake";
 import PlanetAFinalizeHandshake from "./planeta/FinalizeHandshake";
@@ -1015,6 +1017,34 @@ export default class App extends Component {
                 )
 
                 switch(view) {
+                  case 'planet_a_conversion':
+                  return (
+                    <div>
+                      {this.state.scannerOpen ? sendByScan : null}
+                      <Card>
+                        <NavCard title="Conversion rates" goBack={this.goBack.bind(this)}/>
+                        <PlanetAConversion
+                            changeAlert={this.changeAlert}
+                            changeView={this.changeView}
+                            goBack={this.goBack.bind(this)}
+                            web3={this.state.web3}
+                            plasma={this.state.xdaiweb3}
+                            globalCO2={this.state.globalCO2}
+                            metaAccount={this.state.metaAccount}
+                            passport={defaultPassport}
+                            account={account}
+                            openScanner={this.openScanner.bind(this)}
+                            scannerState={this.state.scannerState}
+                            setReceipt={this.setReceipt}
+                            tokenSendV2={tokenSendV2.bind(this)}
+                        />
+                      </Card>
+                      <Bottom
+                        text="Cancel"
+                        action={this.goBack.bind(this)}
+                      />
+                    </div>
+                  );
                   case 'planet_a_transfer_passport':
                   return (
                     <div>

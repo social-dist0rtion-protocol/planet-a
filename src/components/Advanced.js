@@ -202,6 +202,14 @@ export default class Advanced extends React.Component {
         </div>
 
         <hr style={{paddingTop:20}}/>
+        <PrimaryButton width={1} onClick={()=>{
+          changeView('planet_a_conversion')
+        }}>
+        Conversion rates
+        </PrimaryButton>
+
+
+        <hr style={{paddingTop:20}}/>
 
         {privateKey && !isVendor &&
         <div>
