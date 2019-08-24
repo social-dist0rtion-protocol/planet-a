@@ -49,7 +49,7 @@ const configs = [
     DOMAINS: ["toco2.leap.rocks", "planeta.leap.rocks"],
     PLANET_A: {
       // In seconds
-      COOLDOWN: 60*60
+      COOLDOWN: 0
     },
     CURRENCY: {
       EXCHANGE_RATE_QUERY: 5000,
