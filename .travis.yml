@@ -26,7 +26,7 @@ deploy:
     skip_cleanup: true
     region: "eu-west-1"
     on:
-      branch: voting/master
+      all_branches: true
 
 after_deploy:
   - aws configure set preview.cloudfront true
