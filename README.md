@@ -2,7 +2,7 @@
 
 deora.earth is a universal white-label voting and community platform. 
 
-We build an universal decision making/lobby tool for communities, NGOs, political movements and for the people. Together with other blockchain voting initiatives and foundations we want give the voice back to the people. We are using hands-on blockchain solutions for current real offline voting & community organizing challenges.
+We build an universal decision making/lobby tool for communities, NGOs, political movements and for the people. Together with other blockchain voting initiatives and foundations we want to give the voice back to the people. We are using hands-on blockchain solutions for current real offline voting & community organizing challenges.
 
 For our first version - used for projects of closed events/environments and decision making processes - we are utilizing the burner wallet together with the Leap Network, a Plasma implementation on Ethereum.
 
