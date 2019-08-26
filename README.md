@@ -1,4 +1,4 @@
-# deora.earth
+# deora.earth :earth_africa:
 
 deora.earth is a universal white-label voting and community platform. 
 
