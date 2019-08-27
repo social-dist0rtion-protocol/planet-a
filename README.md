@@ -1,16 +1,18 @@
-# 🌍 Planet A 🌍
+# deora.earth :earth_africa:
 
-Planet A is a "serious social game" taking place during the Berlin Blockchain Week 2019 and CCCamp 2019 involving as many participants as possible.
+deora.earth is a universal white-label voting and community platform. 
 
-The game will begin as a gimmick incentivizing participants through a financial incentive to interact with each other via a burner wallet. Half way through the game, players will find themselves in a tragedy of the commons, as they find out that their greedy interactions had dangerous emissions that now threaten to collapse the economy of Berlin Blockchain Week. They enter as teams into a competition to educate each other, and prevent an economic tipping points to be reached. The team that manages to achieve the best climate score wins the event.
+We build an universal decision making/lobby tool for communities, NGOs, political movements and for the people. Together with other blockchain voting initiatives and foundations we want to give the voice back to the people. We are using hands-on blockchain solutions for current real offline voting & community organizing challenges.
+
+For our first version - used for projects of closed events/environments and decision making processes - we are utilizing the burner wallet together with the Leap Network, a Plasma implementation on Ethereum.
 
 ## Installation
 
-The Planet A Wallet runs on LeapDAO's test network. Installation should be
+The wallet runs on LeapDAO's test network. Installation should be
 simple and straight forward:
 
 ```bash
-$ git clone https://github.com/social-dist0rtion-protocol/planet-a.git
+$ git 
 $ npm i
 $ npm run start
 ```
@@ -25,48 +27,14 @@ $ HTTPS=true npm run start
 ## Components
 
 ### ERC20 Tokens
-- LeapToken (LEAP)
-  - decimals: 18
-  - address: [`0xD2D0F8a6ADfF16C2098101087f9548465EC96C98`](https://testnet.leapdao.org/explorer/address/0xD2D0F8a6ADfF16C2098101087f9548465EC96C98)
-  - purpose: to pay the execution of the smart contract.
-- CO2 (CO2)
-  - decimals: 18
-  - unit: Gigaton of CO₂
-  - addresss: [`0xF64fFBC4A69631D327590f4151B79816a193a8c6`](https://testnet.leapdao.org/explorer/address/0xF64fFBC4A69631D327590f4151B79816a193a8c6)
-  - purpose: reserve of CO₂ that is released to `Air`. CO₂ cannot be created out of thin air (eheheh), so the contract needs to be preloaded with a big amount of CO₂.
-- Goellars (GOE)
-  - decimals: 18
-  - address: [`0x1f89Fb2199220a350287B162B9D0A330A2D2eFAD`](https://testnet.leapdao.org/explorer/address/0x1f89Fb2199220a350287B162B9D0A330A2D2eFAD)
-  - purpose: reserve of Göllars to distribute to players on successful handshake.
+
 
 ### ERC1948 Tokens
-Passports are ERC1948 tokens. Each player needs at least one passport to play.
+`
 
-Passport data structure:
-
-```
-+------------+------------+------------+-------------+
-| 20 bytes   | 4 bytes    | 4 bytes    | 4 bytes     |
-| name str   | picId      | CO₂ locked | CO₂ emitted |
-+------------+------------+------------+-------------+
-```
-
-Note that the CO₂ value in the passport is expressed in Megatons.
 
 ### Smart Contracts
-The [planet-a-contracts](https://github.com/social-dist0rtion-protocol/planet-a-contracts) repository contains:
-- `Earth`: smart contract that handles the handshake function and releases CO₂ to `Air`, and Göllars to the players.
-- `Air`: smart contact that accumulates CO₂. It exposes the `plantTree` function to lock CO₂ back to `Earth`.
 
-#### Earth
-`Earth` needs:
-- LeapToken
-- CO2
-- Goellars
-
-#### Air
-`Air` needs:
-- LeapToken
 
 ## License
 
