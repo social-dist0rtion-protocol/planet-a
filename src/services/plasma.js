@@ -21,8 +21,8 @@ export const sliceHex = (hexString, start = 0, end = hexString.length) => {
     .slice(2) // strip 0x
     .slice(start * 2, end * 2)}`;
 };
-export const extractData = passport => {
-  const rawData = passport.output.data;
+export const extractData = nst => {
+  const rawData = nst.output.data;
 
   const nameHex = sliceHex(rawData, 0, 20);
   const imageHex = sliceHex(rawData, 20, 24);
@@ -43,7 +43,8 @@ export const extractData = passport => {
     locked
   };
 };
-export const getId = passport => passport.output.value;
+export const getId = nst => nst.output.value;
+export const getData = nst => nst.output.data;
 
 export const getCitizenship = async (plasma, account) => {
   const citizenship = getStoredValue("citizenship", account);
