@@ -29,5 +29,7 @@ deploy:
       branch: master
 
 after_deploy:
+  - aws configure set aws_access_key_id $aws_access_key_id
+  - aws configure set aws_secret_access_key $aws_secret_access_key
   - aws configure set preview.cloudfront true
   - aws cloudfront create-invalidation --distribution-id $PROD_CLOUDFRONT_DISTRIBUTION --paths "/*"
