@@ -13,7 +13,7 @@ export default {
   },
   fonts: {
     serif: 'athelas, georgia, times, serif',
-    sansSerif: '"Source Sans Pro", -apple-system, sans-serif',
+    sansSerif: '"Ubuntu", -apple-system, sans-serif',
   },
   space: [
     0, 4, 8, 16, 32, 64, 128, 256
@@ -40,11 +40,19 @@ export default {
     disabled: 0.4
   },
   colors: {
+    voltBrandMain: '#582C83',
+    voltBrandWhite: '#FFFFFF',
+    voltBrandGreen: '#41CC8F',
+    voltBrandGreenBorder: '#0ceba1',
+    voltBrandRed: '#FF2C14',
+    voltBrandRedBorder: '#ff6d58',
+    voltBrandDimPurple: '#8a6ca8',
+
     passportUSA: "#6846c3",
     passportUSB: "#077154",
     emitted: '#4C6FED',
     locked: "#05B62C",
-    primary: 'black',
+    primary: '#582C83',
     blue: '#007ce0',
     navy: '#004175',
     copyColor: '#3F3D4B',
