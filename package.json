@@ -45,7 +45,7 @@
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
     "lint": "eslint src",
-    "deploy": "echo 'Re-building, deploying build to S3 and invalidating Cloudfront distribution. To get deployment credentials, ask someone from the team.' && npm run build && AWS_PROFILE=leap aws s3 sync build/ s3://planeta.leap.rocks/ --acl public-read && AWS_PROFILE=leap aws cloudfront create-invalidation --distribution-id EMOOCRPZK4EIL --paths '/*'"
+    "deploy": "echo 'Re-building, deploying build to S3 and invalidating Cloudfront distribution. To get deployment credentials, ask someone from the team.' && npm run build && AWS_PROFILE=deora-ci aws s3 sync build/ s3://volt.deora.earth/ --acl public-read && AWS_PROFILE=deora-ci aws cloudfront create-invalidation --distribution-id E11AR1A1T4EJQY --paths '/*'"
   },
   "eslintConfig": {
     "extends": "react-app"

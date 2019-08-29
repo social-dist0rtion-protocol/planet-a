@@ -1,0 +1,35 @@
+language: node_js
+
+node_js:
+  - "8.11"
+
+before_install:
+  - pip install --user awscli
+  - export PATH=$PATH:$HOME/.local/bin
+
+install: npm i
+
+script:
+  - unset CI
+  - npm run build
+
+cache: npm
+
+deploy:
+  - provider: s3
+    cache_control: "max-age=31536000"
+    access_key_id: $aws_access_key_id
+    secret_access_key: $aws_secret_access_key
+    bucket: $prod_s3_bucket
+    acl: public_read
+    local_dir: build
+    skip_cleanup: true
+    region: "eu-west-1"
+    on:
+      branch: master
+
+after_deploy:
+  - aws configure set aws_access_key_id $aws_access_key_id
+  - aws configure set aws_secret_access_key $aws_secret_access_key
+  - aws configure set preview.cloudfront true
+  - aws cloudfront create-invalidation --distribution-id $PROD_CLOUDFRONT_DISTRIBUTION --paths "/*"
