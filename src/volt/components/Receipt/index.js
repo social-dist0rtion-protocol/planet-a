@@ -84,7 +84,7 @@ const ReceiptField = ({ label, value }) => {
 };
 
 const Receipt = props => {
-  const { voteType, votes = 0 } = props;
+  const { voteType, votes = 0, onClose } = props;
   const voteImage = voteType === "yes" ? voteYes : voteNo;
   return (
     <FullScreenContainer>
@@ -99,7 +99,7 @@ const Receipt = props => {
           </ReceiptInfo>
           <Graphic src={voteAccepted} width={"6rem"} />
         </MiddlePart>
-        <ActionClose>Schließen</ActionClose>
+        <ActionClose onClick={onClose}>Schließen</ActionClose>
       </Container>
     </FullScreenContainer>
   );

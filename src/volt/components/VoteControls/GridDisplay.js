@@ -47,8 +47,8 @@ export const GridDisplay = ({ label, value }) => {
     <GridContainer>
       <Label>{label}</Label>
       <ValueContainer>
-        {numbers.map(number => {
-          return <Cell>{number}</Cell>;
+        {numbers.map((number, index) => {
+          return <Cell key={index}>{number}</Cell>;
         })}
       </ValueContainer>
     </GridContainer>

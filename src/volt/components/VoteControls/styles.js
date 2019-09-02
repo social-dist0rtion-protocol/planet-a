@@ -73,6 +73,10 @@ export const ActionButton = styled.button.attrs(() => ({}))`
   border-radius: 8px;
   background: transparent;
   text-transform: uppercase;
+  margin-bottom: 16px;
+  &:last-of-type{
+    margin-bottom: 0;
+  }
   &:disabled {
     opacity: 0.3;
   }

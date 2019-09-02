@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { Flex } from "rimble-ui";
+import icnFavorites from "../../assets/icn-favorites.png";
 
 export const MainContainer = styled(Flex).attrs(() => ({
   flexDirection: "column",
-  bg: "#4d606d"
+  bg: "voltBrandWhite"
 }))`
   position: relative;
   height: 100vh;
@@ -31,4 +32,12 @@ export const ActionClose = styled.button.attrs(() => ({}))`
   &:disabled {
     opacity: 0.3;
   }
+`;
+
+export const Star = styled(Flex).attrs(() => ({}))`
+  cursor: pointer;
+  width: 25px;
+  height: 24px;
+  background-image: url(${icnFavorites});
+  background-position-x: ${({ active = false }) => (active ? "-25px" : 0)};
 `;

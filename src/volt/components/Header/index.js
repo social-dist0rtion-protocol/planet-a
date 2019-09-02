@@ -1,44 +1,37 @@
 import React from "react";
-import { Flex, Text } from "rimble-ui";
-import styled from "styled-components";
-
-const HeaderContainer = styled(Flex).attrs(() => ({
-  p: 2,
-  flexDirection: "column",
-  bg: "voltBrandMain",
-  height: "160px"
-}))`
-  align-items: center;
-  justify-content: center;
-`;
-
-const BalanceContainer = styled(Flex).attrs(() => ({
-  p: 2,
-  justifyContent: "space-between",
-  width: "100%"
-}))``;
-
-const Label = styled(Text).attrs(() => ({
-  color: "voltBrandWhite"
-}))``;
-
-const Balance = styled(Text).attrs(() => ({
-  color: "voltBrandWhite"
-}))`
-  font-weight: bold;
-`;
+import {
+  HeaderContainer,
+  TopContainer,
+  LogoContainer,
+  LogoDeora,
+  LogoVolt,
+  LogoPadding,
+  Hamburger,
+  BalanceContainer,
+  Balance,
+  Label,
+  Value
+} from "./styles";
 
 export const Header = props => {
-  const { tokens, credits } = props;
+  const { credits, maxCredits = 120, openMenu } = props;
   return (
     <HeaderContainer>
+      <TopContainer>
+        <LogoContainer>
+          <LogoDeora/>
+          <LogoPadding>x</LogoPadding>
+          <LogoVolt/>
+        </LogoContainer>
+        <Hamburger onClick={openMenu} />
+      </TopContainer>
       <BalanceContainer>
-        <Label>Voice Tokens</Label>
-        <Balance>{tokens || "--"}</Balance>
-      </BalanceContainer>
-      <BalanceContainer>
-        <Label>Voice Credits</Label>
-        <Balance>{credits || "--"}</Balance>
+        <Label>DEINE VOICECREDITS</Label>
+        <Balance>
+          <Value>
+            {credits || "--"} <span>/{maxCredits}</span>{" "}
+          </Value>
+        </Balance>
       </BalanceContainer>
     </HeaderContainer>
   );

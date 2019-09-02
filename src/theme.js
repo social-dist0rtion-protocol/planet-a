@@ -16,7 +16,7 @@ export default {
     sansSerif: '"Ubuntu", -apple-system, sans-serif',
   },
   space: [
-    0, 4, 8, 16, 32, 64, 128, 256
+    0, 4, 8, 16, 24, 32, 64, 128, 256
   ],
   radii: [
     '0', '4px', '8px', '16px'
@@ -41,12 +41,15 @@ export default {
   },
   colors: {
     voltBrandMain: '#582C83',
-    voltBrandWhite: '#FFFFFF',
     voltBrandGreen: '#41CC8F',
     voltBrandGreenBorder: '#0ceba1',
     voltBrandRed: '#FF2C14',
     voltBrandRedBorder: '#ff6d58',
     voltBrandDimPurple: '#8a6ca8',
+    voltBrandWhite: '#FFFFFF',
+    voltBrandLightGrey: '#F0F0F0',
+    voltBrandGrey: '#D9E1E2',
+    voltBrandDarkGrey: '#383838',
 
     passportUSA: "#6846c3",
     passportUSB: "#077154",

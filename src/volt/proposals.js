@@ -1,12 +1,12 @@
 const proposals = [
   {
-    proposalId: "prop-12",
+    proposalId: "prop-0",
     title: "bla",
     description: "bla bla bla",
     topic: ["Smart State", "Social Equality"],
-    boothAddress: "0x1ba5dca50564df62f60a4930635f7dbbf38378b7",
-    yesBoxAddress: "0xdea3f5922b9bbde4707d1f73d4d265040c49282b",
-    noBoxAddress: "0x772e6c04dcb3b42d716db90699de6664f4ba45ba"
+    boothAddress: "0xbc89fd59236888ad3a1ce1b7979aa5c3a57fcbcf",
+    yesBoxAddress: "0x10b3bf535f874b6a11818b61d4d164fc0b63e5e1",
+    noBoxAddress: "0x6d3fb1c8abd362e7cf33c982b8943b05c042fb80"
   }
 ];
 

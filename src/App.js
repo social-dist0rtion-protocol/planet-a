@@ -6,30 +6,14 @@ import Web3 from "web3";
 import { I18nextProvider } from "react-i18next";
 import i18n from "./i18n";
 import "./App.scss";
-// import Header from './components/Header';
-import NavCard from "./components/NavCard";
-import SendByScan from "./components/SendByScan";
-import SendToAddress from "./components/SendToAddress";
-import Bity from "./components/Bity";
-import BityHistory from "./components/BityHistory";
-import WithdrawFromPrivate from "./components/WithdrawFromPrivate";
-import RequestFunds from "./components/RequestFunds";
-import Receive from "./components/Receive";
-import Share from "./components/Share";
-import ShareLink from "./components/ShareLink";
-import Balance from "./components/Balance";
-import GoellarsBalance from "./components/GoellarsBalance";
-import MainCard from "./components/MainCard";
+
 import History from "./components/History";
 import Advanced from "./components/Advanced";
 import RecentTransactions from "./components/RecentTransactions";
-import Footer from "./components/Footer";
+
 import Loader from "./components/Loader";
 import burnerlogo from "./assets/burnerwallet.png";
-import BurnWallet from "./components/BurnWallet";
-import Bottom from "./components/Bottom";
-import Card from "./components/StyledCard";
-import { Passports, getDefaultPassport } from "./components/Passports";
+
 import incogDetect from "./services/incogDetect.js";
 import { ThemeProvider } from "rimble-ui";
 import theme from "./theme";
@@ -49,11 +33,16 @@ import {
 import { voltConfig as VOLT_CONFIG } from "./volt/config";
 import { MainContainer } from "./volt/components/Common";
 import { Header } from "./volt/components/Header";
+import Menu from "./volt/components/Menu";
 import VoteControls from "./volt/components/VoteControls";
 import Progress from "./volt/components/Progress";
 import Receipt from "./volt/components/Receipt";
-import { fetchBalanceCard, votesToValue } from "./volt/utils";
+import { fetchBalanceCard, votesToValue, contains } from "./volt/utils";
 import SMT from "./volt/lib/SparseMerkleTree";
+import ProposalsList from "./volt/components/ProposalsList";
+import SortContols from "./volt/components/SortControls";
+import FilterControls from "./volt/components/FilterControls";
+import Footer from "./volt/components/Footer";
 
 let LOADERIMAGE = burnerlogo;
 let HARDCODEVIEW; // = "loader"// = "receipt"
@@ -86,6 +75,7 @@ export default class App extends Component {
     }
     console.log("CACHED VIEW", view);
     super(props);
+
     this.state = {
       web3: false,
       account: false,
@@ -102,9 +92,11 @@ export default class App extends Component {
       ethprice: 0.0,
       hasUpdateOnce: false,
       possibleNewPrivateKey: "",
-      // NOTE: USD in exchangeRates is undefined, such that any result using this
-      // number becomes NaN intentionally until it's defined.
-      exchangeRates: {}
+      isMenuOpen: false,
+      filterQuery: "",
+      filteredList: [],
+      sortedList: [],
+      favorites: {}
     };
     this.alertTimeout = null;
 
@@ -132,55 +124,12 @@ export default class App extends Component {
 
     this.poll = this.poll.bind(this);
     this.setPossibleNewPrivateKey = this.setPossibleNewPrivateKey.bind(this);
-    this.currencyDisplay = this.currencyDisplay.bind(this);
-    this.convertCurrency = this.convertCurrency.bind(this);
-  }
-
-  // NOTE: This function is for _displaying_ a currency value to a user. It
-  // adds a currency unit to the beginning or end of the number!
-  currencyDisplay(amount, toParts = false, convert = true) {
-    const { account } = this.state;
-    const locale = getStoredValue("i18nextLng");
-    const symbol =
-      getStoredValue("currency", account) || CONFIG.CURRENCY.DEFAULT_CURRENCY;
-
-    if (convert) {
-      amount = this.convertCurrency(amount, `${symbol}/USD`);
-    }
-
-    const formatter = new Intl.NumberFormat(locale, {
-      style: "currency",
-      currency: symbol,
-      maximumFractionDigits: 2
-    });
-    return toParts ? formatter.formatToParts(amount) : formatter.format(amount);
-  }
-
-  /*
-   * Pair is supposed to be a currency pair according to ISO 4217. Format must
-   * be BASE/COUNTER.
-   *
-   * convertCurrency then ALWAYS converts from COUNTER => BASE. Amount must
-   * be quoted in the base currency. An example:
-   *
-   * convertCurrency(1, "EUR/USD"):
-   * returns (0.81 / 1) * $1, so essentially converts $1 to 0.81€.
-   *
-   * or
-   *
-   * convertCurrency(1, "USD/EUR"):
-   * returns (1 / 0.81) * €1, so essentially converts €1 to 1.23$.
-   *
-   * NOTE: This function assumes 1 DAI = 1 USD!
-   */
-  convertCurrency(amount, pair) {
-    const { exchangeRates } = this.state;
-    const [base, counter] = pair.split("/");
-
-    const baseRate = exchangeRates[base];
-    const counterRate = exchangeRates[counter];
-
-    return (baseRate / counterRate) * amount;
+    this.openMenu = this.openMenu.bind(this);
+    this.closeMenu = this.closeMenu.bind(this);
+    this.sort = this.sort.bind(this);
+    this.filterList = this.filterList.bind(this);
+    this.resetFilter = this.resetFilter.bind(this);
+    this.toggleFavorites = this.toggleFavorites.bind(this);
   }
 
   parseAndCleanPath(path) {
@@ -257,6 +206,8 @@ export default class App extends Component {
   componentDidMount() {
     this.detectContext();
 
+    this.loadProposals();
+
     console.log(
       "document.getElementsByClassName('className').style",
       document.getElementsByClassName(".btn").style
@@ -329,7 +280,7 @@ export default class App extends Component {
       }
     }
 
-    interval = setInterval(this.poll, 1500);
+    interval = setInterval(this.poll, 2000);
   }
 
   componentWillUnmount() {
@@ -819,20 +770,139 @@ export default class App extends Component {
     }
   }
 
+  // VOLT Methods
+  openMenu() {
+    this.setState(state => ({
+      ...state,
+      isMenuOpen: true
+    }));
+  }
+  closeMenu() {
+    this.setState(state => ({
+      ...state,
+      isMenuOpen: false
+    }));
+  }
+  async loadProposals() {
+    const endpoint = "https://www.npoint.io/documents/217ecb17f01746799a3b";
+    const response = await fetch(endpoint);
+    const body = await response.json();
+    const {
+      proposals: proposalsList,
+      voteEndTime,
+      voteStartTime
+    } = body.contents;
+    this.setState(state => ({
+      ...state,
+      proposalsList,
+      sortedList: proposalsList,
+      filteredList: proposalsList,
+      filterQuery: "",
+      voteStartTime,
+      voteEndTime
+    }));
+  }
+
+  sort(param) {
+    const { filteredList } = this.state;
+    return () => {
+      console.log("Sort by:", param);
+    };
+  }
+
+  filterList(event) {
+    const query = event.target.value;
+    const { proposalsList, filteredList, filterQuery } = this.state;
+
+    const lcQuery = query.toLowerCase();
+    const searchList = lcQuery.includes(filterQuery)
+      ? filteredList
+      : proposalsList;
+
+    const newList = searchList.filter(proposal => {
+      const inTitle = contains(proposal, "title", lcQuery);
+      const inDescription = contains(proposal, "description", lcQuery);
+      const inId = contains(proposal, "proposalId", lcQuery);
+      return inTitle || inDescription || inId;
+    });
+
+    this.setState(state => ({
+      ...state,
+      filterQuery: query,
+      filteredList: newList
+    }));
+  }
+
+  resetFilter() {
+    const { proposalsList, filteredList, filterQuery } = this.state;
+    this.setState(state => ({
+      ...state,
+      filterQuery: "",
+      filteredList: proposalsList
+    }));
+  }
+
+  toggleFavorites(id) {
+    const { account, favorites } = this.state;
+    const value = !!favorites[id];
+    favorites[id] = !value;
+
+    storeValues({ favorites: JSON.stringify(favorites) }, account);
+
+    this.setState(state => ({
+      ...state,
+      favorites
+    }));
+  }
+
   render() {
-    const { creditsBalance, tokensBalance, account, balanceCard } = this.state;
-    const { xdaiweb3 } = this.state;
+    const { creditsBalance, tokensBalance } = this.state;
+    const { xdaiweb3, web3, account, metaAccount } = this.state;
+    const {
+      isMenuOpen,
+      sortedList,
+      filteredList,
+      filterQuery,
+      favorites
+    } = this.state;
+    const { voteStartTime, voteEndTime } = this.state;
+    const web3props = { plasma: xdaiweb3, web3, account, metaAccount };
     return (
       <ThemeProvider theme={theme}>
         <I18nextProvider i18n={i18n}>
-          <MainContainer>
-            <Header credits={creditsBalance} tokens={tokensBalance} />
-            <VoteControls
+          {account ? (
+            <MainContainer>
+              {isMenuOpen && <Menu onClose={this.closeMenu} />}
+              <Header credits={creditsBalance} openMenu={this.openMenu} />
+              <FilterControls
+                filter={this.filterList}
+                query={filterQuery}
+                reset={this.resetFilter}
+              />
+              <SortContols sort={this.sort} />
+              <ProposalsList
+                list={filteredList}
+                toggle={this.toggleFavorites}
+                favorites={favorites}
+              />
+              <Footer
+                voteStartTime={voteStartTime}
+                voteEndTime={voteEndTime}
+                history={[
+                  { id: "EA001", votes: 2 },
+                  { id: "EA003", votes: 4 },
+                  { id: "EA002", votes: 1 }
+                ]}
+              />
+              {/*            <VoteControls
+              proposalId={0}
               credits={creditsBalance}
-              account={account}
-              plasma={xdaiweb3}
-            />
-          </MainContainer>
+              {...web3props}
+            />*/}
+            </MainContainer>
+          ) : (
+            <p>Loading...</p>
+          )}
           <Dapparatus
             config={{
               DEBUG: false,
@@ -848,8 +918,17 @@ export default class App extends Component {
             onUpdate={async state => {
               //console.log("DAPPARATUS UPDATE",state)
 
-              if (state.xdaiweb3) {
+              const { account, favorites } = state;
+              if (!favorites) {
+                const storedList = getStoredValue("favorites", account);
+                const favoritesList = storedList ? JSON.parse(storedList) : {};
+                this.setState(state => ({
+                  ...state,
+                  favorites: favoritesList
+                }));
+              }
 
+              if (state.xdaiweb3) {
                 let voiceCreditsContract;
                 let voiceTokensContract;
                 const StableABI = require("./contracts/StableCoin.abi.js");

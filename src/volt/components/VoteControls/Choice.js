@@ -38,6 +38,7 @@ export const Choice = props => {
         const selected = value === selection;
         return (
           <Option
+            key={option.value}
             selected={selected}
             onClick={() => onChange(option)}
             optionColor={color}
