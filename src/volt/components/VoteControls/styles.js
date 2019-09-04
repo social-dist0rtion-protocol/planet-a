@@ -2,16 +2,12 @@ import styled from "styled-components";
 import {Flex, Slider, Text} from "rimble-ui";
 
 export const Container = styled(Flex).attrs(() => ({
-  p: 4,
   width: "100%",
   bg: "voltBrandMain",
   color: "voltBrandWhite",
   alignItems: "center",
   justifyContent: "center"
 }))`
-  position: fixed;
-  bottom: 0;
-  z-index: 2;
   flex-direction: column;
 `;
 

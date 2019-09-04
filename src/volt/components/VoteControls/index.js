@@ -17,7 +17,6 @@ import {
   StyledSlider,
   ActionButton
 } from "./styles";
-import proposals from "../../proposals";
 import { votesToValue, getUTXOs, toHex, padHex, replaceAll } from "../../utils";
 import { voltConfig } from "../../config";
 import { getData, getId } from "../../../services/plasma";
@@ -75,9 +74,9 @@ class VoteControls extends Component {
   }
 
   prepareScript() {
-    const { proposalId } = this.props;
-    const { yesBoxAddress, noBoxAddress } = proposals[proposalId];
-    const hexId = toHex(proposalId, 12);
+    const { proposal } = this.props;
+    const { yesBoxAddress, noBoxAddress } = proposal;
+    const hexId = toHex(proposal.proposalId, 12);
 
     // Bytecode templates
     const {
@@ -173,8 +172,7 @@ class VoteControls extends Component {
   }
 
   async getOutputs() {
-    const { account, proposalId } = this.props;
-    const proposal = proposals[proposalId];
+    const { account, proposal } = this.props;
     const { boothAddress } = proposal;
 
     // TODO: Parallelize with Promise.all([...promises])
@@ -224,7 +222,7 @@ class VoteControls extends Component {
     const contractInterface = new utils.Interface(abi);
 
     return contractInterface.functions.castBallot.encode([
-      parseInt(balanceCardId),
+      parseInt(balanceCardId, 10),
       proof,
       prevNumOfVotes, // previous value
       newNumOfVotes // how much added
@@ -261,24 +259,24 @@ class VoteControls extends Component {
 
   async signVote(vote) {
     const { metaAccount, web3 } = this.props;
-    console.log(web3);
     if (metaAccount && metaAccount.privateKey) {
       // TODO: Check that this is working on mobile, where you don't have Metamask
-      vote.signAll(metaAccount.privateKey);
+      vote.sign([
+        undefined,
+        undefined,
+        metaAccount.privateKey,
+        metaAccount.privateKey,
+      ]);
     } else {
       await window.ethereum.enable();
-      await vote.signWeb3(web3);
+      const { r, s, v, signer } = await Tx.signMessageWithWeb3(web3, vote.sigData(), 0);
+      vote.inputs[2].setSig(r, s, v, signer);
+      vote.inputs[3].setSig(r, s, v, signer);
     }
   }
 
   async checkVote(vote) {
     return await plasma.send("checkSpendingCondition", [vote.hex()]);
-  }
-
-  async updateVoteOutputs(vote, correctOutputs) {
-    for (let i = 0; i < correctOutputs.length; i++) {
-      vote.outputs[i] = new Output.fromJSON(correctOutputs[i]);
-    }
   }
 
   async processVote(vote) {
@@ -304,9 +302,14 @@ class VoteControls extends Component {
     // Sign and check vote
     await this.signVote(vote);
     const check = await this.checkVote(vote);
+    console.log({ check });
+
+    if (check.error) {
+      throw new Error(`Check error: ${check.error}`);
+    }
 
     // Update vote and sign again
-    this.updateVoteOutputs(vote, check.outputs);
+    vote.outputs = check.outputs.map(Output.fromJSON);
     await this.signVote(vote);
     const secondCheck = await this.checkVote(vote);
     console.log({ secondCheck });
@@ -378,7 +381,6 @@ class VoteControls extends Component {
       { value: "no", color: "voltBrandRed" }
     ];
     const disabled = votes < 1 || choice === "";
-    console.log(this.state);
     return (
       <Container>
         {showProgress && <Progress />}

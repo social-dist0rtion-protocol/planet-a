@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from 'react-router-dom';
 import {
   HeaderContainer,
   TopContainer,
@@ -18,11 +19,13 @@ export const Header = props => {
   return (
     <HeaderContainer>
       <TopContainer>
-        <LogoContainer>
-          <LogoDeora/>
-          <LogoPadding>x</LogoPadding>
-          <LogoVolt/>
-        </LogoContainer>
+        <Link to="/">
+          <LogoContainer>
+            <LogoDeora/>
+            <LogoPadding>x</LogoPadding>
+            <LogoVolt/>
+          </LogoContainer>
+        </Link>
         <Hamburger onClick={openMenu} />
       </TopContainer>
       <BalanceContainer>

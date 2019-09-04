@@ -42,7 +42,6 @@ export const HistoryItem = styled(Text).attrs(() => ({
 `;
 
 export const History = ({ history }) => {
-  console.log(history);
   return (
     <HistoryContainer>
       <HistoryTitle>Voice History</HistoryTitle>

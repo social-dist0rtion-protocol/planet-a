@@ -43,8 +43,8 @@ export const extractData = nst => {
     locked
   };
 };
-export const getId = nst => nst.output.value;
-export const getData = nst => nst.output.data;
+export const getId = nst => nst && nst.output && nst.output.value;
+export const getData = nst => nst && nst.output && nst.output.data;
 
 export const getCitizenship = async (plasma, account) => {
   const citizenship = getStoredValue("citizenship", account);

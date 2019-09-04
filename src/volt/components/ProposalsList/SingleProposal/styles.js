@@ -21,6 +21,7 @@ export const VoteInfo = styled(Flex).attrs(() => ({}))`
   flex: 1;
   flex-direction: column;
   align-items: flex-start;
+  text-decoration: none !important;
 `;
 
 export const TopPart = styled(Flex).attrs(() => ({}))`

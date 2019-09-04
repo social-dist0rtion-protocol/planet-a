@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { Flex } from "rimble-ui";
 import icnFavorites from "../../assets/icn-favorites.png";
+import icnBack from "../../assets/icn-back.svg";
 
 export const MainContainer = styled(Flex).attrs(() => ({
   flexDirection: "column",
@@ -40,4 +41,11 @@ export const Star = styled(Flex).attrs(() => ({}))`
   height: 24px;
   background-image: url(${icnFavorites});
   background-position-x: ${({ active = false }) => (active ? "-25px" : 0)};
+`;
+
+export const Back = styled(Flex).attrs(() => ({}))`
+  cursor: pointer;
+  width: 15px;
+  height: 24px;
+  background-image: url(${icnBack});
 `;

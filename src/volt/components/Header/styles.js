@@ -10,6 +10,7 @@ export const HeaderContainer = styled(Flex).attrs(() => ({
   bg: "voltBrandMain",
   height: "160px"
 }))`
+  flex-shrink: 0;
   align-items: center;
   justify-content: flex-end;
 `;

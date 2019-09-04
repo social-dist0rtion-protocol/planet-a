@@ -22,16 +22,13 @@ export const fetchBalanceCard = async (plasma, account) => {
 };
 export const getUTXOs = async (plasma, account, color) => {
   console.log(`Fetch unspent for ${color}`);
-  const utxos = await plasma.send("plasma_unspent", [account]);
-  console.log({ utxos });
+  const utxos = await plasma.send("plasma_unspent", [account, color]);
+
   return utxos
-    .filter(utxo => utxo.output.color === parseInt(color))
-    .map(utxo => {
-      return {
-        outpoint: Outpoint.fromRaw(utxo.outpoint),
-        output: utxo.output
-      };
-    });
+    .map(utxo => ({
+      outpoint: Outpoint.fromRaw(utxo.outpoint),
+      output: utxo.output
+    }));
 };
 
 export const replaceAll = (str, find, replace) => {
