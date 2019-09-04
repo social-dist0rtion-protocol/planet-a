@@ -861,7 +861,7 @@ export default class App extends Component {
       <>
           {account ? (
             <MainContainer>
-              {isMenuOpen && <Menu onClose={this.closeMenu} />}
+              {isMenuOpen && <Menu onClose={this.closeMenu} account={account} />}
               <Header credits={creditsBalance} openMenu={this.openMenu} />
 
                 <Route path="/" exact render={() => (
@@ -1008,7 +1008,6 @@ export default class App extends Component {
                             b > this.state.block - 6;
                             b--
                           ) {
-                            //console.log(" ++ Parsing *CURRENT BLOCK* Block "+b+" for transactions...")
                             updatedTxs =
                               (await this.parseBlocks(
                                 b,
@@ -1049,7 +1048,6 @@ export default class App extends Component {
                         parsingTheChain: false,
                         loadedBlocksTop: upperBoundOfSearch
                       });
-                      //console.log("~~ DONE PARSING SET ~~")
                     });
                   }
                 });

@@ -1,9 +1,9 @@
 import React from "react";
 import { FullScreenContainer, ActionClose } from "../Common";
 import { Container } from "../Progress/styles";
-import { DeoraLogo, MenuItems, Item } from "./styles";
+import { DeoraLogo, MenuItems, Item, AccountDetails, Label, Address } from "./styles";
 
-const Menu = ({ onClose }) => (
+const Menu = ({ onClose, account }) => (
   <FullScreenContainer>
     <Container>
       <DeoraLogo />
@@ -14,6 +14,10 @@ const Menu = ({ onClose }) => (
         <Item href="/page-4">Sicherheit & Privacy</Item>
         <Item href="/page-5">Wahlergebnisse</Item>
       </MenuItems>
+      <AccountDetails>
+        <Label>Your Account Address:</Label>
+        <Address>{account}</Address>
+      </AccountDetails>
       <ActionClose onClick={onClose}>Schließen</ActionClose>
     </Container>
   </FullScreenContainer>
