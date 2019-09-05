@@ -44,6 +44,10 @@ export const Topic = styled(Flex).attrs(() => ({
   borderColor: "voltBrandDarkGrey"
 }))`
   border: 1px solid;
+
+  & + & {
+    margin-left: 5px;
+  }
 `;
 
 export const Title = styled(Text).attrs(() => ({
