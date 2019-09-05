@@ -86,7 +86,7 @@ export default class ProposalPage extends React.Component {
           <header>
             <TopPart>
               <ProposalId>{proposal.proposalId}</ProposalId>
-              <Topic>Smart state</Topic>
+              {proposal.topic.map((t, i) => <Topic key={i}>{t}</Topic>)}
             </TopPart>
             <h1>{proposal.title}</h1>
           </header>

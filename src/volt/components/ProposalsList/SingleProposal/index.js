@@ -12,8 +12,7 @@ import {
 } from "./styles";
 
 const SingleProposal = props => {
-  const { title, proposalId, toggle, favorite } = props;
-  const topic = "Smart State";
+  const { title, proposalId, toggle, favorite, topic } = props;
   const votes = 0;
   return (
     <ProposalContainer>
@@ -21,7 +20,7 @@ const SingleProposal = props => {
       <VoteInfo as={Link} to={`/proposal/${proposalId}`}>
         <TopPart>
           <ProposalId>{proposalId}</ProposalId>
-          <Topic>{topic}</Topic>
+          {topic.map((t, i) => <Topic key={i}>{t}</Topic>)}
         </TopPart>
         <Title>{title}</Title>
       </VoteInfo>
