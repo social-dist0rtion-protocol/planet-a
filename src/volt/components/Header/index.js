@@ -17,7 +17,7 @@ import {
 } from "./styles";
 
 export const Header = props => {
-  const { credits, maxCredits = 120, openMenu } = props;
+  const { credits, maxCredits = 25, openMenu } = props;
   return (
     <HeaderContainer>
       <TopContainer>
