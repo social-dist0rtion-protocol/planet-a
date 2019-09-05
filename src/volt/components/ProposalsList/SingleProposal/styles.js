@@ -5,6 +5,7 @@ export const ProposalContainer = styled(Flex).attrs(() => ({
   alignItems: "center",
   p: 3
 }))`
+  flex-shrink: 0;
   --bg-color: white;
 
   &:nth-of-type(2n) {

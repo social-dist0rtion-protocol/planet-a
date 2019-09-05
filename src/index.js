@@ -11,7 +11,7 @@ import theme from "./theme";
 
 
 ReactDOM.render(
-  <ThemeProvider theme={theme}>
+  <ThemeProvider theme={theme} style={{ height: '100%' }}>
     <I18nextProvider i18n={i18n}>
       <Router>
         <App />

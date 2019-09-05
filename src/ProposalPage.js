@@ -29,9 +29,7 @@ export const Footer = styled(Flex).attrs(() => ({
   alignItems: "center",
   justifyContent: "center"
 }))`
-  /* position: fixed;
-  bottom: 0;
-  z-index: 2; */
+  flex-shrink: 0;
   flex-direction: column;
   border-radius: 5px 5px 0 0;
 `;
@@ -113,7 +111,6 @@ export default class ProposalPage extends React.Component {
             </VoteFooter>
           }
         </Footer>
-
       </Container>
     );
   }

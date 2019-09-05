@@ -8,7 +8,7 @@ export const MainContainer = styled(Flex).attrs(() => ({
   bg: "voltBrandWhite"
 }))`
   position: relative;
-  height: 100vh;
+  height: 100%;
 `;
 
 export const FullScreenContainer = styled(Flex).attrs(() => ({}))`
