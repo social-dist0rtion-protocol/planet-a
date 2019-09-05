@@ -3,7 +3,7 @@ import { Tx, Input, Output, Util } from "leap-core";
 import { Dapparatus } from "dapparatus";
 import { equal, bi } from "jsbi-utils";
 import Web3 from "web3";
-import { Route } from 'react-router-dom';
+import { Route, withRouter } from 'react-router-dom';
 import i18n from "./i18n";
 import "./App.scss";
 
@@ -75,7 +75,7 @@ let buttonStyle = {
   }
 }
 
-export default class App extends Component {
+class App extends Component {
   constructor(props) {
     console.log(
       "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[" +
@@ -221,6 +221,8 @@ export default class App extends Component {
     });
   }
   componentDidMount() {
+    const { history }   = this.props;
+    console.log({history});
     this.detectContext();
 
     this.loadProposals();
@@ -244,7 +246,7 @@ export default class App extends Component {
           base64url.toBuffer(base64encodedPK)
         );
         this.setState({ possibleNewPrivateKey: rawPK });
-        window.history.pushState({}, "", "/");
+        history.push("/");
       } else if (window.location.pathname.length === 43) {
         this.changeView("send_to_address");
         console.log("CHANGE VIEW");
@@ -254,7 +256,7 @@ export default class App extends Component {
         let claimKey = parts[1];
         console.log("DO CLAIM", claimId, claimKey);
         this.setState({ claimId, claimKey });
-        window.history.pushState({}, "", "/");
+        history.push("/");
       } else if (
         (window.location.pathname.length >= 65 &&
           window.location.pathname.length <= 67 &&
@@ -274,7 +276,7 @@ export default class App extends Component {
         }
         //console.log("!!! possibleNewPrivateKey",privateKey)
         this.setState({ possibleNewPrivateKey: privateKey });
-        window.history.pushState({}, "", "/");
+        history.push("/");
       } else if (window.location.pathname.indexOf("/vendors;") === 0) {
         this.changeView("vendors");
       } else {
@@ -1087,6 +1089,8 @@ export default class App extends Component {
     );
   }
 }
+
+export default withRouter(App);
 
 //<iframe id="galleassFrame" style={{zIndex:99,position:"absolute",left:0,top:0,width:800,height:600}} src="https://galleass.io" />
 
