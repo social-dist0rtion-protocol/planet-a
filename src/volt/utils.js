@@ -2,6 +2,12 @@ import web3 from "web3";
 import { Output, Outpoint } from "leap-core";
 import { voltConfig as VOLT_CONFIG } from "../volt/config";
 import { getId, getData } from "../services/plasma";
+import {
+  hashPersonalMessage,
+  bufferToHex,
+  ecsign,
+  privateToAddress
+} from "ethereumjs-util";
 
 export const contains = (string, query) => {
   const fieldValue = string.toLowerCase();
@@ -58,4 +64,18 @@ export const votesToValue = voteNum => {
     hex: toHex(voteCredits, 64),
     string: voteCredits
   };
+};
+
+export const signMatching = (transaction, privateKey) => {
+  const addressFromPrivate = privateToAddress(privateKey);
+  const address = bufferToHex(addressFromPrivate);
+  const privateKeyBuffer = Buffer.from(privateKey.replace("0x", ""), "hex");
+  for (let input of transaction.inputs) {
+    if (address === input.address) {
+      const sigHashBuf = hashPersonalMessage(transaction.sigDataBuf());
+      const sig = ecsign(sigHashBuf, privateKeyBuffer);
+      input.setSig(sig.r, sig.s, sig.v, address);
+    }
+  }
+  return transaction;
 };

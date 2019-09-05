@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { ListContainer } from "./styles";
 import SingleProposal from "./SingleProposal";
 
@@ -22,4 +22,4 @@ const ProposalsList = props => {
   );
 };
 
-export default ProposalsList;
+export default ProposalsList

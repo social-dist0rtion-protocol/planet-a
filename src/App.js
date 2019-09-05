@@ -769,16 +769,23 @@ export default class App extends Component {
     const {
       proposals: proposalsList,
       voteEndTime,
-      voteStartTime
+      voteStartTime,
+      trashAddress
     } = body.contents;
+
     // ToDo: remove second filter when store won't have any duplicate proposalId
-    const proposals = proposalsList.filter(p => p.proposalId).filter((p, i, list) => list.findIndex(p2 => p2.proposalId === p.proposalId) === i);
-    this.setState({
+    const proposals = proposalsList
+      .map((p,i)=>({...p, id: i }))
+      .filter(p => p.proposalId)
+      .filter((p, i, list) => list.findIndex(p2 => p2.proposalId === p.proposalId) === i);
+
+    this.setState(state => ({
       proposalsList: proposals,
       filterQuery: "",
       voteStartTime,
-      voteEndTime
-    });
+      voteEndTime,
+      trashBox: trashAddress
+    }));
   }
 
   sort(param) {
@@ -824,7 +831,7 @@ export default class App extends Component {
       favorites
     } = this.state;
 
-    const { voteStartTime, voteEndTime } = this.state;
+    const { voteStartTime, voteEndTime, trashBox } = this.state;
     const web3Props = { plasma: xdaiweb3, web3, account, metaAccount };
     return (
       <>
@@ -863,6 +870,7 @@ export default class App extends Component {
                         favorite={favorites[proposalId]}
                         toggleFavorites={this.toggleFavorites}
                         proposal={proposal}
+                        trashBox={trashBox}
                         creditsBalance={creditsBalance}
                         goBack={() => history.replace('/')}
                       />
@@ -889,6 +897,9 @@ export default class App extends Component {
               //console.log("DAPPARATUS UPDATE",state)
 
               const { account, favorites } = state;
+
+              console.log('ACCOUNT ADDRESS:', account);
+
               if (!favorites) {
                 const storedList = getStoredValue("favorites", account);
                 const favoritesList = storedList ? JSON.parse(storedList) : {};

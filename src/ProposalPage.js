@@ -99,6 +99,7 @@ export default class ProposalPage extends React.Component {
           {showVoteControls &&
             <VoteControls
               proposal={proposal}
+              proposalId={proposal.id}
               credits={creditsBalance}
               {...web3Props}
             />
