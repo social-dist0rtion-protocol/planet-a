@@ -1,5 +1,6 @@
 import web3 from "web3";
-import { Output, Outpoint } from "leap-core";
+import { toWei } from "web3-utils";
+import { Outpoint } from "leap-core";
 import { voltConfig as VOLT_CONFIG } from "../volt/config";
 import { getId, getData } from "../services/plasma";
 import {
@@ -10,6 +11,8 @@ import {
 } from "ethereumjs-util";
 import BallotBox from './spendies/BallotBox';
 import VotingBooth from './spendies/VotingBooth';
+
+const BN = web3.utils.BN;
 
 export const contains = (string, query) => {
   const fieldValue = string.toLowerCase();
@@ -103,3 +106,15 @@ export const generateProposal = (motionId) => {
     no: noBox
   }
 };
+
+/**
+ *  Create a function to filter values Outputs greater or equal than a given `lower` value.
+ * */ 
+export const gte = lower => o => 
+  new BN(o.output.value).gte(new BN(toWei(lower.toString())));
+
+/**
+ *  Select a random element from a list.
+ * */ 
+export const randomItem = arr => arr[Math.floor(Math.random() * arr.length)];
+
