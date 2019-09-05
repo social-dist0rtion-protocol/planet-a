@@ -18,7 +18,7 @@ const SingleProposal = props => {
   return (
     <ProposalContainer>
       <VoteRecord votes={votes} />
-      <VoteInfo as={Link}  to={`/proposal/${proposalId}`}>
+      <VoteInfo as={Link} to={`/proposal/${proposalId}`}>
         <TopPart>
           <ProposalId>{proposalId}</ProposalId>
           <Topic>{topic}</Topic>

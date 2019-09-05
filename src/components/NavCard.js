@@ -12,7 +12,7 @@ export default ({title, titleLink, goBack, darkMode}) => {
 
   if (titleLink){
     titleDisplay = (
-      <Link href={titleLink} target="_blank" textAlign={'center'} fontSize={3}>
+      <Link href={titleLink} target="_blank" fontSize={3}>
         {title}
       </Link>
     )

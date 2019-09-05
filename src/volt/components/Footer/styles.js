@@ -51,7 +51,7 @@ export const History = ({ history }) => {
           suffix += "s";
         }
         const t = `${item.votes} ${suffix}`;
-        console.log(t);
+
         return (
           <HistoryItem key={item.id}>
             <span>{item.id}</span> {t}

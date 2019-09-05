@@ -3,8 +3,8 @@ import { Output, Outpoint } from "leap-core";
 import { voltConfig as VOLT_CONFIG } from "../volt/config";
 import { getId, getData } from "../services/plasma";
 
-export const contains = (proposal, field, query) => {
-  const fieldValue = proposal[field].toLowerCase();
+export const contains = (string, query) => {
+  const fieldValue = string.toLowerCase();
   return fieldValue.includes(query);
 };
 

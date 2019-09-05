@@ -28,7 +28,7 @@ import { voltConfig as VOLT_CONFIG } from "./volt/config";
 import { MainContainer } from "./volt/components/Common";
 import { Header } from "./volt/components/Header";
 import Menu from "./volt/components/Menu";
-import { fetchBalanceCard, votesToValue, contains } from "./volt/utils";
+import { fetchBalanceCard } from "./volt/utils";
 
 import MainPage from "./MainPage";
 import ProposalPage from "./ProposalPage";
@@ -83,9 +83,9 @@ export default class App extends Component {
       possibleNewPrivateKey: "",
       isMenuOpen: false,
       filterQuery: "",
-      filteredList: [],
-      sortedList: [],
-      favorites: {}
+      favorites: {},
+      sorting: 'votes',
+      sortingOrder: 1,
     };
     this.alertTimeout = null;
 
@@ -314,17 +314,13 @@ export default class App extends Component {
         this.state.xdaiweb3,
         this.state.account
       );
-      this.setState(state => ({
-        ...state,
-        balanceCard
-      }));
+      this.setState({ balanceCard });
 
-      this.setState(state => ({
-        ...state,
+      this.setState({
         creditsBalance,
         tokensBalance,
         hasUpdateOnce: true
-      }));
+      });
     }
   }
 
@@ -761,16 +757,10 @@ export default class App extends Component {
 
   // VOLT Methods
   openMenu() {
-    this.setState(state => ({
-      ...state,
-      isMenuOpen: true
-    }));
+    this.setState({ isMenuOpen: true });
   }
   closeMenu() {
-    this.setState(state => ({
-      ...state,
-      isMenuOpen: false
-    }));
+    this.setState({ isMenuOpen: false });
   }
   async loadProposals() {
     const endpoint = "https://www.npoint.io/documents/217ecb17f01746799a3b";
@@ -781,54 +771,37 @@ export default class App extends Component {
       voteEndTime,
       voteStartTime
     } = body.contents;
-    const proposals = proposalsList.filter(p => p.proposalId)
-    this.setState(state => ({
-      ...state,
+    // ToDo: remove second filter when store won't have any duplicate proposalId
+    const proposals = proposalsList.filter(p => p.proposalId).filter((p, i, list) => list.findIndex(p2 => p2.proposalId === p.proposalId) === i);
+    this.setState({
       proposalsList: proposals,
-      sortedList: proposals,
-      filteredList: proposals,
       filterQuery: "",
       voteStartTime,
       voteEndTime
-    }));
+    });
   }
 
   sort(param) {
     return () => {
-      console.log("Sort by:", param);
-    };
+      this.setState(({ sorting, sortingOrder }) => ({
+        sorting: param,
+        sortingOrder: sorting === param ? sortingOrder * -1 : 1
+      }));
+    }
   }
 
   filterList(event) {
     const query = event.target.value;
-    const { proposalsList, filteredList, filterQuery } = this.state;
 
-    const lcQuery = query.toLowerCase();
-    const searchList = lcQuery.includes(filterQuery)
-      ? filteredList
-      : proposalsList;
-
-    const newList = searchList.filter(proposal => {
-      const inTitle = contains(proposal, "title", lcQuery);
-      const inDescription = contains(proposal, "description", lcQuery);
-      const inId = contains(proposal, "proposalId", lcQuery);
-      return inTitle || inDescription || inId;
-    });
-
-    this.setState(state => ({
-      ...state,
+    this.setState({
       filterQuery: query,
-      filteredList: newList
-    }));
+    });
   }
 
   resetFilter() {
-    const { proposalsList } = this.state;
-    this.setState(state => ({
-      ...state,
+    this.setState({
       filterQuery: "",
-      filteredList: proposalsList
-    }));
+    });
   }
 
   toggleFavorites(id) {
@@ -838,10 +811,7 @@ export default class App extends Component {
 
     storeValues({ favorites: JSON.stringify(favorites) }, account);
 
-    this.setState(state => ({
-      ...state,
-      favorites
-    }));
+    this.setState({ favorites });
   }
 
   render() {
@@ -849,7 +819,6 @@ export default class App extends Component {
     const { xdaiweb3, web3, account, metaAccount } = this.state;
     const {
       isMenuOpen,
-      filteredList,
       proposalsList,
       filterQuery,
       favorites
@@ -866,10 +835,12 @@ export default class App extends Component {
 
                 <Route path="/" exact render={() => (
                   <MainPage
-                    proposalsList={filteredList}
+                    proposalsList={proposalsList}
                     filterList={this.filterList}
                     resetFilter={this.resetFilter}
                     sort={this.sort}
+                    sorting={this.state.sorting}
+                    sortingOrder={this.state.sortingOrder}
                     toggleFavorites={this.toggleFavorites}
                     filterQuery={filterQuery}
                     favorites={favorites}
@@ -921,10 +892,9 @@ export default class App extends Component {
               if (!favorites) {
                 const storedList = getStoredValue("favorites", account);
                 const favoritesList = storedList ? JSON.parse(storedList) : {};
-                this.setState(state => ({
-                  ...state,
+                this.setState({
                   favorites: favoritesList
-                }));
+                });
               }
 
               if (state.xdaiweb3) {
