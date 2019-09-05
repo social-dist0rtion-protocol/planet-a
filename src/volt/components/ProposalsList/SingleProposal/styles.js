@@ -44,7 +44,10 @@ export const Topic = styled(Flex).attrs(() => ({
   borderColor: "voltBrandDarkGrey"
 }))`
   border: 1px solid;
-
+margin-right: 5px;
+&:last-of-type{
+  margin-right: 0;
+}
   & + & {
     margin-left: 5px;
   }
