@@ -23,7 +23,7 @@ import {
   toHex,
   padHex,
   replaceAll,
-
+  generateProposal
 } from "../../utils";
 import { voltConfig } from "../../config";
 import { getId } from "../../../services/plasma";
@@ -92,50 +92,19 @@ class VoteControls extends Component {
   }
 
   prepareScript() {
-    const { proposal, proposalId } = this.props;
-    const { yesBoxAddress, noBoxAddress } = proposal;
+    const { proposal } = this.props;
+    const { boothAddress, yesBoxAddress, noBoxAddress, id } = proposal;
+    console.log({ boothAddress, yesBoxAddress, noBoxAddress });
+    const motionId = proposal.id;
+    console.log({ motionId });
 
-    const hexId = toHex(proposalId, 12);
-    const { bytecode, template } = voteBoothInterface;
+    const params = generateProposal(motionId);
+    console.log({ params });
+    if ( boothAddress !== params.booth.address ){
+      throw Error("Spendie contract code versions out of sync ");
+    }
 
-    // Bytecode templates
-    const {
-      VOICE_CREDITS,
-      VOICE_TOKENS,
-      BALANCE_CARD,
-      YES_BOX,
-      NO_BOX,
-      PROPOSAL_ID
-    } = template;
-
-    // VOLT related addresses
-    const {
-      CONTRACT_VOICE_CREDITS,
-      CONTRACT_VOICE_TOKENS,
-      CONTRACT_VOICE_BALANCE_CARD
-    } = voltConfig;
-
-    // Replace all the placeholders with real data
-    let finalBytecode = replaceAll(
-      bytecode,
-      VOICE_CREDITS,
-      CONTRACT_VOICE_CREDITS
-    );
-    finalBytecode = replaceAll(
-      finalBytecode,
-      VOICE_TOKENS,
-      CONTRACT_VOICE_TOKENS
-    );
-    finalBytecode = replaceAll(
-      finalBytecode,
-      BALANCE_CARD,
-      CONTRACT_VOICE_BALANCE_CARD
-    );
-    finalBytecode = replaceAll(finalBytecode, YES_BOX, yesBoxAddress);
-    finalBytecode = replaceAll(finalBytecode, NO_BOX, noBoxAddress);
-
-    finalBytecode = replaceAll(finalBytecode, PROPOSAL_ID, hexId);
-    return Buffer.from(finalBytecode, "hex");
+    return Buffer.from(params.booth.code.replace("0x", ""), "hex");
   }
 
   async getBalanceCard(address) {
@@ -218,9 +187,9 @@ class VoteControls extends Component {
   }
 
   getDataFromTree() {
-    const { account, proposalId } = this.props;
-
-    console.log({proposalId});
+    const { account, proposal } = this.props;
+    const motionId = proposal.id;
+    console.log({ motionId });
 
     let tree;
     let castedVotes;
@@ -234,9 +203,9 @@ class VoteControls extends Component {
       const parsedTree = JSON.parse(localTree);
       console.log({ parsedTree });
       tree = new SMT(9, parsedTree);
-      castedVotes = utils.formatEther(parsedTree[proposalId]);
+      castedVotes = utils.formatEther(parsedTree[motionId]);
     }
-    const proof = tree.createMerkleProof(proposalId);
+    const proof = tree.createMerkleProof(motionId);
     console.log("root:", tree.root);
 
     console.log({ castedVotes, proof });
@@ -248,10 +217,11 @@ class VoteControls extends Component {
   }
 
   writeDataToTree(castedVotes, newLeaf) {
-    const { account, proposalId } = this.props;
+    const { account, proposal } = this.props;
+    const motionId = proposal.id;
     const localTree = getStoredValue("votes", account);
     const parsedTree = JSON.parse(localTree);
-    parsedTree[proposalId] = padHex(newLeaf.toHexString(), 64);
+    parsedTree[motionId] = padHex(newLeaf.toHexString(), 64);
 
     console.log({ castedVotes, newLeaf });
     console.log({ parsedTree });
@@ -259,7 +229,7 @@ class VoteControls extends Component {
     storeValues({ votes: JSON.stringify(parsedTree) }, account);
 
     const tree = new SMT(9, parsedTree);
-    const proof = tree.createMerkleProof(proposalId);
+    const proof = tree.createMerkleProof(motionId);
 
     this.setState(state => ({
       ...state,
@@ -356,13 +326,13 @@ class VoteControls extends Component {
     }
   }
 
-  async checkCondition(vote) {
-    return await plasma.send("checkSpendingCondition", [vote.hex()]);
+  async checkCondition(spendie) {
+    return await plasma.send("checkSpendingCondition", [spendie.hex()]);
   }
 
-  async processTransaction(vote) {
+  async processTransaction(tx) {
     const plasmaWeb3 = helpers.extendWeb3(new Web3(RPC));
-    const receipt = await plasmaWeb3.eth.sendSignedTransaction(vote.hex());
+    const receipt = await plasmaWeb3.eth.sendSignedTransaction(tx.hex());
     return receipt;
   }
 
@@ -402,10 +372,6 @@ class VoteControls extends Component {
     await this.signVote(vote, privateOutputs);
     const check = await this.checkCondition(vote);
 
-    if (check.error) {
-      throw new Error(`Check error: ${check.error}`);
-    }
-
     // Update vote and sign again
     vote.outputs = check.outputs.map(Output.fromJSON);
     await this.signVote(vote, privateOutputs);
@@ -414,9 +380,9 @@ class VoteControls extends Component {
     console.log({secondCheck});
 
     // Submit vote to blockchain
-/*    const receipt = await this.processTransaction(vote);
+    const receipt = await this.processTransaction(vote);
     console.log({ receipt });
-    this.writeDataToTree(newVotesTotal, newNumOfVotes);*/
+    this.writeDataToTree(newVotesTotal, newNumOfVotes);
 
     this.setProgressState(false);
     this.setReceiptState(true);
@@ -425,63 +391,29 @@ class VoteControls extends Component {
   // WITHDRAW RELATED METHODS
 
   prepareWithdrawScript() {
-    const { proposal, proposalId, trashBox } = this.props;
+    const { proposal } = this.props;
     const { castedVotes } = this.state;
-    const { yesBoxAddress, noBoxAddress } = proposal;
+    const { yesBoxAddress, noBoxAddress, } = proposal;
+    const motionId = proposal.id;
     console.log({ yesBoxAddress, noBoxAddress });
-    const hexId = toHex(proposalId, 12);
 
-    const { bytecode, template } = ballotBoxInterface;
+    const params = generateProposal(motionId);
+    if (yesBoxAddress !== params.yes.address || noBoxAddress !== params.no.address){
+      throw Error("Spendies contract code is out of sync");
+    }
 
-    const {
-      VOICE_CREDITS,
-      VOICE_TOKENS,
-      BALANCE_CARD,
-      TRASH_BOX,
-      PROPOSAL_ID,
-      IS_YES
-    } = template;
+    // TODO: Make proper comparison to allow votes with decimal places
+    const destBox = castedVotes < 0 ? params.no : params.yes;
 
-    const {
-      CONTRACT_VOICE_CREDITS,
-      CONTRACT_VOICE_TOKENS,
-      CONTRACT_VOICE_BALANCE_CARD
-    } = voltConfig;
-
-    // TODO: Add selection here
-    const YES = "0x000000000001";
-    const NO = "0x000000000000";
-
-    const BOX = castedVotes > 0 ? YES : NO;
-
-    // Construct new bytecode
-    let finalBytecode = replaceAll(
-      bytecode,
-      VOICE_CREDITS,
-      CONTRACT_VOICE_CREDITS
-    );
-    finalBytecode = replaceAll(
-      finalBytecode,
-      VOICE_TOKENS,
-      CONTRACT_VOICE_TOKENS
-    );
-    finalBytecode = replaceAll(
-      finalBytecode,
-      BALANCE_CARD,
-      CONTRACT_VOICE_BALANCE_CARD
-    );
-    finalBytecode = replaceAll(finalBytecode, TRASH_BOX, trashBox);
-    finalBytecode = replaceAll(finalBytecode, IS_YES, BOX);
-    finalBytecode = replaceAll(finalBytecode, PROPOSAL_ID, hexId);
-    return Buffer.from(finalBytecode, "hex");
+    return Buffer.from(destBox.code.replace("0x", ""), "hex");
   }
 
   async getWithdrawOutputs() {
-    const { account, proposal, proposalId } = this.props;
+    const { account, proposal } = this.props;
+    const { castedVotes } = this.state;
 
     const { yesBoxAddress, noBoxAddress } = proposal;
-    // TODO: Check from what box we shall withdraw
-    const destBox = yesBoxAddress;
+    const destBox = castedVotes < 0 ? noBoxAddress : yesBoxAddress;
 
     console.log({ destBox });
 

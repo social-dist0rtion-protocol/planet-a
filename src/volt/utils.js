@@ -8,6 +8,8 @@ import {
   ecsign,
   privateToAddress
 } from "ethereumjs-util";
+import BallotBox from './spendies/BallotBox';
+import VotingBooth from './spendies/VotingBooth';
 
 export const contains = (string, query) => {
   const fieldValue = string.toLowerCase();
@@ -78,4 +80,26 @@ export const signMatching = (transaction, privateKey) => {
     }
   }
   return transaction;
+};
+
+export const generateProposal = (motionId) => {
+  const motionId48 = ('00000000000' + motionId.toString(16)).substr(-12);
+  const yesBox = BallotBox.withParams({
+    IS_YES: '000000000001',
+    MOTION_ID: motionId48
+  });
+  const noBox = BallotBox.withParams({
+    IS_YES: '000000000000',
+    MOTION_ID: motionId48
+  });
+
+  return {
+    booth: VotingBooth.withParams({
+      YES_BOX: yesBox.address,
+      NO_BOX: noBox.address,
+      PROPOSAL_ID: motionId48
+    }),
+    yes: yesBox,
+    no: noBox
+  }
 };
