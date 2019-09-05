@@ -407,6 +407,7 @@ class VoteControls extends Component {
       this.setProgressState(false);
       this.setReceiptState(true);
     } catch (error) {
+      console.error(error);
       changeAlert({
         type: "fail",
         message: error.message
@@ -550,6 +551,7 @@ class VoteControls extends Component {
       this.setReceiptState(true);
 
     } catch (error) {
+      console.error(error);
       changeAlert({
         type: "fail",
         message: error.message
