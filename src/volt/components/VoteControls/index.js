@@ -23,7 +23,9 @@ import {
   toHex,
   padHex,
   replaceAll,
-  generateProposal
+  generateProposal,
+  gte,
+  randomItem,
 } from "../../utils";
 import { voltConfig } from "../../config";
 import { getId } from "../../../services/plasma";
@@ -137,10 +139,16 @@ class VoteControls extends Component {
   async getGas(address) {
     // Gas is always paid in Leap tokens (color = 0)
     const LEAP_COLOR = 0;
+    const { MIN_SIZE_FOR_LEAP_UTXO } = voltConfig;
     const gasUTXOs = await getUTXOs(plasma, address, LEAP_COLOR);
 
-    // TODO: Do we need to get several here?
-    const gas = gasUTXOs[0];
+    console.log({ gasUTXOs });
+    
+    // Assumptions:
+    // 1. BallotBox and VotingBooth spendies contain multiple big-enough
+    //    UTXOs for LEAP (done by consolidation script)
+    const gas = randomItem(gasUTXOs.filter(gte(MIN_SIZE_FOR_LEAP_UTXO)));
+    console.log({ gas });
     return {
       unspent: gas
     };
@@ -148,20 +156,24 @@ class VoteControls extends Component {
 
   async getVoteTokens(address) {
     console.log("Get vote tokens from:", address);
-    const { VOICE_TOKENS_COLOR } = voltConfig;
+    const { VOICE_TOKENS_COLOR, MIN_SIZE_FOR_VOT_UTXO } = voltConfig;
     const voiceTokensUTXOs = await getUTXOs(
       plasma,
       address,
       VOICE_TOKENS_COLOR
     );
 
-    console.log("get vote otkens");
     console.log({ voiceTokensUTXOs });
 
-    // TODO: Pick enough outputs
-    const voiceTokensOutput = voiceTokensUTXOs[0];
+    // Assumptions:
+    // 1. BallotBox and VotingBooth spendies contain multiple big-enough
+    //    UTXOs for VOT (done by consolidation script)
+    // 2. Each voter can cast/withdraw MIN_SIZE_FOR_VOT_UTXO votes at most
+    const voiceTokensOutput = randomItem(
+      voiceTokensUTXOs.filter(gte(MIN_SIZE_FOR_VOT_UTXO))
+    );
 
-    console.log({ voiceTokensUTXOs });
+    console.log({ voiceTokensOutput });
 
     return {
       unspent: [voiceTokensOutput],
