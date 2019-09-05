@@ -143,7 +143,7 @@ class VoteControls extends Component {
     const gasUTXOs = await getUTXOs(plasma, address, LEAP_COLOR);
 
     console.log({ gasUTXOs });
-    
+
     // Assumptions:
     // 1. BallotBox and VotingBooth spendies contain multiple big-enough
     //    UTXOs for LEAP (done by consolidation script)
@@ -349,55 +349,62 @@ class VoteControls extends Component {
   }
 
   async submitVote() {
-    const { votes, choice, castedVotes } = this.state;
+    const { changeAlert } = this.props;
+    const {votes, choice, castedVotes} = this.state;
+    try {
+      console.log("Display Progress Screen");
+      console.log({choice});
+      this.setProgressState(true);
 
-    console.log("Display Progress Screen");
-    console.log({ choice });
-    this.setProgressState(true);
+      /// START NEW CODE
 
-    /// START NEW CODE
+      const script = this.prepareScript();
+      const outputs = await this.getOutputs();
+      const {balanceCard} = outputs;
 
-    const script = this.prepareScript();
-    const outputs = await this.getOutputs();
-    const { balanceCard } = outputs;
+      const treeData = this.getDataFromTree();
+      console.log({treeData});
 
-    const treeData = this.getDataFromTree();
-    console.log({ treeData });
+      const sign = choice === "yes" ? 1 : -1;
 
-    const sign = choice === "yes" ? 1 : -1;
+      const prevNumOfVotes = utils.parseEther(castedVotes.toString());
+      const newVotesTotal = Math.abs(parseInt(castedVotes)) + parseInt(votes);
+      const newNumOfVotes = utils.parseEther((sign * newVotesTotal).toString());
 
-    const prevNumOfVotes = utils.parseEther(castedVotes.toString());
-    const newVotesTotal = Math.abs(parseInt(castedVotes)) + parseInt(votes);
-    const newNumOfVotes = utils.parseEther((sign * newVotesTotal).toString());
+      console.log({castedVotes, newVotesTotal, newNumOfVotes});
 
-    console.log({ castedVotes, newVotesTotal, newNumOfVotes });
+      const data = this.cookVoteParams(
+        balanceCard.id,
+        prevNumOfVotes,
+        newNumOfVotes
+      );
+      const vote = await this.constructVote(outputs, script, data);
+      console.log({vote});
 
-    const data = this.cookVoteParams(
-      balanceCard.id,
-      prevNumOfVotes,
-      newNumOfVotes
-    );
-    const vote = await this.constructVote(outputs, script, data);
-    console.log({ vote });
+      const privateOutputs = outputs.voteCredits.unspent.length;
+      await this.signVote(vote, privateOutputs);
+      const check = await this.checkCondition(vote);
 
-    const privateOutputs = outputs.voteCredits.unspent.length;
-    await this.signVote(vote, privateOutputs);
-    const check = await this.checkCondition(vote);
+      // Update vote and sign again
+      vote.outputs = check.outputs.map(Output.fromJSON);
+      await this.signVote(vote, privateOutputs);
 
-    // Update vote and sign again
-    vote.outputs = check.outputs.map(Output.fromJSON);
-    await this.signVote(vote, privateOutputs);
+      const secondCheck = await this.checkCondition(vote);
+      console.log({secondCheck});
 
-    const secondCheck = await this.checkCondition(vote);
-    console.log({secondCheck});
+      // Submit vote to blockchain
+      const receipt = await this.processTransaction(vote);
+      console.log({receipt});
+      this.writeDataToTree(newVotesTotal, newNumOfVotes);
 
-    // Submit vote to blockchain
-    const receipt = await this.processTransaction(vote);
-    console.log({ receipt });
-    this.writeDataToTree(newVotesTotal, newNumOfVotes);
-
-    this.setProgressState(false);
-    this.setReceiptState(true);
+      this.setProgressState(false);
+      this.setReceiptState(true);
+    } catch (error) {
+      changeAlert({
+        type: "fail",
+        message: error.message
+      })
+    }
   }
 
   // WITHDRAW RELATED METHODS
@@ -490,48 +497,57 @@ class VoteControls extends Component {
   }
 
   async withdrawVote() {
+    const { changeAlert } = this.props;
     const { castedVotes } = this.state;
-    console.log("Display Progress Screen");
-    this.setProgressState(true);
 
-    // WITHDRAW CODE HERE
-    const script = this.prepareWithdrawScript();
-    const outputs = await this.getWithdrawOutputs();
-    const { balanceCard } = outputs;
+    try {
+      this.setProgressState(true);
 
-    const treeData = this.getDataFromTree();
-    console.log({ treeData });
+      // WITHDRAW CODE HERE
+      const script = this.prepareWithdrawScript();
+      const outputs = await this.getWithdrawOutputs();
+      const {balanceCard} = outputs;
 
-    const currentVotes = utils.parseEther(castedVotes.toString());
+      const treeData = this.getDataFromTree();
+      console.log({treeData});
 
-    const data = this.cookWithdrawParams(balanceCard.id, currentVotes);
+      const currentVotes = utils.parseEther(castedVotes.toString());
 
-    const withdraw = await this.constructWithdraw(outputs, script, data);
+      const data = this.cookWithdrawParams(balanceCard.id, currentVotes);
 
-    console.log({ withdraw });
+      const withdraw = await this.constructWithdraw(outputs, script, data);
 
-    //await this.signVote(withdraw);
+      console.log({withdraw});
 
-    await this.signWithdraw(withdraw);
-    const check = await this.checkCondition(withdraw);
+      //await this.signVote(withdraw);
 
-    console.log({ check });
-    withdraw.outputs = check.outputs.map(o => new Output(o));
-    await this.signWithdraw(withdraw);
+      await this.signWithdraw(withdraw);
+      const check = await this.checkCondition(withdraw);
 
-    const secondCheck = await this.checkCondition(withdraw);
-    console.log({ secondCheck });
+      console.log({check});
+      withdraw.outputs = check.outputs.map(o => new Output(o));
+      await this.signWithdraw(withdraw);
 
-    const zeroVotes = utils.parseEther("0");
+      const secondCheck = await this.checkCondition(withdraw);
+      console.log({secondCheck});
 
-    // Process withdrawal
-    const receipt = await this.processTransaction(withdraw);
-    console.log({ receipt });
+      const zeroVotes = utils.parseEther("0");
 
-    this.writeDataToTree(0, zeroVotes);
+      // Process withdrawal
+      const receipt = await this.processTransaction(withdraw);
+      console.log({receipt});
 
-    this.setProgressState(false);
-    this.setReceiptState(true);
+      this.writeDataToTree(0, zeroVotes);
+
+      this.setProgressState(false);
+      this.setReceiptState(true);
+
+    } catch (error) {
+      changeAlert({
+        type: "fail",
+        message: error.message
+      })
+    }
   }
 
   setProgressState(bool) {

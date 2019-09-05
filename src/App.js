@@ -33,6 +33,7 @@ import { fetchBalanceCard } from "./volt/utils";
 import MainPage from "./MainPage";
 import ProposalPage from "./ProposalPage";
 import Advanced from "./components/Advanced";
+import AlertBox from './volt/components/AlertBox';
 
 let LOADERIMAGE = burnerlogo;
 let HARDCODEVIEW; // = "loader"// = "receipt"
@@ -425,6 +426,7 @@ export default class App extends Component {
       setTimeout(this.dealWithPossibleNewPrivateKey.bind(this), 500);
     }
   }
+
   componentDidUpdate(prevProps, prevState) {
     let { network, web3, account } = this.state;
     if (web3 && network !== prevState.network /*&& !this.checkNetwork()*/) {
@@ -482,12 +484,13 @@ export default class App extends Component {
     this.setState({ view, scannerState: false }, cb);
   };
   changeAlert = (alert, hide = true) => {
+    console.log('Alert!!');
     clearTimeout(this.alertTimeout);
     this.setState({ alert });
     if (alert && hide) {
       this.alertTimeout = setTimeout(() => {
         this.setState({ alert: null });
-      }, 2000);
+      }, 200000);
     }
   };
   goBack(view = "main") {
@@ -849,7 +852,7 @@ export default class App extends Component {
   }
 
   render() {
-    const { creditsBalance } = this.state;
+    const { creditsBalance, alert } = this.state;
     const { xdaiweb3, web3, account, metaAccount } = this.state;
     const {
       isMenuOpen,
@@ -916,10 +919,12 @@ export default class App extends Component {
                         trashBox={trashBox}
                         creditsBalance={creditsBalance}
                         goBack={() => history.replace('/')}
+                        changeAlert={this.changeAlert}
                       />
                     )
                   }
                 }} />
+              { alert && <AlertBox alert={alert} changeAlert={this.changeAlert}/> }
             </MainContainer>
           ) : (
             <p>Loading...</p>
