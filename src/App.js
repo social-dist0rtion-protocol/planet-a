@@ -793,7 +793,7 @@ export default class App extends Component {
     this.setState({ isMenuOpen: false });
   }
   async loadProposals() {
-    const endpoint = "https://www.npoint.io/documents/217ecb17f01746799a3b";
+    const endpoint = "https://www.npoint.io/documents/fe2e229f1864c7baae55";
     const response = await fetch(endpoint);
     const body = await response.json();
     const {
