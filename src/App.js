@@ -34,6 +34,7 @@ import MainPage from "./MainPage";
 import ProposalPage from "./ProposalPage";
 import ResultPage from "./ResultPage";
 import Advanced from "./components/Advanced";
+import BurnWallet from './components/BurnWallet';
 import AlertBox from './volt/components/AlertBox';
 
 let LOADERIMAGE = burnerlogo;
@@ -856,7 +857,7 @@ class App extends Component {
 
   render() {
     const { creditsBalance, alert } = this.state;
-    const { xdaiweb3, web3, account, metaAccount } = this.state;
+    const { xdaiweb3, web3, account, metaAccount, burnMetaAccount } = this.state;
     const {
       isMenuOpen,
       proposalsList,
@@ -895,7 +896,7 @@ class App extends Component {
                   />
                 )} />
 
-                <Route path="/settings" exact render={()=>(
+                <Route path="/settings" exact render={({ history })=>(
                   <Advanced
                     isVendor={this.state.isVendor && this.state.isVendor.isAllowed}
                     buttonStyle={buttonStyle}
@@ -908,6 +909,39 @@ class App extends Component {
                     tokenSendV2={tokenSendV2.bind(this)}
                     metaAccount={this.state.metaAccount}
                     setPossibleNewPrivateKey={this.setPossibleNewPrivateKey}
+                    history={history}
+                  />
+                )} />
+
+                <Route path="/burn" exact render={()=>(
+                  <BurnWallet
+                    mainStyle={mainStyle}
+                    address={account}
+                    balance={creditsBalance}
+                    goBack={() => this.props.history.go(-1) }
+                    currencyDisplay={this.currencyDisplay}
+                    burnWallet={()=>{
+                      burnMetaAccount(true);
+
+                      if(RNMessageChannel){
+                        RNMessageChannel.send("burn");
+                      }
+                      
+                      storeValues({
+                        loadedBlocksTop: "",
+                        metaPrivateKey: "",
+                        recentTxs: "",
+                        transactionsByAddress: "",
+                      }, this.state.account);
+
+                      this.setState({ 
+                        recentTxs: [],
+                        transactionsByAddress: {}
+                      });
+
+                      window.location.href = 'https://deora.earth/scan';
+                      return;
+                    }}
                   />
                 )} />
 

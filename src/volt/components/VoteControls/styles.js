@@ -77,3 +77,15 @@ export const ActionButton = styled.button.attrs(() => ({}))`
     opacity: 0.3;
   }
 `;
+
+export const PrimaryButton = styled(ActionButton)`
+  margin-bottom: 0;
+  background-color: ${({ theme }) => theme.colors.voltBrandMain};
+`;
+
+export const OutlineButton = styled(ActionButton)`
+  margin-bottom: 0;
+  border-color: ${({ theme }) => theme.colors.voltBrandMain};
+  color: ${({ theme }) => theme.colors.voltBrandMain};
+  background-color: ${({ theme }) => theme.colors.voltBrandWhite};
+`;
