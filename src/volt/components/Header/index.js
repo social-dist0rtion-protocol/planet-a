@@ -7,6 +7,8 @@ import {
   LogoDeora,
   LogoVolt,
   LogoPadding,
+  Actions,
+  Settings,
   Hamburger,
   BalanceContainer,
   Balance,
@@ -26,7 +28,12 @@ export const Header = props => {
             <LogoVolt/>
           </LogoContainer>
         </Link>
-        <Hamburger onClick={openMenu} />
+        <Actions>
+          <Link to="/settings">
+           <Settings/>
+          </Link>
+          <Hamburger onClick={openMenu} />
+        </Actions>
       </TopContainer>
       <BalanceContainer>
         <Label>DEINE VOICECREDITS</Label>

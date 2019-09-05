@@ -3,6 +3,7 @@ import { Flex, Text, Image } from "rimble-ui";
 import logoDeora from "../../assets/logo-deora.png";
 import logoVolt from "../../assets/logo-volt-europa.png";
 import icnHamburger from "../../assets/icn-hamburger.svg";
+import icnSettings from "../../assets/icn-settings.svg";
 
 export const HeaderContainer = styled(Flex).attrs(() => ({
   p: 4,
@@ -53,6 +54,16 @@ export const LogoPadding = styled(Text).attrs(()=>({
 
 export const Hamburger = styled(Image).attrs(() => ({
   src: icnHamburger
+}))`
+  width: 32px;
+  height: auto;
+  background-color: transparent;
+  cursor: pointer;
+`;
+
+export const Settings = styled(Image).attrs(() => ({
+  src: icnSettings,
+  mr: 3,
 }))`
   width: 32px;
   height: auto;
@@ -128,4 +139,9 @@ export const Value = styled(Flex)`
   margin-left: 10px;
   align-items: center;
   justify-content: center;
+`;
+
+export const Actions = styled(Flex)`
+  align-items: center;
+  justify-content: flex-end;
 `;

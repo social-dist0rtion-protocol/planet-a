@@ -161,6 +161,7 @@ export default class Advanced extends React.Component {
 
     return (
       <div style={{marginTop:20}}>
+        <Flex flexDirection="column" p={4}>
         {/* NOTE: We don't need this functionality in Planet A. If we wanted to
             properly remove it, that would mean "cleaning" this component from
             any unused variables. Instead however, we're just setting these
@@ -262,7 +263,7 @@ export default class Advanced extends React.Component {
           </div>
         </div>
         }
-
+        </Flex>
       </div>
     )
   }

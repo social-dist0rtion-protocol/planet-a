@@ -32,6 +32,7 @@ import { fetchBalanceCard } from "./volt/utils";
 
 import MainPage from "./MainPage";
 import ProposalPage from "./ProposalPage";
+import Advanced from "./components/Advanced";
 
 let LOADERIMAGE = burnerlogo;
 let HARDCODEVIEW; // = "loader"// = "receipt"
@@ -46,6 +47,32 @@ const BLOCKS_TO_PARSE_PER_BLOCKTIME = 32;
 const MAX_BLOCK_TO_LOOK_BACK = 512; //don't look back more than 512 blocks
 
 let interval;
+
+
+let mainStyle = {
+  width:"100%",
+  backgroundColor: "linear-gradient(135deg, red, blue)",
+  height:"100%",
+  hotColor:"white",
+  mainColorAlt:"white",
+  mainColor:"white",
+}
+
+let buttonStyle = {
+  primary: {
+    backgroundImage:"linear-gradient("+mainStyle.mainColorAlt+","+mainStyle.mainColor+")",
+    backgroundColor:mainStyle.mainColor,
+    color:"#FFFFFF",
+    whiteSpace:"nowrap",
+    cursor:"pointer",
+  },
+  secondary: {
+    border:"2px solid "+mainStyle.mainColor,
+    color:mainStyle.mainColor,
+    whiteSpace:"nowrap",
+    cursor:"pointer",
+  }
+}
 
 export default class App extends Component {
   constructor(props) {
@@ -853,6 +880,22 @@ export default class App extends Component {
                     favorites={favorites}
                     voteStartTime={voteStartTime}
                     voteEndTime={voteEndTime}
+                  />
+                )} />
+
+                <Route path="/settings" exact render={()=>(
+                  <Advanced
+                    isVendor={this.state.isVendor && this.state.isVendor.isAllowed}
+                    buttonStyle={buttonStyle}
+                    address={account}
+                    balance={creditsBalance}
+                    changeView={this.changeView}
+                    privateKey={metaAccount.privateKey}
+                    changeAlert={this.changeAlert}
+                    currencyDisplay={this.currencyDisplay}
+                    tokenSendV2={tokenSendV2.bind(this)}
+                    metaAccount={this.state.metaAccount}
+                    setPossibleNewPrivateKey={this.setPossibleNewPrivateKey}
                   />
                 )} />
 
