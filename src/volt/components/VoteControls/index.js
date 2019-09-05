@@ -232,7 +232,11 @@ class VoteControls extends Component {
     const { account, proposal } = this.props;
     const motionId = proposal.id;
     const localTree = getStoredValue("votes", account);
-    const parsedTree = JSON.parse(localTree);
+    let parsedTree = JSON.parse(localTree);
+    if (!parsedTree) {
+      parsedTree = {};
+      storeValues(parsedTree, account);
+    }
     parsedTree[motionId] = padHex(newLeaf.toHexString(), 64);
 
     console.log({ castedVotes, newLeaf });
