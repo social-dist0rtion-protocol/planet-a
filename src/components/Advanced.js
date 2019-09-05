@@ -10,9 +10,9 @@ import {
   Flex,
   Checkbox
 } from 'rimble-ui'
-import { PrimaryButton, BorderButton } from '../components/Buttons'
 import getConfig from '../config'
 import { getStoredValue, storeValues } from "../services/localStorage";
+import { PrimaryButton, OutlineButton } from "../volt/components/VoteControls/styles";
 
 const { CURRENCY } = getConfig()
 
@@ -182,22 +182,22 @@ export default class Advanced extends React.Component {
         <div>
           <div style={{width:"100%",textAlign:"center"}}><h5>Learn More</h5></div>
           <div className="content ops row settings-row" style={{marginBottom:10}}>
-            <a href="https://github.com/social-dist0rtion-protocol/planet-a" style={{color:"#FFFFFF"}} target="_blank" rel="noopener noreferrer">
-              <BorderButton width={1}>
+            <a href="https://github.com/deora-earth" style={{color:"#FFFFFF"}} target="_blank" rel="noopener noreferrer">
+              <OutlineButton width={1}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                   <i className="fas fa-code"/> {i18n.t('code')}
                 </Scaler>
-              </BorderButton>
+              </OutlineButton>
             </a>
             {/* NOTE: Added presentation of Planet A as "About" for now.
                 Once we have a better resource, we should replace this
               */}
-            <a href="https://docs.google.com/presentation/d/1zjhVQMqVYKIzXUOKR83o5jbo97BRb60XqG6_OwnJOlw/edit" style={{color:"#FFFFFF"}} target="_blank" rel="noopener noreferrer">
-              <BorderButton width={1}>
+            <a href="https://www.deora.earth/" style={{color:"#FFFFFF"}} target="_blank" rel="noopener noreferrer">
+              <OutlineButton width={1}>
                 <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                   <i className="fas fa-info"/> {i18n.t('about')}
                 </Scaler>
-              </BorderButton>
+              </OutlineButton>
             </a>
           </div>
         </div>
@@ -231,10 +231,7 @@ export default class Advanced extends React.Component {
         {privateKey &&
         <div>
           <div className="content ops row settings-row" >
-            <PrimaryButton width={1} onClick={()=>{
-              console.log("BALANCE",balance)
-              changeView('burn-wallet')
-            }}>
+            <PrimaryButton onClick={() => this.props.history.push("/burn")}>              
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 <i className="fas fa-fire"/> {i18n.t('burn')}
               </Scaler>
