@@ -215,7 +215,7 @@ class VoteControls extends Component {
       const parsedTree = JSON.parse(localTree);
       console.log({ parsedTree });
       tree = new SMT(9, parsedTree);
-      castedVotes = utils.formatEther(parsedTree[motionId]);
+      castedVotes = utils.formatEther(parsedTree[motionId] || 0);
     }
     const proof = tree.createMerkleProof(motionId);
 
