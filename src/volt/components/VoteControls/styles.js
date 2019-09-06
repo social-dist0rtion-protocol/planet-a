@@ -25,7 +25,7 @@ export const StyledSlider = styled(Slider).attrs(() => ({}))`
   user-select: none;
   width: 100%;
   min-width: auto;
-  margin-bottom: 8px;
+  margin-bottom: ${({theme}) => `${theme.space[2]}px`};
   display: flex;
   align-items: center;
   &:focus,
