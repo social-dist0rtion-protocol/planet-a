@@ -34,12 +34,12 @@ const Option = styled(Flex).attrs({
 export const Choice = props => {
   const { options, selection, alreadyVoted } = props;
   const { onChange } = props;
+  const disabled = alreadyVoted;
   return (
-    <OptionContainer num={options.length}>
+    <OptionContainer disabled={disabled} num={options.length}>
       {options.map(option => {
         const { value, label, color } = option;
         const selected = value === selection;
-        const disabled = alreadyVoted && !selected;
         return (
           <Option
             key={option.value}

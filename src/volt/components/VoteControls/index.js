@@ -711,11 +711,11 @@ class VoteControls extends Component {
     // no sqrt in BN.js 🤷‍
     const max = Math.floor(Math.sqrt(parseInt(totalCredits.toString(), 10)));
 
-    const voteDisabled = votes.lt(new BN(1)) || choice === "";
+    const alreadyVoted = castedCredits.gt(new BN(0));
+    const voteDisabled = alreadyVoted || votes.lt(new BN(1)) || choice === "";
 
     const voteUnits = votes.abs();
 
-    const alreadyVoted = castedCredits.gt(new BN(0));
     return (
       <Container>
         {showProgress && <Progress message={"Processing, please wait..."} />}
@@ -725,7 +725,7 @@ class VoteControls extends Component {
             this.props.history.push('/');
           }} />
         )}
-        <Equation votes={voteUnits} />
+        <Equation disabled={alreadyVoted} votes={voteUnits} />
 
         <SubContainer>
           <StyledSlider
@@ -734,7 +734,8 @@ class VoteControls extends Component {
             max={max}
             steps={max + 1}
             value={voteUnits}
-            onChange={(e) => this.setTokenNumber(e, alreadyVoted ? 1 : 0)}
+            disabled={alreadyVoted}
+            onChange={(e) => !alreadyVoted && this.setTokenNumber(e, alreadyVoted ? 1 : 0)}
           />
           <Choice
             options={options}
