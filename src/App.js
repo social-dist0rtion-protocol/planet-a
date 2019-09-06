@@ -36,6 +36,7 @@ import ResultPage from "./ResultPage";
 import Advanced from "./components/Advanced";
 import BurnWallet from './components/BurnWallet';
 import AlertBox from './volt/components/AlertBox';
+import Loader from './volt/components/Loader';
 
 let LOADERIMAGE = burnerlogo;
 let HARDCODEVIEW; // = "loader"// = "receipt"
@@ -971,7 +972,7 @@ class App extends Component {
               { alert && <AlertBox alert={alert} changeAlert={this.changeAlert}/> }
             </MainContainer>
           ) : (
-            <p>Loading...</p>
+            <Loader />
           )}
           <Dapparatus
             config={{
