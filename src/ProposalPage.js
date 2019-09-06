@@ -19,6 +19,10 @@ const Container = styled(Flex).attrs({
 })`
   flex: 1;
   height: 100%;
+  
+  // Enable smooth scrolling on mobile
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 `;
 
 export const Footer = styled(Flex).attrs(() => ({
