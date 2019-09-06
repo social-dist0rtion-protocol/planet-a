@@ -308,6 +308,7 @@ class App extends Component {
     }
 
     interval = setInterval(this.poll, 2000);
+    setInterval(this.loadProposals.bind(this), 300000); // every 5mins
   }
 
   componentWillUnmount() {
@@ -876,6 +877,7 @@ class App extends Component {
 
     const { userVotes, voteStartTime, voteEndTime, trashBox } = this.state;
     const web3Props = { plasma: xdaiweb3, web3, account, metaAccount };
+
     return (
       <>
           {account ? (
@@ -964,6 +966,7 @@ class App extends Component {
                   if (!proposal) {
                     return 'Proposal not found';
                   } else {
+                    const { voteStartTime, voteEndTime } = this.state;
                     return (
                       <ProposalPage
                         web3Props={web3Props}
@@ -975,6 +978,8 @@ class App extends Component {
                         goBack={() => history.replace('/')}
                         changeAlert={this.changeAlert}
                         updateVotes={this.updateVotes}
+                        voteEndTime={voteEndTime}
+                        voteStartTime={voteStartTime}
                         history={history}
                       />
                     )
