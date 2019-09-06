@@ -18,6 +18,7 @@
     "jsbi": "^3.1.0",
     "jsbi-utils": "^1.0.0",
     "leap-core": "^0.32.4",
+    "lodash.shuffle": "^4.2.0",
     "qrcode-reader": "^1.0.4",
     "qrcode.react": "^0.8.0",
     "query-string": "^6.3.0",

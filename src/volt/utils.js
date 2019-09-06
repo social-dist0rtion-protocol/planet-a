@@ -113,6 +113,9 @@ export const generateProposal = (motionId) => {
 export const gte = lower => o => 
   new BN(o.output.value).gte(new BN(toWei(lower.toString())));
 
+export const lt = lower => o => 
+  new BN(o.output.value).lt(new BN(toWei(lower.toString())));
+
 /**
  *  Select a random element from a list.
  * */ 

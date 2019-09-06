@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import Web3 from "web3";
+import { toWei } from "web3-utils";
 import { Tx, Input, Output, helpers } from "leap-core";
 import { providers, utils } from "ethers";
+import shuffle from 'lodash.shuffle';
 import SMT from "../../lib/SparseMerkleTree";
 import { getStoredValue, storeValues } from "../../../services/localStorage";
 
@@ -20,9 +22,7 @@ import {
 
 import {
   getUTXOs,
-  toHex,
   padHex,
-  replaceAll,
   generateProposal,
   gte,
   randomItem,
@@ -34,6 +34,11 @@ import Receipt from "../Receipt";
 
 const RPC = "https://testnet-node1.leapdao.org";
 const plasma = new providers.JsonRpcProvider(RPC);
+
+const BN = Web3.utils.BN;
+
+const sortUtxosAsc = (a, b) => 
+  new BN(a.output.value).lt(new BN(b.output.value)) ? 1 : -1;
 
 class VoteControls extends Component {
   constructor(props) {
@@ -121,18 +126,51 @@ class VoteControls extends Component {
     };
   }
 
-  async getVoteCredits(address) {
+
+  async getMyVoteCredits() {
     const { VOICE_CREDITS_COLOR } = voltConfig;
-    const voiceCreditsUTXOs = await getUTXOs(
+    const sortedCreditsUTXOs = (await getUTXOs(
+      plasma,
+      this.props.account,
+      VOICE_CREDITS_COLOR
+    )).sort(sortUtxosAsc);
+
+    console.log({ sortedCreditsUTXOs });
+
+    // take the largest UTXO and 3 of the smallest to consolidate
+    // so it is 4 → 1 consolidation
+    const utxosToSpendAndConsolidate = [
+      sortedCreditsUTXOs[0],
+      ...sortedCreditsUTXOs.slice(1).slice(-3)
+    ];
+
+    console.log({ utxosToSpendAndConsolidate });
+
+    return {
+      inputs: utxosToSpendAndConsolidate.map(u => new Input(u.outpoint))
+    };
+  }
+
+
+  async getBoxVoteCredits(address, amount) {
+    const { VOICE_CREDITS_COLOR } = voltConfig;
+    const allCreditUtxos = shuffle(await getUTXOs(
       plasma,
       address,
       VOICE_CREDITS_COLOR
+    ));
+
+    console.log({ allCreditUtxos });
+
+    const selectedInputs = Tx.calcInputs(
+      allCreditUtxos, address, toWei(String(amount)).toString(), parseInt(VOICE_CREDITS_COLOR, 10)
     );
+
+    console.log({ selectedInputs });
 
     // TODO: We can put all UTXO here for consolidation
     return {
-      unspent: [voiceCreditsUTXOs[0]],
-      all: voiceCreditsUTXOs
+      inputs: selectedInputs
     };
   }
 
@@ -154,41 +192,37 @@ class VoteControls extends Component {
     };
   }
 
-  async getVoteTokens(address) {
-    console.log("Get vote tokens from:", address);
-    const { VOICE_TOKENS_COLOR, MIN_SIZE_FOR_VOT_UTXO } = voltConfig;
-    const voiceTokensUTXOs = await getUTXOs(
+  async getVoteTokens(address, amount) {
+    console.log("Get vote tokens from:", address, amount);
+    const { VOICE_TOKENS_COLOR } = voltConfig;
+    const allVoteTokensUTXOs = shuffle(await getUTXOs(
       plasma,
       address,
       VOICE_TOKENS_COLOR
+    ));
+
+    console.log({ allVoteTokensUTXOs });
+
+    const selectedInputs = Tx.calcInputs(
+      allVoteTokensUTXOs, address, toWei(String(amount)).toString(), parseInt(VOICE_TOKENS_COLOR, 10)
     );
 
-    console.log({ voiceTokensUTXOs });
-
-    // Assumptions:
-    // 1. BallotBox and VotingBooth spendies contain multiple big-enough
-    //    UTXOs for VOT (done by consolidation script)
-    // 2. Each voter can cast/withdraw MIN_SIZE_FOR_VOT_UTXO votes at most
-    const voiceTokensOutput = randomItem(
-      voiceTokensUTXOs.filter(gte(MIN_SIZE_FOR_VOT_UTXO))
-    );
-
-    console.log({ voiceTokensOutput });
+    console.log({ selectedInputs });
 
     return {
-      unspent: [voiceTokensOutput],
-      all: voiceTokensUTXOs
+      inputs: selectedInputs
     };
   }
 
   async getOutputs() {
     const { account, proposal } = this.props;
+    const { votes } = this.state;
     const { boothAddress } = proposal;
     // TODO: Parallelize with Promise.all([...promises])
     const gas = await this.getGas(boothAddress);
-    const voteTokens = await this.getVoteTokens(boothAddress);
+    const voteTokens = await this.getVoteTokens(boothAddress, String(votes));
     const balanceCard = await this.getBalanceCard(account);
-    const voteCredits = await this.getVoteCredits(account);
+    const voteCredits = await this.getMyVoteCredits();
 
     return {
       gas,
@@ -206,7 +240,6 @@ class VoteControls extends Component {
     let tree;
     let castedVotes;
     let localTree = getStoredValue("votes", account);
-
     if (!localTree) {
       console.log("local tree is empty");
       tree = new SMT(9);
@@ -271,11 +304,6 @@ class VoteControls extends Component {
   async constructVote(outputs, script, data) {
     const { gas, voteTokens, voteCredits, balanceCard } = outputs;
 
-    const mapInput = utxo => new Input({ prevout: utxo.outpoint });
-
-    const voteCreditsInputs = voteCredits.unspent.map(mapInput);
-    const voteTokensInputs = voteTokens.unspent.map(mapInput);
-
     const vote = Tx.spendCond(
       [
         new Input({
@@ -285,8 +313,8 @@ class VoteControls extends Component {
         new Input({
           prevout: balanceCard.unspent.outpoint
         }),
-        ...voteCreditsInputs,
-        ...voteTokensInputs
+        ...voteCredits.inputs,
+        ...voteTokens.inputs
       ],
       // Outputs is empty, cause it's hard to guess what it should be
       []
@@ -303,7 +331,7 @@ class VoteControls extends Component {
     if (metaAccount && metaAccount.privateKey) {
       const privateKeys = [];
       for (let i = 0; i < numOfInputs; i++) {
-        if (i > 0 && i < voiceInputs) {
+        if (i > 0 && i <= voiceInputs + 1) {
           privateKeys.push(metaAccount.privateKey);
         } else {
           privateKeys.push(null);
@@ -312,9 +340,9 @@ class VoteControls extends Component {
       vote.sign(privateKeys);
     } else {
       await window.ethereum.enable();
-      const { r, s, v, signer } = await Tx.signMessageWithWeb3(web3, vote.sigData(), 0);
+      const { r, s, v, signer } = await Tx.signMessageWithWeb3(web3, vote.sigData(), 0);  
       for (let i = 0; i < numOfInputs; i++) {
-        if (i === 1) {
+        if (i > 0 && i <= voiceInputs + 1) {
           vote.inputs[i].setSig(r, s, v, signer);
         }
       }
@@ -388,7 +416,7 @@ class VoteControls extends Component {
       const vote = await this.constructVote(outputs, script, data);
       console.log({vote});
 
-      const privateOutputs = outputs.voteCredits.unspent.length;
+      const privateOutputs = outputs.voteCredits.inputs.length;
       await this.signVote(vote, privateOutputs);
       const check = await this.checkCondition(vote);
 
@@ -450,8 +478,9 @@ class VoteControls extends Component {
     console.log({ destBox });
 
     const gas = await this.getGas(destBox);
-    const voteTokens = await this.getVoteTokens(destBox);
-    const voteCredits = await this.getVoteCredits(destBox);
+    const voteTokens = await this.getVoteTokens(destBox, castedVotes);
+    const lockedCredits = castedVotes * castedVotes;
+    const voteCredits = await this.getBoxVoteCredits(destBox, lockedCredits);
     const balanceCard = await this.getBalanceCard(account);
 
     return {
@@ -480,13 +509,6 @@ class VoteControls extends Component {
   async constructWithdraw(outputs, script, data) {
     const { gas, voteTokens, voteCredits, balanceCard } = outputs;
 
-    const mapInput = utxo => new Input({ prevout: utxo.outpoint });
-
-    const voteTokensInputs = voteTokens.unspent.map(mapInput);
-    const voteCreditsInputs = voteCredits.unspent.map(mapInput);
-
-    console.log({ voteTokensInputs, voteCreditsInputs });
-
     const inputs = [
       new Input({
         prevout: gas.unspent.outpoint,
@@ -495,8 +517,8 @@ class VoteControls extends Component {
       new Input({
         prevout: balanceCard.unspent.outpoint
       }),
-      ...voteTokensInputs,
-      ...voteCreditsInputs
+      ...voteTokens.inputs,
+      ...voteCredits.inputs
     ];
 
     const withdraw = Tx.spendCond(
