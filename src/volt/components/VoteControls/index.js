@@ -236,7 +236,9 @@ class VoteControls extends Component {
     const { boothAddress } = proposal;
     // TODO: Parallelize with Promise.all([...promises])
     const gas = await this.getGas(boothAddress);
-    const voteTokens = await this.getVoteTokens(boothAddress, String(votes));
+    const voteTokens = await this.getVoteTokens(
+      boothAddress, new BN(utils.parseEther(votes).toString())
+    );
     const balanceCard = await this.getBalanceCard(account);
     const voteCredits = await this.getMyVoteCredits();
 
