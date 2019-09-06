@@ -51,12 +51,67 @@
         align-items: center;
         justify-content: center;
         width: 100%;
-        background-image: url("images/flame.svg"), linear-gradient(to bottom, var(--primary), var(--secondary));
-        background-repeat: no-repeat;
-        background-position: -25vh center, center;
+	      background-color: #ffffff;
+	      margin: 0;
       }
       .root{
         width: 100%;
+      }
+      .loader{
+	      position: fixed;
+	      top: 0;
+	      right:0;
+	      bottom: 0;
+	      left:0;
+	      background-color: #582C83;
+	      display: flex;
+	      flex-direction: column;
+	      align-items: center;
+	      justify-content: center;
+	      padding: 6rem 3rem 3rem;
+      }
+      .loader .logo{
+	      width: 12rem;
+	      height: auto;
+	      background-color: transparent;
+	      position: relative;
+	      margin-bottom: 32px;
+      }
+      .loader .bar{
+	      width: 192px;
+	      height: 6px;
+	      position: relative;
+	      overflow: hidden;
+	      background-color: #8a6ca8;
+	      border-radius: 10px;
+      }
+      .loader .bar:after {
+	       content: "";
+	       display: block;
+	       left: 0;
+	       right: 0;
+	       height: 100%;
+	       background-color: white;
+	       position: absolute;
+	       border-radius: 16px;
+	       animation: loading 1s linear alternate infinite;
+       }
+
+      @keyframes loading {
+	      0%,10% {
+		      left: 0;
+		      right: 100%;
+	      }
+
+	      50%{
+		      left: 0;
+		      right: 0;
+	      }
+
+	      90%, 100% {
+		      left: 100%;
+		      right: 0;
+	      }
       }
       html, body, .root {
         height: 100%;
@@ -65,7 +120,12 @@
   </head>
   <body>
     <noscript> You need to enable JavaScript to run this app. </noscript>
-    <div id="root" class="root"></div>
+    <div id="root" class="root">
+	    <div class="loader">
+		    <img class="logo" src="./logo-deora.png" alt="">
+				<div class="bar"></div>
+	    </div>
+    </div>
     <div id="log" style="position:absolute;left:0px;top:0px;z-index:99;color:#ffffff;background-color:#000000;opacity:0.5;">
     </div>
     <script>
