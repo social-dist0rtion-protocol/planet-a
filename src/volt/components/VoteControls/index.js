@@ -255,6 +255,7 @@ class VoteControls extends Component {
 
     let tree;
     let castedVotes;
+    console.log('READING FROM THE TREE (READ)', motionId);
     let localTree = getStoredValue("votes", account);
     if (!localTree) {
       console.log("local tree is empty");
@@ -264,7 +265,7 @@ class VoteControls extends Component {
       const parsedTree = JSON.parse(localTree);
       console.log({ parsedTree });
       tree = new SMT(9, parsedTree);
-      console.log(parsedTree[motionId]);
+      console.log({ treeRecord: parsedTree[motionId] });
       castedVotes = parsedTree[motionId] 
         ? new BN(utils.defaultAbiCoder.decode(['int256'], parsedTree[motionId])[0].toString())
         : new BN(0);
@@ -285,13 +286,17 @@ class VoteControls extends Component {
   writeDataToTree(newNumberOfVotes) {
     const { account, proposal } = this.props;
     const motionId = proposal.id;
+    console.log('READING FROM THE TREE (WRITE)', motionId);
     const localTree = getStoredValue("votes", account);
     let parsedTree = JSON.parse(localTree);
+    console.log({ parsedTree });
     if (!parsedTree) {
       parsedTree = {};
       storeValues(parsedTree, account);
     }
+    
     parsedTree[motionId] = utils.defaultAbiCoder.encode(['int256'], [newNumberOfVotes.toString()]);
+    console.log({ treeRecord: parsedTree[motionId] });
 
     console.log({ newNumberOfVotes });
     console.log({ parsedTree });
