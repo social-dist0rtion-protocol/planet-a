@@ -135,6 +135,9 @@ class VoteControls extends Component {
     // Balance Card
     const { BALANCE_CARD_COLOR } = voltConfig;
     const balanceCards = await getUTXOs(plasma, address, BALANCE_CARD_COLOR);
+    if (!balanceCards.length) {
+      throw new Error('No balance card. Please, contact administrator');
+    }
     const balanceCard = balanceCards[0];
 
     return {
