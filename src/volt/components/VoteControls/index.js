@@ -163,7 +163,7 @@ class VoteControls extends Component {
     console.log({ allCreditUtxos });
 
     const selectedInputs = Tx.calcInputs(
-      allCreditUtxos, address, toWei(String(amount)).toString(), parseInt(VOICE_CREDITS_COLOR, 10)
+      allCreditUtxos, address, toWei(String(amount)).toString(), parseInt(VOICE_CREDITS_COLOR, 10), 8
     );
 
     console.log({ selectedInputs });
@@ -204,7 +204,7 @@ class VoteControls extends Component {
     console.log({ allVoteTokensUTXOs });
 
     const selectedInputs = Tx.calcInputs(
-      allVoteTokensUTXOs, address, toWei(String(amount)).toString(), parseInt(VOICE_TOKENS_COLOR, 10)
+      allVoteTokensUTXOs, address, toWei(String(amount)).toString(), parseInt(VOICE_TOKENS_COLOR, 10), 8
     );
 
     console.log({ selectedInputs });
