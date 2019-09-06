@@ -714,8 +714,10 @@ class VoteControls extends Component {
     // no sqrt in BN.js 🤷‍
     const max = Math.floor(Math.sqrt(parseInt(totalCredits.toString(), 10)));
 
+    const noCredits = totalCredits.eq(new BN(0));
     const alreadyVoted = castedCredits.gt(new BN(0));
-    const voteDisabled = alreadyVoted || votes.lt(new BN(1)) || choice === "";
+    const voteFormDisabled = alreadyVoted || noCredits;
+    const voteBtnDisabled = noCredits || alreadyVoted || votes.lt(new BN(1)) || choice === "";
 
     const voteUnits = votes.abs();
 
@@ -734,7 +736,8 @@ class VoteControls extends Component {
             this.props.history.push('/');
           }} />
         )}
-        <Equation disabled={alreadyVoted} votes={voteUnits} />
+        <Equation disabled={voteFormDisabled} votes={voteUnits} />
+
 
         <SubContainer>
           <StyledSlider
@@ -743,16 +746,21 @@ class VoteControls extends Component {
             max={max}
             steps={max + 1}
             value={voteUnits}
-            disabled={alreadyVoted}
-            onChange={(e) => !alreadyVoted && this.setTokenNumber(e, alreadyVoted ? 1 : 0)}
+            title={ noCredits ? 'Keine Voice Credits verfügbar' : ''}
+            disabled={voteFormDisabled}
+            onChange={(e) => !voteFormDisabled && this.setTokenNumber(e, alreadyVoted ? 1 : 0)}
           />
           <Choice
             options={options}
             selection={choice}
             onChange={this.setChoice}
-            alreadyVoted={alreadyVoted}
+            alreadyVoted={voteFormDisabled}
           />
-          <ActionButton disabled={voteDisabled} onClick={this.submitOrUpdateVote}>
+          <ActionButton 
+            disabled={voteBtnDisabled}
+            onClick={this.submitOrUpdateVote}
+            title={ noCredits ? 'Keine Voice Credits verfügbar' : ''}
+          >
             { alreadyVoted ? 'Vote Ändern' : 'Vote Senden' }
           </ActionButton>
           {alreadyVoted && <ActionButton onClick={this.withdrawVote}>Zurücksetzen</ActionButton>}
