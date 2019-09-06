@@ -698,7 +698,7 @@ class VoteControls extends Component {
 
     const totalCredits = castedCredits.add(credits || new BN(0)).div(factor18);
     // no sqrt in BN.js 🤷‍
-    const max = Math.sqrt(parseInt(totalCredits.toString(), 10)) || 0;
+    const max = Math.floor(Math.sqrt(parseInt(totalCredits.toString(), 10)));
 
     const voteDisabled = votes.lt(new BN(1)) || choice === "";
 
