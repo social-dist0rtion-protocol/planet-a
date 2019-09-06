@@ -19,6 +19,10 @@ const Container = styled(Flex).attrs({
 })`
   flex: 1;
   height: 100%;
+  
+  // Enable smooth scrolling on mobile
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 `;
 
 export const Footer = styled(Flex).attrs(() => ({
@@ -74,7 +78,8 @@ export default class ProposalPage extends React.Component {
       goBack,
       web3Props,
       changeAlert,
-      updateVotes
+      updateVotes,
+      history,
     } = this.props;
 
     return (
@@ -103,6 +108,7 @@ export default class ProposalPage extends React.Component {
               credits={creditsBalance}
               changeAlert={changeAlert}
               updateVotes={updateVotes}
+              history={history}
               {...web3Props}
             />
           }

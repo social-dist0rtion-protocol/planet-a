@@ -94,8 +94,8 @@ const Receipt = props => {
           <Graphic src={voteImage} width={"210px"} mb="4rem" />
           <ReceiptInfo>
             <ReceiptField label="Dein Vote" value={voteType} />
-            <ReceiptField label="Anzahl an Votes" value={votes} />
-            <ReceiptField label="Voicecredits" value={votes ** 2} />
+            <ReceiptField label="Anzahl an Votes" value={votes.toString()} />
+            <ReceiptField label="Voicecredits" value={votes.mul(votes).toString()} />
           </ReceiptInfo>
           <Graphic src={voteAccepted} width={"6rem"} />
         </MiddlePart>
