@@ -454,7 +454,7 @@ class VoteControls extends Component {
       const treeData = this.getDataFromTree();
 
       if (balanceCard.unspent.output.data !== treeData.root){
-        throw Error(`local Storage and balance card out of sync: ${balanceCard.unspent.output.data} / ${treeData.root}`);
+        throw Error(`balance card / local Storage out of sync: ${balanceCard.unspent.output.data} / ${treeData.root}`);
       }
 
       const data = this.cookVoteParams(
@@ -604,6 +604,10 @@ class VoteControls extends Component {
       const data = this.cookWithdrawParams(balanceCard.id, prevNumOfVotes, votesToWithdraw);
 
       const withdraw = await this.constructWithdraw(outputs, script, data);
+
+      if (balanceCard.unspent.output.data !== treeData.root){
+        throw Error(`balance card / local Storage out of sync: ${balanceCard.unspent.output.data} / ${treeData.root}`);
+      }
 
       console.log({withdraw});
 
