@@ -6,8 +6,8 @@ import { Flex } from "rimble-ui";
 import icnSort from "../../assets/icn-sort.svg";
 
 export const SortContainer = styled(Flex).attrs(() => ({
-  p: 3,
-  pb: 0
+  px: 4,
+  pb: 1
 }))``;
 
 export const SortParam = styled(Flex).attrs(() => ({

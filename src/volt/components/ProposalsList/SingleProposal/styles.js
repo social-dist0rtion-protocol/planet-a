@@ -3,7 +3,8 @@ import { Flex, Text } from "rimble-ui";
 
 export const ProposalContainer = styled(Flex).attrs(() => ({
   alignItems: "center",
-  p: 3
+  px: 4,
+  py: 3
 }))`
   flex-shrink: 0;
   --bg-color: white;

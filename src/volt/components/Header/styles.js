@@ -9,11 +9,14 @@ export const HeaderContainer = styled(Flex).attrs(() => ({
   p: 4,
   flexDirection: "column",
   bg: "voltBrandMain",
-  height: "160px"
 }))`
   flex-shrink: 0;
   align-items: center;
   justify-content: flex-end;
+  
+  @media screen and (max-height: 600px){
+    padding: ${({theme}) => `${theme.space[3]}px`};
+  }
 `;
 
 export const TopContainer = styled(Flex).attrs(()=>({
@@ -22,6 +25,10 @@ export const TopContainer = styled(Flex).attrs(()=>({
   align-items: baseline;
   justify-content: space-between;
   width: 100%;
+    
+  @media screen and (max-height: 600px){
+    margin-bottom: ${({theme}) => `${theme.space[3]}px`};
+  }
 `;
 export const LogoContainer = styled(Flex)`
   justify-content: flex-start;
@@ -33,6 +40,9 @@ export const LogoDeora = styled(Image).attrs(() => ({
   background-color: transparent;
   width: auto;
   height: 18px;
+  @media screen and (max-height: 600px){
+    height: 15px;
+  }
 `;
 export const LogoVolt = styled(Image).attrs(() => ({
   src: logoVolt
@@ -42,6 +52,10 @@ export const LogoVolt = styled(Image).attrs(() => ({
   height: 22px;
   position: relative;
   top: 2px;
+  
+  @media screen and (max-height: 600px){
+    height: 17px;
+  }
 `;
 
 export const LogoPadding = styled(Text).attrs(()=>({
@@ -59,6 +73,10 @@ export const Hamburger = styled(Image).attrs(() => ({
   height: auto;
   background-color: transparent;
   cursor: pointer;
+  
+  @media screen and (max-height: 600px){
+    width: 20px;
+  }
 `;
 
 export const Settings = styled(Image).attrs(() => ({
@@ -69,6 +87,9 @@ export const Settings = styled(Image).attrs(() => ({
   height: auto;
   background-color: transparent;
   cursor: pointer;
+  @media screen and (max-height: 600px){
+    width: 20px;
+  }
 `;
 
 export const BalanceContainer = styled(Flex)`
@@ -79,12 +100,26 @@ export const BalanceContainer = styled(Flex)`
   overflow: hidden;
   height: 42px;
   width: 100%;
+  .short{
+    display: none;
+  }
+  
+  @media screen and (max-width: 600px){
+    height: 32px;
+    .long{
+      display: none;
+    }
+    .short{
+      display: flex;
+    }
+  }
+  
 `;
 
 export const Label = styled(Text).attrs(() => ({
   py: 1,
   p: 3,
-  fontSize: 0
+  fontSize: 1
 }))`
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -132,6 +167,10 @@ export const Balance = styled(Text).attrs(() => ({
     background-color: ${({ theme }) => theme.colors.voltBrandMain};
     transform: rotate(20deg);
     z-index: 2;
+    
+    @media screen and (max-width: 600px){
+      width: 16px;
+    }
   }
 `;
 

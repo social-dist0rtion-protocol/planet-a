@@ -45,7 +45,8 @@ export const Header = props => {
         </Actions>
       </TopContainer>
       <BalanceContainer>
-        <Label>DEINE VOICECREDITS</Label>
+        <Label className="long">MEINE VOICE CREDITS</Label>
+        <Label className="short">VOICE CREDITS</Label>
         <Balance>
           <Value>
             {availableCredits} <span>/{maxCredits}</span>{" "}

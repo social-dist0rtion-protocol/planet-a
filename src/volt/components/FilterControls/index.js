@@ -5,8 +5,9 @@ import icnSearch from "../../assets/icn-search.svg";
 import icnReset from "../../assets/icn-close.svg";
 
 const FilterContainer = styled(Flex).attrs(() => ({
-  p: 3,
-  pb: 0
+  px: 4,
+  pt: 3,
+  pb: 2
 }))`
   width: 100%;
   align-items: center;

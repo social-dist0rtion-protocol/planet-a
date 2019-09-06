@@ -63,15 +63,6 @@ export default function MainPage({
         favorites={favorites}
         userVotes={userVotes}
       />
-      <Footer
-        voteStartTime={voteStartTime}
-        voteEndTime={voteEndTime}
-        history={[
-          { id: "EA001", votes: 2 },
-          { id: "EA003", votes: 4 },
-          { id: "EA002", votes: 1 }
-        ]}
-      />
     </>
   );
 }
