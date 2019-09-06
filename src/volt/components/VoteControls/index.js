@@ -22,10 +22,10 @@ import {
 
 import {
   getUTXOs,
-  padHex,
   generateProposal,
   gte,
   randomItem,
+  factor18,
 } from "../../utils";
 import { voltConfig } from "../../config";
 import { getId } from "../../../services/plasma";
@@ -39,6 +39,18 @@ const BN = Web3.utils.BN;
 
 const sortUtxosAsc = (a, b) => 
   new BN(a.output.value).lt(new BN(b.output.value)) ? 1 : -1;
+
+const choiceFromSign = (votes) => {
+  if (votes > 0) {
+    return 'yes';
+  }
+
+  if (votes < 0) {
+    return 'no';
+  }
+
+  return '';
+};
 
 class VoteControls extends Component {
   constructor(props) {
@@ -70,21 +82,25 @@ class VoteControls extends Component {
     this.writeDataToTree = this.writeDataToTree.bind(this);
 
     this.submitVote = this.submitVote.bind(this);
+    this.submitOrUpdateVote = this.submitOrUpdateVote.bind(this);
     this.withdrawVote = this.withdrawVote.bind(this);
 
     const treeData = this.getDataFromTree();
+    const votes = treeData.castedVotes ? treeData.castedVotes.div(factor18) : new BN(0);
+
     this.state = {
       expanded: false,
-      votes: 0,
-      choice: "",
+      votes,
+      choice: choiceFromSign(votes),
       showProgress: false,
       showReceipt: false,
       ...treeData
     };
   }
 
-  setTokenNumber(event) {
+  setTokenNumber(event, lowerBound = 0) {
     const { target } = event;
+    if (target && target.value < lowerBound) return;
     this.setState(state => ({
       ...state,
       votes: target.value
@@ -152,7 +168,7 @@ class VoteControls extends Component {
   }
 
 
-  async getBoxVoteCredits(address, amount) {
+  async getBoxVoteCredits(address, creditsToLock) {
     const { VOICE_CREDITS_COLOR } = voltConfig;
     const allCreditUtxos = shuffle(await getUTXOs(
       plasma,
@@ -163,7 +179,7 @@ class VoteControls extends Component {
     console.log({ allCreditUtxos });
 
     const selectedInputs = Tx.calcInputs(
-      allCreditUtxos, address, toWei(String(amount)).toString(), parseInt(VOICE_CREDITS_COLOR, 10), 8
+      allCreditUtxos, address, creditsToLock.toString(), parseInt(VOICE_CREDITS_COLOR, 10), 8
     );
 
     console.log({ selectedInputs });
@@ -193,7 +209,7 @@ class VoteControls extends Component {
   }
 
   async getVoteTokens(address, amount) {
-    console.log("Get vote tokens from:", address, amount);
+    console.log("Get vote tokens from:", address, amount.toString());
     const { VOICE_TOKENS_COLOR } = voltConfig;
     const allVoteTokensUTXOs = shuffle(await getUTXOs(
       plasma,
@@ -204,7 +220,7 @@ class VoteControls extends Component {
     console.log({ allVoteTokensUTXOs });
 
     const selectedInputs = Tx.calcInputs(
-      allVoteTokensUTXOs, address, toWei(String(amount)).toString(), parseInt(VOICE_TOKENS_COLOR, 10), 8
+      allVoteTokensUTXOs, address, amount.toString(), parseInt(VOICE_TOKENS_COLOR, 10), 8
     );
 
     console.log({ selectedInputs });
@@ -243,13 +259,18 @@ class VoteControls extends Component {
     if (!localTree) {
       console.log("local tree is empty");
       tree = new SMT(9);
-      castedVotes = 0;
+      castedVotes = new BN(0);
     } else {
       const parsedTree = JSON.parse(localTree);
       console.log({ parsedTree });
       tree = new SMT(9, parsedTree);
-      castedVotes = utils.formatEther(parsedTree[motionId] || 0);
+      console.log(parsedTree[motionId]);
+      castedVotes = parsedTree[motionId] 
+        ? new BN(utils.defaultAbiCoder.decode(['int256'], parsedTree[motionId])[0].toString())
+        : new BN(0);
     }
+
+    console.log(castedVotes.toString());
     const proof = tree.createMerkleProof(motionId);
 
     console.log({ castedVotes, proof });
@@ -261,7 +282,7 @@ class VoteControls extends Component {
     };
   }
 
-  writeDataToTree(castedVotes, newLeaf) {
+  writeDataToTree(newNumberOfVotes) {
     const { account, proposal } = this.props;
     const motionId = proposal.id;
     const localTree = getStoredValue("votes", account);
@@ -270,9 +291,9 @@ class VoteControls extends Component {
       parsedTree = {};
       storeValues(parsedTree, account);
     }
-    parsedTree[motionId] = padHex(newLeaf.toHexString(), 64);
+    parsedTree[motionId] = utils.defaultAbiCoder.encode(['int256'], [newNumberOfVotes.toString()]);
 
-    console.log({ castedVotes, newLeaf });
+    console.log({ newNumberOfVotes });
     console.log({ parsedTree });
 
     storeValues({ votes: JSON.stringify(parsedTree) }, account);
@@ -283,7 +304,7 @@ class VoteControls extends Component {
     this.setState(state => ({
       ...state,
       proof,
-      castedVotes
+      castedVotes: newNumberOfVotes
     }));
   }
 
@@ -296,8 +317,8 @@ class VoteControls extends Component {
     return contractInterface.functions.castBallot.encode([
       utils.bigNumberify(balanceCardId),
       proof,
-      prevVotes, // previous value
-      newVotes // how much added
+      prevVotes.toString(), // previous value
+      newVotes.toString() // how much added
     ]);
   }
 
@@ -380,15 +401,46 @@ class VoteControls extends Component {
     return receipt;
   }
 
+  getCurrentVote() {
+    const {votes, castedVotes, choice} = this.state;
+
+    const sign = choice === 'yes' ? 1 : -1;
+    const prevNumOfVotes = castedVotes;
+    const newNumOfVotes = new BN(utils.parseEther(votes.toString()).mul(sign).toString());
+    
+    return { prevNumOfVotes, newNumOfVotes, sign };
+  }
+
+  async submitOrUpdateVote() {
+    const { prevNumOfVotes, newNumOfVotes } = this.getCurrentVote();
+    console.log({ newNumOfVotes, prevNumOfVotes});
+    // nothing changed, no need to do anything
+    if (newNumOfVotes.eq(prevNumOfVotes)) {
+      return;
+    }
+
+    console.log(prevNumOfVotes.toString(), newNumOfVotes.toString());
+
+    const isAddingMoreVotes = newNumOfVotes.abs().gt(prevNumOfVotes.abs());
+
+    if (isAddingMoreVotes) {
+      return this.submitVote();
+    } else {
+      return this.withdrawVote(null, prevNumOfVotes.sub(newNumOfVotes).abs());
+    }
+  }
+
   async submitVote() {
     const { changeAlert } = this.props;
-    const {votes, choice, castedVotes} = this.state;
     try {
       console.log("Display Progress Screen");
-      console.log({choice});
       this.setProgressState(true);
 
       /// START NEW CODE
+
+      const { prevNumOfVotes, newNumOfVotes } = this.getCurrentVote();
+
+      console.log({prevNumOfVotes, newNumOfVotes});
 
       const script = this.prepareScript();
       const outputs = await this.getOutputs();
@@ -399,14 +451,6 @@ class VoteControls extends Component {
       if (balanceCard.unspent.output.data !== treeData.root){
         throw Error(`local Storage and balance card out of sync: ${balanceCard.unspent.output.data} / ${treeData.root}`);
       }
-
-      const sign = choice === "yes" ? 1 : -1;
-
-      const prevNumOfVotes = utils.parseEther(castedVotes.toString());
-      const newVotesTotal = Math.abs(parseInt(castedVotes)) + parseInt(votes);
-      const newNumOfVotes = utils.parseEther((sign * newVotesTotal).toString());
-
-      console.log({castedVotes, newVotesTotal, newNumOfVotes});
 
       const data = this.cookVoteParams(
         balanceCard.id,
@@ -432,10 +476,12 @@ class VoteControls extends Component {
       const secondCheck = await this.checkCondition(vote);
       console.log({secondCheck});
 
+      console.log(prevNumOfVotes.toString(), newNumOfVotes.toString());
+      
       // Submit vote to blockchain
       const receipt = await this.processTransaction(vote);
       console.log({receipt});
-      this.writeDataToTree(newVotesTotal, newNumOfVotes);
+      this.writeDataToTree(newNumOfVotes);
 
       this.setProgressState(false);
       this.setReceiptState(true);
@@ -479,7 +525,7 @@ class VoteControls extends Component {
 
     const gas = await this.getGas(destBox);
     const voteTokens = await this.getVoteTokens(destBox, castedVotes);
-    const lockedCredits = castedVotes * castedVotes;
+    const lockedCredits = castedVotes.mul(castedVotes).div(factor18);
     const voteCredits = await this.getBoxVoteCredits(destBox, lockedCredits);
     const balanceCard = await this.getBalanceCard(account);
 
@@ -491,18 +537,18 @@ class VoteControls extends Component {
     };
   }
 
-  cookWithdrawParams(balanceCardId, amount) {
+  cookWithdrawParams(balanceCardId, amount, amountToWithdraw) {
     const { proof } = this.state;
     const { abi } = ballotBoxInterface;
     const contractInterface = new utils.Interface(abi);
 
     // const amount = utils.parseEther("3");
-
+    console.log(amount.toString(), amountToWithdraw.toString());
     return contractInterface.functions.withdraw.encode([
       utils.bigNumberify(balanceCardId),
       proof,
-      amount,
-      amount
+      amount.toString(),
+      amountToWithdraw.toString()
     ]);
   }
 
@@ -531,10 +577,9 @@ class VoteControls extends Component {
     return withdraw;
   }
 
-  async withdrawVote() {
+  async withdrawVote(e, votesToWithdraw) {
     const { changeAlert } = this.props;
-    const { castedVotes } = this.state;
-
+    
     try {
       this.setProgressState(true);
 
@@ -546,9 +591,11 @@ class VoteControls extends Component {
       const treeData = this.getDataFromTree();
       console.log({treeData});
 
-      const currentVotes = utils.parseEther(castedVotes.toString());
+      const { prevNumOfVotes, sign } = this.getCurrentVote();
 
-      const data = this.cookWithdrawParams(balanceCard.id, currentVotes);
+      votesToWithdraw = votesToWithdraw || prevNumOfVotes.abs();
+      
+      const data = this.cookWithdrawParams(balanceCard.id, prevNumOfVotes, votesToWithdraw);
 
       const withdraw = await this.constructWithdraw(outputs, script, data);
 
@@ -570,13 +617,14 @@ class VoteControls extends Component {
       const secondCheck = await this.checkCondition(withdraw);
       console.log({secondCheck});
 
-      const zeroVotes = utils.parseEther("0");
+      const votesToSet = prevNumOfVotes.abs().sub(votesToWithdraw).mul(new BN(sign));
+      console.log(prevNumOfVotes.toString(), votesToSet.toString(), votesToWithdraw.toString());
 
       // Process withdrawal
       const receipt = await this.processTransaction(withdraw);
       console.log({receipt});
 
-      this.writeDataToTree(0, zeroVotes);
+      this.writeDataToTree(votesToSet);
 
       this.setProgressState(false);
       this.setReceiptState(true);
@@ -633,29 +681,44 @@ class VoteControls extends Component {
   }
 
   render() {
-    const { expanded, votes, choice } = this.state;
+    const { votes : voteStr, choice, castedVotes } = this.state;
     const { showReceipt, showProgress } = this.state;
     const { credits } = this.props;
-    const max = Math.floor(Math.sqrt(credits)) || 0;
+
+    const votes = new BN(voteStr);
     const options = [
       { value: "yes", color: "voltBrandGreen" },
       { value: "no", color: "voltBrandRed" }
     ];
-    const disabled = votes < 1 || choice === "";
+    console.log({ castedVotes });
+    const castedCredits = castedVotes.mul(castedVotes).div(factor18);
+    console.log({ credits, castedCredits });
 
+    const totalCredits = castedCredits.add(credits || new BN(0)).div(factor18);
+    // no sqrt in BN.js 🤷‍
+    const max = Math.sqrt(parseInt(totalCredits.toString(), 10)) || 0;
+
+    const voteDisabled = votes.lt(new BN(1)) || choice === "";
+
+    const voteUnits = votes.abs();
+
+    const alreadyVoted = castedCredits.gt(new BN(0));
     return (
       <Container>
         {showProgress && <Progress message={"Processing, please wait..."} />}
         {showReceipt && (
-          <Receipt voteType={choice} votes={votes} onClose={this.resetState} />
+          <Receipt voteType={choice} votes={voteUnits} onClose={() => {
+            this.resetState();
+            this.props.history.push('/');
+          }} />
         )}
-        <Equation votes={votes} />
+        <Equation votes={voteUnits} />
         <StyledSlider
           min={0}
-          max={Math.max(max, 1)}
+          max={max}
           steps={max + 1}
-          value={votes}
-          onChange={this.setTokenNumber}
+          value={voteUnits}
+          onChange={(e) => this.setTokenNumber(e, alreadyVoted ? 1 : 0)}
         />
         <SliderLabels>
           <Label>0</Label>
@@ -665,9 +728,10 @@ class VoteControls extends Component {
           options={options}
           selection={choice}
           onChange={this.setChoice}
+          alreadyVoted={alreadyVoted}
         />
-        <ActionButton disabled={disabled} onClick={this.submitVote}>
-          Send Vote
+        <ActionButton disabled={voteDisabled} onClick={this.submitOrUpdateVote}>
+          { alreadyVoted ? 'Update Vote' : 'Send Vote' }
         </ActionButton>
         <ActionButton onClick={this.withdrawVote}>Withdraw</ActionButton>
       </Container>

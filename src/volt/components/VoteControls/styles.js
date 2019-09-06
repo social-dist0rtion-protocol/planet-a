@@ -16,7 +16,9 @@ export const SliderLabels = styled(Flex).attrs(() => ({
   width: "100%",
   justifyContent: "space-between",
   alignItems: "center"
-}))``;
+}))`
+  opacity: ${props => props.disabled ? 0.3 : 1};
+`;
 
 export const Label = styled(Text).attrs(() => ({
   fontSize: 2,
@@ -53,6 +55,9 @@ export const StyledSlider = styled(Slider).attrs(() => ({}))`
     border-radius: 2px;
     background-color: white;
     display: block;
+  }
+  &:disabled {
+    opacity: 0.3;
   }
 `;
 

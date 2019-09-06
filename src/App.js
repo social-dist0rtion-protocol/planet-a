@@ -38,6 +38,8 @@ import BurnWallet from './components/BurnWallet';
 import AlertBox from './volt/components/AlertBox';
 import Loader from './volt/components/Loader';
 
+const BN = Web3.utils.BN;
+
 let LOADERIMAGE = burnerlogo;
 let HARDCODEVIEW; // = "loader"// = "receipt"
 
@@ -318,23 +320,18 @@ class App extends Component {
       voiceTokensContract
     } = this.state;
     if (account) {
-      let creditsBalance = 0;
-      let tokensBalance = 0;
+      let creditsBalance = new BN(0);
+      let tokensBalance = new BN(0);
 
       if (xdaiweb3) {
-        const {
-          utils: { fromWei }
-        } = xdaiweb3;
 
-        const voiceCreditsInWei = await voiceCreditsContract.methods
+        creditsBalance = new BN(await voiceCreditsContract.methods
           .balanceOf(account)
-          .call();
-        creditsBalance = fromWei(voiceCreditsInWei, "ether");
+          .call());
 
-        const voiceTokensInWei = await voiceTokensContract.methods
+        tokensBalance = new BN(await voiceTokensContract.methods
           .balanceOf(account)
-          .call();
-        tokensBalance = fromWei(voiceTokensInWei, "ether");
+          .call());
       }
 
       // TODO: Fetch Balance Card here
@@ -965,6 +962,7 @@ class App extends Component {
                         creditsBalance={creditsBalance}
                         goBack={() => history.replace('/')}
                         changeAlert={this.changeAlert}
+                        history={history}
                       />
                     )
                   }

@@ -62,6 +62,7 @@ const EquationContainer = styled(Flex).attrs(() => ({
 }))`
   width: 100%;
   max-width: 300px;
+  opacity: ${props => props.disabled ? 0.3 : 1};
 `;
 
 const EqualityContainer = styled(Flex).attrs(() => ({
@@ -94,9 +95,9 @@ const Equality = () => {
   );
 };
 
-export const Equation = ({ votes }) => {
+export const Equation = ({ disabled, votes }) => {
   return (
-    <EquationContainer>
+    <EquationContainer disabled={disabled}>
       <GridDisplay label="Votes" value={votes} />
       <Equality />
       <GridDisplay label="Voice Credits" value={votes ** 2} />

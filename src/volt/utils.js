@@ -14,6 +14,8 @@ import VotingBooth from './spendies/VotingBooth';
 
 const BN = web3.utils.BN;
 
+export const factor18 = new BN(10).pow(new BN(18));
+
 export const contains = (string, query) => {
   const fieldValue = string.toLowerCase();
   return fieldValue.includes(query);

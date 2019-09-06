@@ -8,6 +8,7 @@ const OptionContainer = styled.div`
   grid-template-columns: ${({ num = 1 }) => `repeat(${num}, auto)`};
   grid-column-gap: 16px;
   margin-bottom: 16px;
+  opacity: ${props => props.disabled ? 0.3 : 1};
 `;
 
 const Option = styled(Flex).attrs({
@@ -26,22 +27,26 @@ const Option = styled(Flex).attrs({
     selected ? theme.colors[optionColor] : theme.colors.voltBrandWhite};
   background-color: ${({ selected = false, optionColor, theme }) =>
     selected ? theme.colors[optionColor] : theme.colors.voltBrandMain};
+  opacity: ${props => props.disabled ? 0.3 : 1};
 `;
 
 export const Choice = props => {
-  const { options, selection } = props;
+  const { options, selection, alreadyVoted } = props;
   const { onChange } = props;
   return (
     <OptionContainer num={options.length}>
       {options.map(option => {
         const { value, color } = option;
         const selected = value === selection;
+        const disabled = alreadyVoted && !selected;
         return (
           <Option
             key={option.value}
             selected={selected}
-            onClick={() => onChange(option)}
+            onClick={() => !disabled && onChange(option)}
             optionColor={color}
+            disabled={disabled}
+            title={disabled ? 'Withdraw your previous vote first' : ''}
           >
             {value}
           </Option>

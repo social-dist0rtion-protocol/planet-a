@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from 'react-router-dom';
+import Web3 from 'web3';
 import {
   HeaderContainer,
   TopContainer,
@@ -16,8 +17,16 @@ import {
   Value
 } from "./styles";
 
+import { factor18 } from '../../utils';
+
+const BN = Web3.utils.BN;
+
 export const Header = props => {
   const { credits, maxCredits = 25, openMenu } = props;
+  let availableCredits = '--';
+  if (credits) {
+    availableCredits = new BN(credits).div(factor18).toString();
+  }
   return (
     <HeaderContainer>
       <TopContainer>
@@ -39,7 +48,7 @@ export const Header = props => {
         <Label>DEINE VOICECREDITS</Label>
         <Balance>
           <Value>
-            {credits || "--"} <span>/{maxCredits}</span>{" "}
+            {availableCredits} <span>/{maxCredits}</span>{" "}
           </Value>
         </Balance>
       </BalanceContainer>
