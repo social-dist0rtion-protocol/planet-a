@@ -12,8 +12,7 @@ import {
 } from "./styles";
 
 const SingleProposal = props => {
-  const { title, proposalId, toggle, favorite, topic } = props;
-  const votes = 0;
+  const { title, proposalId, toggle, favorite, topic, votes } = props;
   return (
     <ProposalContainer>
       <VoteRecord votes={votes} />

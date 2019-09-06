@@ -73,7 +73,8 @@ export default class ProposalPage extends React.Component {
       creditsBalance,
       goBack,
       web3Props,
-      changeAlert
+      changeAlert,
+      updateVotes
     } = this.props;
 
     return (
@@ -101,6 +102,7 @@ export default class ProposalPage extends React.Component {
               proposalId={proposal.id}
               credits={creditsBalance}
               changeAlert={changeAlert}
+              updateVotes={updateVotes}
               {...web3Props}
             />
           }

@@ -18,6 +18,7 @@ export default function MainPage({
   favorites,
   voteStartTime,
   voteEndTime,
+  userVotes
 }) {
   const filteredList = React.useMemo(() => {
     const sortFunctions = {
@@ -56,6 +57,7 @@ export default function MainPage({
         list={filteredList}
         toggle={toggleFavorites}
         favorites={favorites}
+        userVotes={userVotes}
       />
       <Footer
         voteStartTime={voteStartTime}
