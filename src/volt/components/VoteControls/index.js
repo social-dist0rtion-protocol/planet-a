@@ -626,7 +626,7 @@ class VoteControls extends Component {
       console.log({receipt});
 
       this.writeDataToTree(votesToSet);
-      updateVotes(proposal.id, votesToSet);
+      updateVotes(proposal.id, votesToSet.div(factor18).toString());
 
       this.setProgressState(false);
       this.setReceiptState(true);
