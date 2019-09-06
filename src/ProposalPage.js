@@ -1,12 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Flex, Box } from "rimble-ui";
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import "dayjs/locale/de";
 
 import { Star, Back } from "./volt/components/Common";
 import { TopPart, Topic, ProposalId } from "./volt/components/ProposalsList/SingleProposal/styles";
 import VoteControls from "./volt/components/VoteControls";
 import { ActionButton } from "./volt/components/VoteControls/styles";
 import BB from './volt/components/BB';
+
+dayjs.locale("de");
+dayjs.extend(relativeTime);
 
 const VoteButton = styled(ActionButton)`
   width: auto;
@@ -78,7 +84,9 @@ export default class ProposalPage extends React.Component {
       goBack,
       web3Props,
       changeAlert,
-      history,
+      voteStartTime,
+      voteEndTime,
+      history
     } = this.props;
 
     return (
@@ -113,9 +121,11 @@ export default class ProposalPage extends React.Component {
 
           {!showVoteControls &&
             <VoteFooter>
-              <VoteButton onClick={() => {
-                this.setState({ showVoteControls: true })
-              }}>JETZT VOTEN</VoteButton>
+              <VoteButton
+                disabled={dayjs().isBefore(voteStartTime) || dayjs().isAfter(voteEndTime)}
+                onClick={() => this.setState({ showVoteControls: true })}>
+              {dayjs().isBefore(voteStartTime) ? `VOTE STARTET ${dayjs().to(dayjs(voteStartTime))}`.toUpperCase() : dayjs().isAfter(voteEndTime) ? "VOTE GESCHLOSSEN" : "JETZT VOTEN"}
+              </VoteButton>
             </VoteFooter>
           }
         </Footer>
