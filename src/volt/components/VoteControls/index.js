@@ -37,7 +37,7 @@ const plasma = new providers.JsonRpcProvider(RPC);
 
 const BN = Web3.utils.BN;
 
-const sortUtxosAsc = (a, b) => 
+const sortUtxosAsc = (a, b) =>
   new BN(a.output.value).lt(new BN(b.output.value)) ? 1 : -1;
 
 class VoteControls extends Component {
@@ -340,7 +340,7 @@ class VoteControls extends Component {
       vote.sign(privateKeys);
     } else {
       await window.ethereum.enable();
-      const { r, s, v, signer } = await Tx.signMessageWithWeb3(web3, vote.sigData(), 0);  
+      const { r, s, v, signer } = await Tx.signMessageWithWeb3(web3, vote.sigData(), 0);
       for (let i = 0; i < numOfInputs; i++) {
         if (i > 0 && i <= voiceInputs + 1) {
           vote.inputs[i].setSig(r, s, v, signer);
@@ -381,7 +381,7 @@ class VoteControls extends Component {
   }
 
   async submitVote() {
-    const { changeAlert } = this.props;
+    const { changeAlert, updateVotes, proposal } = this.props;
     const {votes, choice, castedVotes} = this.state;
     try {
       console.log("Display Progress Screen");
@@ -436,6 +436,7 @@ class VoteControls extends Component {
       const receipt = await this.processTransaction(vote);
       console.log({receipt});
       this.writeDataToTree(newVotesTotal, newNumOfVotes);
+      updateVotes(proposal.id, newVotesTotal);
 
       this.setProgressState(false);
       this.setReceiptState(true);
@@ -532,7 +533,7 @@ class VoteControls extends Component {
   }
 
   async withdrawVote() {
-    const { changeAlert } = this.props;
+    const { changeAlert, updateVotes, proposal } = this.props;
     const { castedVotes } = this.state;
 
     try {
@@ -577,6 +578,7 @@ class VoteControls extends Component {
       console.log({receipt});
 
       this.writeDataToTree(0, zeroVotes);
+      updateVotes(proposal.id, 0);
 
       this.setProgressState(false);
       this.setReceiptState(true);
