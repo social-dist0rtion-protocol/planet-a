@@ -396,7 +396,7 @@ class VoteControls extends Component {
       console.log({check});
       if (!check.outputs || !check.outputs[0]) {
         console.error(check.error);
-        throw new Error('Cannot submit a vote.\nPlease, contact administrator');
+        throw new Error('Vote rejected by network.\nPlease, contact administrator');
       }
       vote.outputs = check.outputs.map(Output.fromJSON);
       await this.signVote(vote, privateOutputs);
@@ -540,7 +540,7 @@ class VoteControls extends Component {
       console.log({check});
       if (!check.outputs || !check.outputs[0]) {
         console.error(check.error);
-        throw new Error('Cannot withdraw the vote.\nPlease, contact administrator');
+        throw new Error('Withdrawal rejected by network.\nPlease, contact administrator');
       }
       withdraw.outputs = check.outputs.map(o => new Output(o));
       await this.signWithdraw(withdraw);
