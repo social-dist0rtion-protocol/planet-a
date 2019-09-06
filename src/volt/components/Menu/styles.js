@@ -14,17 +14,26 @@ export const MenuItems = styled(Flex).attrs(() => ({
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "flex-start",
-  pt: "5rem",
+  pt: "3rem",
   flex: 1
-}))``;
+}))`
+  @media screen and (max-height: 600px){
+    padding-top: 5vh;   
+  }
+`;
 
 export const Item = styled(Link).attrs(() => ({
   textDecoration: "none",
   fontSize: 4,
   mb: 3
 }))`
+  text-align: center;
   letter-spacing: 1px;
   color: ${({ theme }) => `${theme.colors.voltBrandWhite} !important`};
+  
+  @media screen and (max-height: 600px){
+    font-size: ${({theme})=>`${theme.fontSizes[3]}px`};
+  }
 `;
 
 export const AccountDetails = styled(Flex).attrs(() => ({

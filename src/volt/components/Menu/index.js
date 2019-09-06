@@ -8,11 +8,12 @@ const Menu = ({ onClose, account }) => (
     <Container>
       <DeoraLogo />
       <MenuItems>
-        <Item href="/page-1">Über uns</Item>
-        <Item href="/page-2">Quadratical Voting</Item>
-        <Item href="/page-3">Die Blockchain</Item>
-        <Item href="/page-4">Sicherheit & Privacy</Item>
-        <Item href="/page-5">Wahlergebnisse</Item>
+        <Item target="_blank" href="https://www.deora.earth/volt-platform/about">Über uns</Item>
+        <Item target="_blank" href="https://www.deora.earth/volt-platform/quadratic">Quadratical Voting</Item>
+        <Item target="_blank" href="https://www.deora.earth/volt-platform/blockchain">Die Blockchain</Item>
+        <Item target="_blank" href="https://www.deora.earth/volt-platform/privacy">Sicherheit & Privacy</Item>
+        <Item target="_blank" href="https://www.deora.earth/volt-platform/extra-proposals">Weitere Anträge</Item>
+        <Item target="_blank" href="https://www.volt.deora.earth/results">Wahlergebnisse</Item>
       </MenuItems>
       <AccountDetails>
         <Label>Your Account Address:</Label>

@@ -13,6 +13,11 @@ export const Container = styled(Flex).attrs(() => ({
   position: absolute;
   width: 100%;
   height: 100%;
+  
+  @media screen and (max-height: 600px){
+    padding-top: 10vh;
+    padding-bottom: 10vh;
+  }
 `;
 
 export const TopPart = styled(Flex).attrs(() => ({
