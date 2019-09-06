@@ -698,8 +698,8 @@ class VoteControls extends Component {
 
     const votes = new BN(voteStr);
     const options = [
-      { value: "yes", color: "voltBrandGreen" },
-      { value: "no", color: "voltBrandRed" }
+      { value: "yes", label: "Ja", color: "voltBrandGreen" },
+      { value: "no", label: "Nein", color: "voltBrandRed" }
     ];
     console.log({ castedVotes });
     const castedCredits = castedVotes.mul(castedVotes).div(factor18);
@@ -741,9 +741,9 @@ class VoteControls extends Component {
             alreadyVoted={alreadyVoted}
           />
           <ActionButton disabled={voteDisabled} onClick={this.submitOrUpdateVote}>
-            { alreadyVoted ? 'Update Vote' : 'Send Vote' }
+            { alreadyVoted ? 'Vote Ändern' : 'Vote Senden' }
           </ActionButton>
-          <ActionButton onClick={this.withdrawVote}>Withdraw</ActionButton>
+          {alreadyVoted && <ActionButton onClick={this.withdrawVote}>Zurücksetzen</ActionButton>}
         </SubContainer>
       </Container>
     );

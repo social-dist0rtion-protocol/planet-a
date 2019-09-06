@@ -33,6 +33,9 @@ export const StyledSlider = styled(Slider).attrs(() => ({}))`
     border: 0;
     outline: none;
   }
+  &::-moz-range-track {
+    background-color: white;
+  }
   &::-webkit-slider-runnable-track {
     background-color: white;
   }
