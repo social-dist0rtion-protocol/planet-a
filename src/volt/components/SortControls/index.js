@@ -17,6 +17,7 @@ export const SortParam = styled(Flex).attrs(() => ({
   flex-direction: ${({ reverse }) => (reverse ? "row-reverse" : "row")};
   align-items: center;
   cursor: pointer;
+  user-select: none;
   &:before {
     content: "";
     display: block;
@@ -42,8 +43,8 @@ const SortContols = props => {
       <SortParam width="60px" mr={3} onClick={sort("votes")}>
         Votes
       </SortParam>
-      <SortParam flex={1} onClick={sort("name")}>
-        Namen
+      <SortParam flex={1} onClick={sort("id")}>
+        Id
       </SortParam>
       <SortParam reverse={true} onClick={sort("favorite")}>
         Favoriten

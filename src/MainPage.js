@@ -22,8 +22,12 @@ export default function MainPage({
 }) {
   const filteredList = React.useMemo(() => {
     const sortFunctions = {
-      votes: (a, b) => 0,
-      name: (a, b) => a.title.localeCompare(b.title) * sortingOrder,
+      votes: (a, b) => {
+        const aVotes = userVotes[a.id] || 0;
+        const bVotes = userVotes[b.id] || 0;
+        return (aVotes - bVotes) * sortingOrder
+      },
+      id: (a, b) => a.proposalId.localeCompare(b.proposalId) * sortingOrder,
       favorite: (a, b) => (
         Number(!!favorites[b.proposalId]) - Number(!!favorites[a.proposalId])
       ) * sortingOrder
