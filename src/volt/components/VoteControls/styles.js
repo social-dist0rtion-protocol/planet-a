@@ -15,16 +15,6 @@ export const SubContainer = styled(Container).attrs(() => ({
   width: "80%"
 }))``;
 
-
-export const SliderLabels = styled(Flex).attrs(() => ({
-  mb: 3,
-  width: "100%",
-  justifyContent: "space-between",
-  alignItems: "center"
-}))`
-  opacity: ${props => props.disabled ? 0.3 : 1};
-`;
-
 export const Label = styled(Text).attrs(() => ({
   fontSize: 2,
   color: "white"
@@ -35,6 +25,7 @@ export const StyledSlider = styled(Slider).attrs(() => ({}))`
   user-select: none;
   width: 100%;
   min-width: auto;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
   &:focus,

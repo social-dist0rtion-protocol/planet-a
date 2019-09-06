@@ -13,7 +13,6 @@ import ballotBoxInterface from "../../contracts/ballotBox";
 import { Equation } from "./GridDisplay";
 import { Choice } from "./Choice";
 import {
-  SliderLabels,
   Container,
   SubContainer,
   Label,
@@ -728,6 +727,7 @@ class VoteControls extends Component {
 
         <SubContainer>
           <StyledSlider
+      mb={4}
             min={0}
             max={max}
             steps={max + 1}
