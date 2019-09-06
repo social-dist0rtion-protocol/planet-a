@@ -20,6 +20,7 @@ const Option = styled(Flex).attrs({
   color: "voltBrandWhite"
 })`
   font-weight: bold;
+  line-height: 1;
   cursor: pointer;
   text-transform: uppercase;
   border: 3px solid white;

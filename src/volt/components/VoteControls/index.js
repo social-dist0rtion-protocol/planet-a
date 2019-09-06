@@ -15,6 +15,7 @@ import { Choice } from "./Choice";
 import {
   SliderLabels,
   Container,
+  SubContainer,
   Label,
   StyledSlider,
   ActionButton
@@ -266,7 +267,7 @@ class VoteControls extends Component {
       console.log({ parsedTree });
       tree = new SMT(9, parsedTree);
       console.log({ treeRecord: parsedTree[motionId] });
-      castedVotes = parsedTree[motionId] 
+      castedVotes = parsedTree[motionId]
         ? new BN(utils.defaultAbiCoder.decode(['int256'], parsedTree[motionId])[0].toString())
         : new BN(0);
     }
@@ -294,7 +295,7 @@ class VoteControls extends Component {
       parsedTree = {};
       storeValues(parsedTree, account);
     }
-    
+
     parsedTree[motionId] = utils.defaultAbiCoder.encode(['int256'], [newNumberOfVotes.toString()]);
     console.log({ treeRecord: parsedTree[motionId] });
 
@@ -412,7 +413,7 @@ class VoteControls extends Component {
     const sign = choice === 'yes' ? 1 : -1;
     const prevNumOfVotes = castedVotes;
     const newNumOfVotes = new BN(utils.parseEther(votes.toString()).mul(sign).toString());
-    
+
     return { prevNumOfVotes, newNumOfVotes, sign };
   }
 
@@ -482,7 +483,7 @@ class VoteControls extends Component {
       console.log({secondCheck});
 
       console.log(prevNumOfVotes.toString(), newNumOfVotes.toString());
-      
+
       // Submit vote to blockchain
       const receipt = await this.processTransaction(vote);
       console.log({receipt});
@@ -585,7 +586,7 @@ class VoteControls extends Component {
 
   async withdrawVote(e, votesToWithdraw) {
     const { changeAlert, updateVotes, proposal } = this.props;
-    
+
     try {
       this.setProgressState(true);
 
@@ -600,7 +601,7 @@ class VoteControls extends Component {
       const { prevNumOfVotes, sign } = this.getCurrentVote();
 
       votesToWithdraw = votesToWithdraw || prevNumOfVotes.abs();
-      
+
       const data = this.cookWithdrawParams(balanceCard.id, prevNumOfVotes, votesToWithdraw);
 
       const withdraw = await this.constructWithdraw(outputs, script, data);
@@ -724,27 +725,26 @@ class VoteControls extends Component {
           }} />
         )}
         <Equation votes={voteUnits} />
-        <StyledSlider
-          min={0}
-          max={max}
-          steps={max + 1}
-          value={voteUnits}
-          onChange={(e) => this.setTokenNumber(e, alreadyVoted ? 1 : 0)}
-        />
-        <SliderLabels>
-          <Label>0</Label>
-          <Label>{max}</Label>
-        </SliderLabels>
-        <Choice
-          options={options}
-          selection={choice}
-          onChange={this.setChoice}
-          alreadyVoted={alreadyVoted}
-        />
-        <ActionButton disabled={voteDisabled} onClick={this.submitOrUpdateVote}>
-          { alreadyVoted ? 'Update Vote' : 'Send Vote' }
-        </ActionButton>
-        <ActionButton onClick={this.withdrawVote}>Withdraw</ActionButton>
+
+        <SubContainer>
+          <StyledSlider
+            min={0}
+            max={max}
+            steps={max + 1}
+            value={voteUnits}
+            onChange={(e) => this.setTokenNumber(e, alreadyVoted ? 1 : 0)}
+          />
+          <Choice
+            options={options}
+            selection={choice}
+            onChange={this.setChoice}
+            alreadyVoted={alreadyVoted}
+          />
+          <ActionButton disabled={voteDisabled} onClick={this.submitOrUpdateVote}>
+            { alreadyVoted ? 'Update Vote' : 'Send Vote' }
+          </ActionButton>
+          <ActionButton onClick={this.withdrawVote}>Withdraw</ActionButton>
+        </SubContainer>
       </Container>
     );
   }

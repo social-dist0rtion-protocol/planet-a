@@ -11,6 +11,11 @@ export const Container = styled(Flex).attrs(() => ({
   flex-direction: column;
 `;
 
+export const SubContainer = styled(Container).attrs(() => ({
+  width: "80%"
+}))``;
+
+
 export const SliderLabels = styled(Flex).attrs(() => ({
   mb: 3,
   width: "100%",
@@ -39,22 +44,6 @@ export const StyledSlider = styled(Slider).attrs(() => ({}))`
   }
   &::-webkit-slider-runnable-track {
     background-color: white;
-  }
-  &:before {
-    content: "";
-    height: 20px;
-    width: 4px;
-    border-radius: 2px;
-    background-color: white;
-    display: block;
-  }
-  &:after {
-    content: "";
-    height: 20px;
-    width: 4px;
-    border-radius: 2px;
-    background-color: white;
-    display: block;
   }
   &:disabled {
     opacity: 0.3;
