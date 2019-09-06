@@ -37,7 +37,7 @@ const plasma = new providers.JsonRpcProvider(RPC);
 
 const BN = Web3.utils.BN;
 
-const sortUtxosAsc = (a, b) => 
+const sortUtxosAsc = (a, b) =>
   new BN(a.output.value).lt(new BN(b.output.value)) ? 1 : -1;
 
 const choiceFromSign = (votes) => {
@@ -361,7 +361,7 @@ class VoteControls extends Component {
       vote.sign(privateKeys);
     } else {
       await window.ethereum.enable();
-      const { r, s, v, signer } = await Tx.signMessageWithWeb3(web3, vote.sigData(), 0);  
+      const { r, s, v, signer } = await Tx.signMessageWithWeb3(web3, vote.sigData(), 0);
       for (let i = 0; i < numOfInputs; i++) {
         if (i > 0 && i <= voiceInputs + 1) {
           vote.inputs[i].setSig(r, s, v, signer);
@@ -431,7 +431,7 @@ class VoteControls extends Component {
   }
 
   async submitVote() {
-    const { changeAlert } = this.props;
+    const { changeAlert, updateVotes, proposal } = this.props;
     try {
       console.log("Display Progress Screen");
       this.setProgressState(true);
@@ -482,6 +482,7 @@ class VoteControls extends Component {
       const receipt = await this.processTransaction(vote);
       console.log({receipt});
       this.writeDataToTree(newNumOfVotes);
+      updateVotes(proposal.id, newNumOfVotes.div(factor18).toString());
 
       this.setProgressState(false);
       this.setReceiptState(true);
@@ -578,7 +579,7 @@ class VoteControls extends Component {
   }
 
   async withdrawVote(e, votesToWithdraw) {
-    const { changeAlert } = this.props;
+    const { changeAlert, updateVotes, proposal } = this.props;
     
     try {
       this.setProgressState(true);
@@ -625,6 +626,7 @@ class VoteControls extends Component {
       console.log({receipt});
 
       this.writeDataToTree(votesToSet);
+      updateVotes(proposal.id, votesToSet.div(factor18).toString());
 
       this.setProgressState(false);
       this.setReceiptState(true);
@@ -696,7 +698,7 @@ class VoteControls extends Component {
 
     const totalCredits = castedCredits.add(credits || new BN(0)).div(factor18);
     // no sqrt in BN.js 🤷‍
-    const max = Math.sqrt(parseInt(totalCredits.toString(), 10)) || 0;
+    const max = Math.floor(Math.sqrt(parseInt(totalCredits.toString(), 10)));
 
     const voteDisabled = votes.lt(new BN(1)) || choice === "";
 

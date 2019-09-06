@@ -84,6 +84,7 @@ export default class ProposalPage extends React.Component {
       goBack,
       web3Props,
       changeAlert,
+      updateVotes,
       voteStartTime,
       voteEndTime,
       history
@@ -114,6 +115,7 @@ export default class ProposalPage extends React.Component {
               proposalId={proposal.id}
               credits={creditsBalance}
               changeAlert={changeAlert}
+              updateVotes={updateVotes}
               history={history}
               {...web3Props}
             />
