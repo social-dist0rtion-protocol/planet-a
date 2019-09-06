@@ -231,7 +231,7 @@ export default class Advanced extends React.Component {
         {privateKey &&
         <div>
           <div className="content ops row settings-row" >
-            <PrimaryButton onClick={() => this.props.history.push("/burn")}>              
+            <PrimaryButton onClick={() => this.props.history.push("/burn")}>
               <Scaler config={{startZoomAt:400,origin:"50% 50%"}}>
                 <i className="fas fa-fire"/> {i18n.t('burn')}
               </Scaler>

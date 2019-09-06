@@ -41,6 +41,7 @@
     "react-scroll": "^1.7.10",
     "react-sound": "^1.2.0",
     "rimble-ui": "0.4.2",
+    "sourcemapped-stacktrace": "^1.1.11",
     "styled-components": "^4.1.3",
     "web3": "1.0.0-beta.36",
     "ya-bbcode": "^1.0.9"
