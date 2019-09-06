@@ -1,10 +1,14 @@
 import React from "react";
-import { FullScreenContainer } from "../Common";
-import { Flex, Text, Image } from "rimble-ui";
 import styled from "styled-components";
+import { Flex, Text, Image } from "rimble-ui";
+
+import { FullScreenContainer } from "../Common";
+import { DeoraLogo } from "../Menu/styles";
+
 import voteYes from "../../assets/vote-yes.png";
 import voteNo from "../../assets/vote-no.png";
-import voteAccepted from "../../assets/vote-accepted.svg";
+import voteAccepted from '../../assets/vote-accepted.svg';
+import witdrawImage from "../../assets/icn-withdraw.svg";
 import { ActionClose } from "../Common";
 
 const Container = styled(Flex).attrs(() => ({
@@ -19,6 +23,13 @@ const Container = styled(Flex).attrs(() => ({
   position: absolute;
   width: 100%;
   height: 100%;
+`;
+
+const Logo = styled(DeoraLogo)`
+  margin-bottom: ${({theme}) => `${theme.space[5]}px`};
+  
+  @media screen and (max-height: 600px){  
+  }
 `;
 
 const MiddlePart = styled(Flex).attrs(() => ({
@@ -48,6 +59,19 @@ const ReceiptFieldContainer = styled(Flex).attrs(() => ({
   mb: 3
 }))`
   justify-content: center;
+`;
+
+const ReceiptText = styled(Text).attrs(() => ({
+  mb: "3rem",
+  flexDirection: "column",
+  fontSize: 3
+}))`
+  color: white;
+  font-weight: normal;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 2px;
+  max-width: 60em;
 `;
 
 const Label = styled(Text).attrs(() => ({
@@ -83,7 +107,7 @@ const ReceiptField = ({ label, value }) => {
   );
 };
 
-const Receipt = props => {
+export const Receipt = props => {
   const { voteType, votes = 0, onClose } = props;
   const voteImage = voteType === "yes" ? voteYes : voteNo;
   return (
@@ -105,4 +129,20 @@ const Receipt = props => {
   );
 };
 
-export default Receipt;
+export const WithdrawReceipt = props => {
+  const { onClose } = props;
+  return (
+    <FullScreenContainer>
+      <Container>
+        <Logo/>
+        <MiddlePart>
+          <Graphic src={witdrawImage} width={"30vw"} mb="4rem" />
+          <ReceiptText>
+            DEIN VOTE WURDE ERFOLGREICH ZURÜCKGESETZT
+          </ReceiptText>
+        </MiddlePart>
+        <ActionClose onClick={onClose}>Schließen</ActionClose>
+      </Container>
+    </FullScreenContainer>
+  );
+};

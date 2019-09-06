@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import Web3 from "web3";
-import { toWei } from "web3-utils";
 import { Tx, Input, Output, helpers } from "leap-core";
 import { providers, utils } from "ethers";
 import shuffle from 'lodash.shuffle';
@@ -12,10 +11,12 @@ import ballotBoxInterface from "../../contracts/ballotBox";
 
 import { Equation } from "./GridDisplay";
 import { Choice } from "./Choice";
+import { Receipt, WithdrawReceipt } from "../Receipt";
+import Loader from "../Loader";
+
 import {
   Container,
   SubContainer,
-  Label,
   StyledSlider,
   ActionButton
 } from "./styles";
@@ -29,8 +30,7 @@ import {
 } from "../../utils";
 import { voltConfig } from "../../config";
 import { getId } from "../../../services/plasma";
-import Progress from "../Progress";
-import Receipt from "../Receipt";
+
 
 const RPC = "https://testnet-node1.leapdao.org";
 const plasma = new providers.JsonRpcProvider(RPC);
@@ -94,6 +94,7 @@ class VoteControls extends Component {
       choice: choiceFromSign(votes),
       showProgress: false,
       showReceipt: false,
+      showWithdrawReceipt: false,
       ...treeData
     };
   }
@@ -640,7 +641,7 @@ class VoteControls extends Component {
       updateVotes(proposal.id, votesToSet.div(factor18).toString());
 
       this.setProgressState(false);
-      this.setReceiptState(true);
+      this.setReceiptState(true, 'withdraw');
 
     } catch (error) {
       console.error(error);
@@ -658,10 +659,11 @@ class VoteControls extends Component {
     }));
   }
 
-  setReceiptState(bool) {
+  setReceiptState(bool, type = "") {
+    const receipt = type ? "showWithdrawReceipt" : "showReceipt";
     this.setState(state => ({
       ...state,
-      showReceipt: bool
+      [receipt]: bool
     }));
   }
 
@@ -671,7 +673,8 @@ class VoteControls extends Component {
       votes: 0,
       choice: "",
       showProgress: false,
-      showReceipt: false
+      showReceipt: false,
+      showWithdrawReceipt: false
     }));
   }
 
@@ -695,7 +698,7 @@ class VoteControls extends Component {
 
   render() {
     const { votes : voteStr, choice, castedVotes } = this.state;
-    const { showReceipt, showProgress } = this.state;
+    const { showReceipt, showWithdrawReceipt, showProgress } = this.state;
     const { credits } = this.props;
 
     const votes = new BN(voteStr);
@@ -718,9 +721,15 @@ class VoteControls extends Component {
 
     return (
       <Container>
-        {showProgress && <Progress message={"Processing, please wait..."} />}
+        {showProgress && <Loader/>}
         {showReceipt && (
           <Receipt voteType={choice} votes={voteUnits} onClose={() => {
+            this.resetState();
+            this.props.history.push('/');
+          }} />
+        )}
+        {showWithdrawReceipt && (
+          <WithdrawReceipt onClose={() => {
             this.resetState();
             this.props.history.push('/');
           }} />
