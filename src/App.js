@@ -893,6 +893,7 @@ class App extends Component {
                 <Route path="/results" exact render={() => (
                   <ResultPage
                     proposals={proposalsList}
+                    web3Props={web3Props}
                   />
                 )} />
 
@@ -926,7 +927,7 @@ class App extends Component {
                       if(RNMessageChannel){
                         RNMessageChannel.send("burn");
                       }
-                      
+
                       storeValues({
                         loadedBlocksTop: "",
                         metaPrivateKey: "",
@@ -934,7 +935,7 @@ class App extends Component {
                         transactionsByAddress: "",
                       }, this.state.account);
 
-                      this.setState({ 
+                      this.setState({
                         recentTxs: [],
                         transactionsByAddress: {}
                       });
