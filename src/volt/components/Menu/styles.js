@@ -3,11 +3,12 @@ import styled from "styled-components";
 import logoDeora from "../../assets/logo-deora.png";
 
 export const DeoraLogo = styled(Image).attrs(() => ({
-  src: logoDeora
+  src: "./logo-deora.png"
 }))`
   width: 12rem;
   height: auto;
   background-color: transparent;
+  position: relative;
 `;
 
 export const MenuItems = styled(Flex).attrs(() => ({
