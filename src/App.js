@@ -36,6 +36,7 @@ import ResultPage from "./ResultPage";
 import Advanced from "./components/Advanced";
 import BurnWallet from './components/BurnWallet';
 import AlertBox from './volt/components/AlertBox';
+import {ethers} from "ethers";
 
 let LOADERIMAGE = burnerlogo;
 let HARDCODEVIEW; // = "loader"// = "receipt"
@@ -116,6 +117,7 @@ class App extends Component {
       favorites: {},
       sorting: 'votes',
       sortingOrder: 1,
+      userVotes: {}
     };
     this.alertTimeout = null;
 
@@ -149,6 +151,7 @@ class App extends Component {
     this.filterList = this.filterList.bind(this);
     this.resetFilter = this.resetFilter.bind(this);
     this.toggleFavorites = this.toggleFavorites.bind(this);
+    this.updateVotes = this.updateVotes.bind(this);
   }
 
   parseAndCleanPath(path) {
@@ -497,6 +500,14 @@ class App extends Component {
       }, 200000);
     }
   };
+
+  updateVotes = (id, votes) => {
+    console.log(`Update number of votes for ${id} with ${votes}`);
+    const { userVotes }  = this.state;
+    userVotes[id] = votes;
+    this.setState({ userVotes })
+  };
+
   goBack(view = "main") {
     console.log("GO BACK");
     this.changeView(view);
@@ -865,7 +876,7 @@ class App extends Component {
       favorites
     } = this.state;
 
-    const { voteStartTime, voteEndTime, trashBox } = this.state;
+    const { userVotes, voteStartTime, voteEndTime, trashBox } = this.state;
     const web3Props = { plasma: xdaiweb3, web3, account, metaAccount };
     return (
       <>
@@ -887,6 +898,7 @@ class App extends Component {
                     favorites={favorites}
                     voteStartTime={voteStartTime}
                     voteEndTime={voteEndTime}
+                    userVotes={userVotes}
                   />
                 )} />
 
@@ -964,6 +976,7 @@ class App extends Component {
                         creditsBalance={creditsBalance}
                         goBack={() => history.replace('/')}
                         changeAlert={this.changeAlert}
+                        updateVotes={this.updateVotes}
                       />
                     )
                   }
@@ -988,7 +1001,7 @@ class App extends Component {
             onUpdate={async state => {
               //console.log("DAPPARATUS UPDATE",state)
 
-              const { account, favorites } = state;
+              const { account, favorites, userVotes } = state;
 
               console.log('ACCOUNT ADDRESS:', account);
 
@@ -997,6 +1010,35 @@ class App extends Component {
                 const favoritesList = storedList ? JSON.parse(storedList) : {};
                 this.setState({
                   favorites: favoritesList
+                });
+              }
+
+              if (!userVotes){
+                const userVotes = {};
+                const localTree = getStoredValue("votes", account);
+                const parsedTree = JSON.parse(localTree);
+
+                if (parsedTree){
+                  for (const key in parsedTree){
+                    if (parsedTree.hasOwnProperty(key)){
+
+                      // Get value from the leaf
+                      const value = parsedTree[key];
+
+                      // Decode it
+                      const decVal = ethers.utils.defaultAbiCoder.decode(["int256"], value);
+
+                      // Number stored in the leaf is numOfVotes * (10 ** 18)
+                      const decEthVal = ethers.utils.formatEther(decVal.toString());
+
+                      // Later in list of proposals we will need integer value
+                      userVotes[key] = parseInt(decEthVal);
+                    }
+                  }
+                }
+
+                this.setState({
+                  userVotes
                 });
               }
 
