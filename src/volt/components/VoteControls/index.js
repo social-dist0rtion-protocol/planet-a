@@ -727,7 +727,7 @@ class VoteControls extends Component {
 
         <SubContainer>
           <StyledSlider
-      mb={4}
+            mb={4}
             min={0}
             max={max}
             steps={max + 1}
