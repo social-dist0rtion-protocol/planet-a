@@ -11,14 +11,9 @@ export const Container = styled(Flex).attrs(() => ({
   flex-direction: column;
 `;
 
-export const SliderLabels = styled(Flex).attrs(() => ({
-  mb: 3,
-  width: "100%",
-  justifyContent: "space-between",
-  alignItems: "center"
-}))`
-  opacity: ${props => props.disabled ? 0.3 : 1};
-`;
+export const SubContainer = styled(Container).attrs(() => ({
+  width: "80%"
+}))``;
 
 export const Label = styled(Text).attrs(() => ({
   fontSize: 2,
@@ -30,6 +25,7 @@ export const StyledSlider = styled(Slider).attrs(() => ({}))`
   user-select: none;
   width: 100%;
   min-width: auto;
+  margin-bottom: ${({theme}) => `${theme.space[2]}px`};
   display: flex;
   align-items: center;
   &:focus,
@@ -37,24 +33,11 @@ export const StyledSlider = styled(Slider).attrs(() => ({}))`
     border: 0;
     outline: none;
   }
+  &::-moz-range-track {
+    background-color: white;
+  }
   &::-webkit-slider-runnable-track {
     background-color: white;
-  }
-  &:before {
-    content: "";
-    height: 20px;
-    width: 4px;
-    border-radius: 2px;
-    background-color: white;
-    display: block;
-  }
-  &:after {
-    content: "";
-    height: 20px;
-    width: 4px;
-    border-radius: 2px;
-    background-color: white;
-    display: block;
   }
   &:disabled {
     opacity: 0.3;

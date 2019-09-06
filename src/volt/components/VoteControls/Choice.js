@@ -20,6 +20,7 @@ const Option = styled(Flex).attrs({
   color: "voltBrandWhite"
 })`
   font-weight: bold;
+  line-height: 1;
   cursor: pointer;
   text-transform: uppercase;
   border: 3px solid white;
@@ -36,7 +37,7 @@ export const Choice = props => {
   return (
     <OptionContainer num={options.length}>
       {options.map(option => {
-        const { value, color } = option;
+        const { value, label, color } = option;
         const selected = value === selection;
         const disabled = alreadyVoted && !selected;
         return (
@@ -48,7 +49,7 @@ export const Choice = props => {
             disabled={disabled}
             title={disabled ? 'Withdraw your previous vote first' : ''}
           >
-            {value}
+            {label}
           </Option>
         );
       })}
