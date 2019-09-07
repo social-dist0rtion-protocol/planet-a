@@ -38,9 +38,6 @@ export const Header = props => {
           </LogoContainer>
         </Link>
         <Actions>
-          <Link to="/settings">
-           <Settings/>
-          </Link>
           <Hamburger onClick={openMenu} />
         </Actions>
       </TopContainer>
