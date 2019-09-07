@@ -881,13 +881,18 @@ class App extends Component {
 
     const { userVotes, voteStartTime, voteEndTime, trashBox } = this.state;
     const web3Props = { plasma: xdaiweb3, web3, account, metaAccount };
-
+    const filledProposals = proposalsList ? proposalsList.filter(p => p.proposalId) : [];
+    const maxCredits = filledProposals.length;
     return (
       <>
           {account ? (
             <MainContainer>
               {isMenuOpen && <Menu onClose={this.closeMenu} account={account} />}
-              <Header credits={creditsBalance} openMenu={this.openMenu} />
+              <Header
+                credits={creditsBalance}
+                maxCredits={maxCredits}
+                openMenu={this.openMenu}
+              />
 
                 <Route path="/" exact render={() => (
                   <MainPage
