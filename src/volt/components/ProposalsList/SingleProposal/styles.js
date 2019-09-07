@@ -17,6 +17,11 @@ export const ProposalContainer = styled(Flex).attrs(() => ({
     border-bottom: 1px solid;
     border-color: ${({ theme }) => theme.colors.voltBrandLightGrey};
   }
+
+  @media screen and (max-height: 600px){
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
 `;
 
 export const VoteInfo = styled(Flex).attrs(() => ({}))`

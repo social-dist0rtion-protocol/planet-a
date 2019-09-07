@@ -39,6 +39,12 @@ const Cell = styled(Flex).attrs(() => ({
     border-left-width: 0;
     border-right-width: 0;
   }
+
+  @media screen and (max-height: 600px){
+    padding-top: 4px;
+    padding-bottom: 4px;
+    font-size: 18px;
+  }
 `;
 
 export const GridDisplay = ({ label, value }) => {
@@ -68,9 +74,9 @@ const EquationContainer = styled(Flex).attrs(() => ({
 const EqualityContainer = styled(Flex).attrs(() => ({
   mx: 2,
   flexDirection: "column",
-  height: "54px",
   mt: 4
 }))`
+  height: 54px;
   align-items: center;
   justify-content: center;
 `;

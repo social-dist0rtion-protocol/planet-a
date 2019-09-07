@@ -5,6 +5,7 @@ export const VoteContainer = styled(Flex).attrs(() => ({
   mr: 3,
   className: "vote-container"
 }))`
+  flex-shrink: 0;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;

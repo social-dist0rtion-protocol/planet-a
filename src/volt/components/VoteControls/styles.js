@@ -64,6 +64,10 @@ export const ActionButton = styled.button.attrs(() => ({}))`
   &:disabled {
     opacity: 0.3;
   }
+
+  @media screen and (max-height: 600px){
+    font-size: 16px;
+  }
 `;
 
 export const PrimaryButton = styled(ActionButton)`

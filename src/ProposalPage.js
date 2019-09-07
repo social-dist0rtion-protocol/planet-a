@@ -49,6 +49,9 @@ export const VoteFooter = styled(Flex).attrs(() => ({
   pt: 5,
   pb: 5,
 }))`
+  @media screen and (max-height: 600px){
+    padding: 0;
+  }
 `;
 
 const HeaderBar = styled(Flex).attrs({
@@ -66,6 +69,12 @@ const Content = styled(Box).attrs({
   /* br {
     display: none;
   } */
+
+  @media screen and (max-height: 600px){
+    header h1 {
+      font-size: 24px;
+    }
+  }
 `;
 
 export default function ProposalPage({
