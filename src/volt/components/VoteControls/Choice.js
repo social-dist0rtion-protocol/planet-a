@@ -33,7 +33,7 @@ const Option = styled(Flex).attrs({
 
 export const Choice = props => {
   const { options, selection, alreadyVoted } = props;
-  const { onChange } = props;
+  const { onChange, onClick } = props;
   const disabled = alreadyVoted;
   return (
     <OptionContainer disabled={disabled} num={options.length}>
@@ -44,7 +44,13 @@ export const Choice = props => {
           <Option
             key={option.value}
             selected={selected}
-            onClick={() => !disabled && onChange(option)}
+            onClick={() => {
+              if (disabled) return;
+              onClick(option);
+              if (option.value !== selection) {
+                onChange(option);
+              }
+            }}
             optionColor={color}
             disabled={disabled}
           >

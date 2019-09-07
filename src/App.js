@@ -820,7 +820,7 @@ class App extends Component {
       voteStartTime,
       trashAddress
     } = body;
-
+    
     // ToDo: remove second filter when store won't have any duplicate proposalId
     const proposals = proposalsList
       .map((p,i)=>({...p, id: i }))

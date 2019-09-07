@@ -102,17 +102,18 @@ class VoteControls extends Component {
   setTokenNumber(event, lowerBound = 0) {
     const { target } = event;
     if (target && target.value < lowerBound) return;
-    this.setState(state => ({
-      ...state,
+    this.setState({
       votes: target.value
-    }));
+    });
   }
 
   setChoice({ value }) {
-    this.setState(state => ({
-      ...state,
-      choice: value
-    }));
+    const { choice, votes } = this.state;
+    // if no decision yet, but slider is selected → preserve user's credits value
+    this.setState({
+      choice: value,
+      votes: choice === '' && votes > 0 ? votes : 1,
+    });
   }
 
   prepareScript() {
@@ -241,7 +242,7 @@ class VoteControls extends Component {
     // TODO: Parallelize with Promise.all([...promises])
     const gas = await this.getGas(boothAddress);
     const voteTokens = await this.getVoteTokens(
-      boothAddress, new BN(utils.parseEther(votes).toString())
+      boothAddress, new BN(utils.parseEther(votes.toString()).toString())
     );
     const balanceCard = await this.getBalanceCard(account);
     const voteCredits = await this.getMyVoteCredits();
@@ -312,11 +313,10 @@ class VoteControls extends Component {
     const tree = new SMT(9, parsedTree);
     const proof = tree.createMerkleProof(motionId);
 
-    this.setState(state => ({
-      ...state,
+    this.setState({
       proof,
       castedVotes: newNumberOfVotes
-    }));
+    });
   }
 
   cookVoteParams(balanceCardId, prevVotes, newVotes) {
@@ -656,18 +656,16 @@ class VoteControls extends Component {
   }
 
   setProgressState(bool) {
-    this.setState(state => ({
-      ...state,
+    this.setState({
       showProgress: bool
-    }));
+    });
   }
 
   setReceiptState(bool, type = "") {
     const receipt = type ? "showWithdrawReceipt" : "showReceipt";
-    this.setState(state => ({
-      ...state,
+    this.setState({
       [receipt]: bool
-    }));
+    });
   }
 
   resetState() {
@@ -682,20 +680,14 @@ class VoteControls extends Component {
   }
 
   collapse() {
-    this.setState(state => {
-      return {
-        ...state,
-        expanded: false
-      };
+    this.setState({
+      expanded: false
     });
   }
 
   expand() {
-    this.setState(state => {
-      return {
-        ...state,
-        expand: true
-      };
+    this.setState({
+      expand: true
     });
   }
 
@@ -709,9 +701,7 @@ class VoteControls extends Component {
       { value: "yes", label: "Ja", color: "voltBrandGreen" },
       { value: "no", label: "Nein", color: "voltBrandRed" }
     ];
-    console.log({ castedVotes });
     const castedCredits = castedVotes.mul(castedVotes).div(factor18);
-    console.log({ credits, castedCredits });
 
     const totalCredits = castedCredits.add(credits || new BN(0)).div(factor18);
     // no sqrt in BN.js 🤷‍
@@ -757,9 +747,16 @@ class VoteControls extends Component {
             options={options}
             selection={choice}
             onChange={this.setChoice}
+            onClick={() => {
+              if (this.state.votes < max) {
+                this.setState(state => ({
+                  votes: state.votes + 1,
+                }));
+              };
+            }}
             alreadyVoted={voteFormDisabled}
           />
-          <ActionButton 
+          <ActionButton
             disabled={voteBtnDisabled}
             onClick={this.submitOrUpdateVote}
             title={ noCredits ? 'Keine Voice Credits verfügbar' : ''}
