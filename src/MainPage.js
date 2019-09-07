@@ -3,7 +3,6 @@ import React from 'react';
 import ProposalsList from "./volt/components/ProposalsList";
 import SortContols from "./volt/components/SortControls";
 import FilterControls from "./volt/components/FilterControls";
-import Footer from "./volt/components/Footer";
 import { contains } from "./volt/utils";
 
 export default function MainPage({
@@ -38,7 +37,8 @@ export default function MainPage({
       const inTitle = contains(proposal.title, lcQuery);
       const inDescription = contains(proposal.description, lcQuery);
       const inId = contains(proposal.proposalId, lcQuery);
-      return inTitle || inDescription || inId;
+      const inTopics = proposal.topic.some(topic => contains(topic, lcQuery));
+      return inTitle || inDescription || inId || inTopics;
     });
 
     const sortFunction = sortFunctions[sorting];
