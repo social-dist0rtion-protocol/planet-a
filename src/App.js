@@ -307,7 +307,7 @@ class App extends Component {
       }
     }
 
-    interval = setInterval(this.poll, 2000);
+    interval = setInterval(this.poll, 3000);
     setInterval(this.loadProposals.bind(this), 300000); // every 5mins
   }
 
@@ -516,6 +516,9 @@ class App extends Component {
     }, 60);
   }
   async parseBlocks(parseBlock, recentTxs, transactionsByAddress) {
+    // We don't neede this right now, so we simply short fuse it
+    return false;
+
     let web3;
     if (this.state.xdaiweb3) {
       web3 = this.state.xdaiweb3;
