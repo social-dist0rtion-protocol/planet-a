@@ -3,7 +3,7 @@ import { Tx, Input, Output, Util } from "leap-core";
 import { Dapparatus } from "dapparatus";
 import { equal, bi } from "jsbi-utils";
 import Web3 from "web3";
-import { Route, withRouter } from 'react-router-dom';
+import { Redirect, Route, withRouter } from 'react-router-dom';
 import i18n from "./i18n";
 import "./App.scss";
 
@@ -989,6 +989,11 @@ class App extends Component {
                     )
                   }
                 }} />
+
+              <Route path="*" exact render={() => (
+                <Redirect to="/"/>
+              )} />
+
               { alert && <AlertBox alert={alert} changeAlert={this.changeAlert}/> }
             </MainContainer>
           ) : (
