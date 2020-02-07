@@ -11,6 +11,7 @@ simple and straight forward:
 
 ```bash
 $ git clone https://github.com/social-dist0rtion-protocol/planet-a.git
+$ cd planet-a
 $ npm i
 $ npm run start
 ```
